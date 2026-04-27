@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warkop Mawar — Seduhan Jujur, Harga Saudara</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #E8622A;
+            --orange-glow: rgba(232, 98, 42, 0.35);
+            --dark-orange: #C04E1A;
+            --cream: #F5EFE4;
+            --espresso: #1A0F08;
+            --charcoal: #111111;
+            --bg: #F4EFE6;
+            --bg2: #EDE5D8;
+            --text: #1A0F08;
+            --muted: #7A6C60;
+            --card-bg: #FFFFFF;
+            --nav-bg: rgba(244, 239, 230, 0.82);
+            --footer-bg: #1A0F08;
+            --border: rgba(26,15,8,0.1);
+        }
+        body.dark {
+            --bg: #111111;
+            --bg2: #1A1410;
+            --text: #F4EFE6;
+            --muted: #9A8C82;
+            --card-bg: #1E1812;
+            --nav-bg: rgba(17, 17, 17, 0.88);
+            --footer-bg: #0A0704;
+            --border: rgba(244,239,230,0.08);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background-color 0.6s ease, color 0.6s ease;
+            overflow-x: hidden;
+            cursor: none;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* ── GRAIN OVERLAY ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.032;
+            pointer-events: none;
+            z-index: 9998;
+            mix-blend-mode: overlay;
+        }
+
+        /* ── CURSOR ── */
+        #cursor {
+            width: 12px; height: 12px;
+            background: var(--orange);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+            mix-blend-mode: multiply;
+        }
+        #cursor-ring {
+            width: 36px; height: 36px;
+            border: 1.5px solid var(--orange);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: left 0.12s ease, top 0.12s ease, width 0.25s ease, height 0.25s ease, opacity 0.3s ease;
+            opacity: 0.6;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg2); }
+        ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+        /* ── PRELOADER ── */
+        #preloader {
+            position: fixed; inset: 0;
+            background: var(--espresso);
+            z-index: 99997;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: opacity 0.9s cubic-bezier(0.77,0,0.175,1), visibility 0.9s ease;
+        }
+        .loader-ring {
+            width: 56px; height: 56px;
+            border: 2px solid rgba(244,239,230,0.15);
+            border-top: 2px solid var(--orange);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #preloader .pl-wordmark {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--cream);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        #preloader .pl-sub {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--orange);
+            letter-spacing: 3px;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+
+        /* ── NAVBAR ── */
+        header {
+            position: fixed; top: 0; width: 100%; height: 72px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%;
+            z-index: 1000;
+            transition: background 0.5s ease, border-color 0.5s ease;
+        }
+        .logo-wrap { display: flex; flex-direction: column; line-height: 1; gap: 2px; }
+        .logo-main {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.25rem, 4vw, 1.55rem);
+            font-weight: 900;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+        .logo-main span { color: var(--orange); }
+        .logo-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.48rem;
+            letter-spacing: 2.5px;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+        nav { display: flex; align-items: center; gap: 2rem; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a {
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            position: relative;
+            padding-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute; left: 0; bottom: 0;
+            width: 0; height: 1.5px;
+            background: var(--orange);
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a:hover::after { width: 100%; }
+        .controls { display: flex; gap: 8px; align-items: center; }
+        .icon-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 1.5px;
+            cursor: none;
+            transition: background 0.3s, color 0.3s, transform 0.25s, border-color 0.3s;
+        }
+        .icon-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: scale(1.05); }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: none;
+            padding: 6px;
+            border: none;
+            background: none;
+        }
+        .hamburger span {
+            display: block;
+            width: 22px; height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+            transform-origin: center;
+        }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* Mobile Menu Overlay */
+        .mobile-nav {
+            position: fixed; inset: 0; top: 72px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            z-index: 999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            gap: 40px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .mobile-nav.open { opacity: 1; pointer-events: all; }
+        .mobile-nav a {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.5px;
+            position: relative;
+            transition: color 0.3s;
+        }
+        .mobile-nav a::after {
+            content: '';
+            position: absolute; left: 0; bottom: -4px;
+            width: 0; height: 2px;
+            background: var(--orange);
+            transition: width 0.3s;
+        }
+        .mobile-nav a:hover { color: var(--orange); }
+        .mobile-nav a:hover::after { width: 100%; }
+        .mobile-controls { display: flex; gap: 12px; margin-top: 12px; }
+
+        /* ── HERO ── */
+        .hero {
+            height: 100svh; width: 100%;
+            display: flex; align-items: flex-end;
+            position: relative; overflow: hidden;
+        }
+        .hero-video-container {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+        .hero-video {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(1.08);
+            transition: opacity 1.2s ease, transform 12s ease-in-out;
+        }
+        .hero-video.active {
+            opacity: 1;
+            animation: heroZoom 14s ease-in-out infinite alternate;
+        }
+        @keyframes heroZoom { from { transform: scale(1.05); } to { transform: scale(1.13); } }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(175deg, rgba(26,15,8,0.15) 0%, rgba(26,15,8,0.5) 45%, rgba(26,15,8,0.95) 100%);
+            z-index: 1;
+        }
+        /* Video dots */
+        .hero-video-dots {
+            position: absolute;
+            bottom: 40px; left: 8%;
+            z-index: 3;
+            display: flex; gap: 8px;
+            opacity: 0;
+            animation: fadeUp 0.8s 2.4s forwards;
+        }
+        .vdot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.35);
+            border: none;
+            cursor: none;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .vdot.active { background: var(--orange); transform: scale(1.4); }
+
+        .hero-content {
+            position: relative; z-index: 2;
+            padding: 0 8% 8%;
+            max-width: 820px;
+        }
+        .hero-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(0.55rem, 1.5vw, 0.65rem);
+            letter-spacing: 4px;
+            color: var(--orange);
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s 1.2s forwards;
+        }
+        .hero-eyebrow::before {
+            content: '';
+            display: block;
+            width: 28px; height: 1.5px;
+            background: var(--orange);
+        }
+        .hero h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.6rem, 6.5vw, 5.5rem);
+            line-height: 1.07;
+            color: #fff;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 22px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.9s 1.4s forwards;
+        }
+        .hero h2 em { color: var(--orange); font-style: italic; }
+        .hero-desc {
+            font-size: clamp(0.88rem, 2vw, 1rem);
+            color: rgba(244,239,230,0.62);
+            max-width: 480px;
+            line-height: 1.8;
+            font-weight: 300;
+            margin-bottom: 38px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s 1.6s forwards;
+        }
+        .hero-actions {
+            display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s 1.8s forwards;
+        }
+        .btn-primary {
+            background: var(--orange);
+            color: #fff;
+            padding: 13px 32px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 6px 24px var(--orange-glow);
+            cursor: none;
+        }
+        .btn-primary:hover { background: var(--dark-orange); transform: translateY(-3px); box-shadow: 0 12px 32px var(--orange-glow); }
+        .btn-primary svg { transition: transform 0.3s; }
+        .btn-primary:hover svg { transform: translateX(4px); }
+        .btn-ghost {
+            color: rgba(244,239,230,0.65);
+            padding: 13px 0;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(244,239,230,0.3);
+            transition: color 0.3s, border-color 0.3s;
+            cursor: none;
+        }
+        .btn-ghost:hover { color: #fff; border-color: #fff; }
+        .hero-scroll {
+            position: absolute; bottom: 40px; right: 8%;
+            z-index: 2;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            opacity: 0;
+            animation: fadeUp 0.8s 2.2s forwards;
+        }
+        .scroll-line {
+            width: 1px; height: 50px;
+            background: linear-gradient(to bottom, rgba(232,98,42,0), var(--orange));
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
+        .scroll-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.5rem; letter-spacing: 3px;
+            color: var(--orange);
+            text-transform: uppercase;
+            writing-mode: vertical-rl;
+        }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* ── STATS BAND ── */
+        .stats-band {
+            background: var(--espresso);
+            padding: 36px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            overflow: hidden;
+        }
+        body.dark .stats-band { background: #0D0A08; }
+        .stat-item { text-align: center; flex: 1; position: relative; }
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute; right: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 1px; height: 36px;
+            background: rgba(244,239,230,0.1);
+        }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 700; color: var(--orange);
+            display: block; line-height: 1;
+        }
+        .stat-label {
+            font-size: clamp(0.55rem, 1.2vw, 0.68rem);
+            letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(244,239,230,0.4);
+            margin-top: 6px;
+            font-family: 'Space Mono', monospace;
+            display: block;
+        }
+
+        /* ── SECTION BASE ── */
+        section { padding: clamp(72px, 10vw, 120px) 8%; }
+        .section-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem; letter-spacing: 4px; color: var(--orange);
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 16px;
+        }
+        .section-eyebrow::before {
+            content: '';
+            width: 24px; height: 1.5px; background: var(--orange); flex-shrink: 0;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4.5vw, 3.6rem);
+            font-weight: 900; color: var(--text);
+            letter-spacing: -1.5px; line-height: 1.1;
+        }
+        .section-title em { color: var(--orange); font-style: italic; }
+
+        /* ── ABOUT ── */
+        #about { background: var(--bg2); }
+        .about-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(40px, 6vw, 80px);
+            align-items: center;
+        }
+        .about-visual { position: relative; }
+        .about-img-frame {
+            width: 100%; aspect-ratio: 4/5;
+            overflow: hidden; border-radius: 4px; position: relative;
+        }
+        .about-img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: block;
+        }
+        .about-img-frame:hover .about-img { transform: scale(1.06); }
+        .about-badge {
+            position: absolute;
+            bottom: -20px; right: -16px;
+            width: clamp(88px, 10vw, 110px); height: clamp(88px, 10vw, 110px);
+            background: var(--orange);
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            box-shadow: 0 12px 30px var(--orange-glow);
+            animation: badgeSpin 14s linear infinite;
+        }
+        .badge-inner {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.48rem; letter-spacing: 1.8px;
+            text-transform: uppercase; color: rgba(255,255,255,0.85);
+            text-align: center; line-height: 1.7;
+        }
+        .badge-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem; font-weight: 700; color: #fff; display: block;
+        }
+        @keyframes badgeSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        .about-text-block { display: flex; flex-direction: column; gap: 26px; }
+        .about-body {
+            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            line-height: 1.9; color: var(--muted); font-weight: 300;
+        }
+        .about-body strong { color: var(--text); font-weight: 600; }
+        .about-features {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;
+        }
+        .feature-chip {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--bg); border: 1px solid var(--border);
+            padding: 11px 15px; border-radius: 8px;
+            font-size: 0.82rem; font-weight: 500;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .feature-chip:hover { border-color: var(--orange); box-shadow: 0 4px 16px var(--orange-glow); }
+        .feature-chip .dot {
+            width: 7px; height: 7px; background: var(--orange);
+            border-radius: 50%; flex-shrink: 0;
+        }
+
+        /* ── GALLERY STRIP ── */
+        .gallery-strip {
+            background: var(--bg);
+            padding: 0 0 0 8%;
+            overflow: hidden;
+        }
+        .gallery-track {
+            display: flex; gap: 16px;
+            animation: galleryScroll 28s linear infinite;
+            width: max-content;
+        }
+        .gallery-track:hover { animation-play-state: paused; }
+        .gallery-item {
+            width: clamp(160px, 20vw, 220px);
+            aspect-ratio: 3/4;
+            border-radius: 8px; overflow: hidden; flex-shrink: 0;
+            position: relative;
+        }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .gallery-item:hover img { transform: scale(1.06); }
+        @keyframes galleryScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ── MENU ── */
+        #menu { background: var(--bg); }
+        .menu-header {
+            display: flex;
+            justify-content: space-between; align-items: flex-end;
+            margin-bottom: clamp(40px, 6vw, 64px);
+            flex-wrap: wrap; gap: 20px;
+        }
+        .menu-header-left { max-width: 520px; }
+        .menu-tabs { display: flex; gap: 8px; margin-bottom: 44px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 9px 22px; border-radius: 100px;
+            font-size: 0.78rem; font-weight: 600;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            border: 1.5px solid var(--border);
+            background: transparent; color: var(--muted);
+            cursor: none;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .tab-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tab-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+        .tab-content { display: none; }
+        .tab-content.active { display: grid; }
+        .menu-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(18px, 2.5vw, 28px);
+        }
+        .menu-card {
+            background: var(--card-bg);
+            border-radius: 14px; overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                        box-shadow 0.4s ease, border-color 0.3s;
+            position: relative; cursor: none;
+        }
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 48px rgba(26,15,8,0.12), 0 0 0 1.5px var(--orange);
+            border-color: var(--orange);
+        }
+        .menu-img-wrap {
+            width: 100%; aspect-ratio: 1/1;
+            overflow: hidden; position: relative;
+            background: var(--bg2);
+        }
+        .menu-img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
+            display: block;
+        }
+        .menu-card:hover .menu-img { transform: scale(1.08); }
+        .menu-card-tag {
+            position: absolute; top: 12px; left: 12px;
+            background: var(--orange); color: #fff;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.52rem; letter-spacing: 2px;
+            padding: 5px 10px; border-radius: 3px;
+            text-transform: uppercase; z-index: 2;
+        }
+        .menu-card-body { padding: 20px 20px 22px; }
+        .menu-card-name {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: 700; color: var(--text);
+            margin-bottom: 7px; letter-spacing: -0.3px;
+        }
+        .menu-card-desc {
+            font-size: 0.84rem; color: var(--muted);
+            line-height: 1.65; font-weight: 300; margin-bottom: 16px;
+        }
+        .menu-card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .menu-card-price {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem; font-weight: 700; color: var(--orange);
+        }
+        .add-btn {
+            width: 34px; height: 34px;
+            background: var(--orange); border: none; border-radius: 50%;
+            color: #fff; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: none;
+            transition: background 0.25s, transform 0.3s;
+            flex-shrink: 0; line-height: 1;
+        }
+        .add-btn:hover { background: var(--dark-orange); transform: scale(1.12) rotate(90deg); }
+
+        /* ── MARQUEE ── */
+        .marquee-wrap {
+            background: var(--orange); padding: 17px 0;
+            overflow: hidden; white-space: nowrap;
+        }
+        .marquee-track {
+            display: inline-flex;
+            animation: marquee 20s linear infinite;
+        }
+        .marquee-item {
+            display: inline-flex; align-items: center; gap: 18px;
+            padding: 0 26px;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(0.88rem, 2vw, 1rem);
+            font-style: italic; color: rgba(255,255,255,0.9); font-weight: 700;
+        }
+        .marquee-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.45); border-radius: 50%; }
+        @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--footer-bg);
+            padding: clamp(48px, 6vw, 60px) 8% 36px;
+            transition: background 0.6s ease;
+        }
+        .footer-inner {
+            display: flex; justify-content: space-between;
+            align-items: flex-end; flex-wrap: wrap; gap: 28px;
+            border-bottom: 1px solid rgba(244,239,230,0.08);
+            padding-bottom: 36px; margin-bottom: 24px;
+        }
+        .footer-brand .logo-main { font-size: clamp(1.5rem, 4vw, 2rem); }
+        .footer-tagline {
+            font-size: 0.82rem; color: rgba(244,239,230,0.32);
+            margin-top: 8px; font-weight: 300;
+            max-width: 250px; line-height: 1.65;
+        }
+        .footer-links { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
+        .footer-links a {
+            font-size: 0.75rem; letter-spacing: 2px;
+            text-transform: uppercase; color: rgba(244,239,230,0.38);
+            transition: color 0.3s; font-family: 'Space Mono', monospace;
+        }
+        .footer-links a:hover { color: var(--orange); }
+        .footer-bottom {
+            display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .footer-copy {
+            font-size: 0.72rem; color: rgba(244,239,230,0.22);
+            font-family: 'Space Mono', monospace;
+        }
+        .footer-copy span { color: var(--orange); }
+
+        /* ── REVEAL ── */
+        .reveal {
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94),
+                        transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .text-fade { transition: opacity 0.4s ease, transform 0.4s ease; }
+        .text-fade.out { opacity: 0; transform: translateY(-8px); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .menu-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .about-inner { grid-template-columns: 1fr; gap: 48px; }
+            .about-badge { right: 8px; bottom: -16px; }
+            .menu-header { flex-direction: column; align-items: flex-start; }
+            .hero-scroll { display: none; }
+            section { padding: 72px 6%; }
+            header { padding: 0 6%; }
+        }
+        @media (max-width: 640px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .menu-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+            .stats-band { display: grid; grid-template-columns: repeat(2,1fr); gap: 0; }
+            .stat-item:not(:last-child)::after { display: none; }
+            .stat-item {
+                padding: 20px 10px;
+                border-bottom: 1px solid rgba(244,239,230,0.08);
+            }
+            .stat-item:nth-child(1) { border-right: 1px solid rgba(244,239,230,0.08); }
+            .stat-item:nth-child(2) { border-right: none; }
+            .stat-item:nth-child(3) { border-right: 1px solid rgba(244,239,230,0.08); border-bottom: none; }
+            .stat-item:nth-child(4) { border-bottom: none; }
+            .about-features { grid-template-columns: 1fr; }
+            #cursor, #cursor-ring { display: none; }
+            body { cursor: auto; }
+            a, button { cursor: pointer; }
+            .hero h2 { letter-spacing: -1px; }
+            .hero-content { padding: 0 6% 72px; }
+            .hero-video-dots { left: 6%; bottom: 32px; }
+            section { padding: 60px 5%; }
+            header { padding: 0 5%; }
+            .menu-card-body { padding: 15px 15px 17px; }
+        }
+        @media (max-width: 420px) {
+            .menu-grid { grid-template-columns: 1fr; }
+            .hero h2 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="loader-ring"></div>
+        <div class="pl-wordmark t-preloader text-fade">Warkop Mawar</div>
+        <div class="pl-sub">Menyeduh Kopi...</div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo-wrap">
+            <div class="logo-main t-logo">Warkop <span>Mawar</span></div>
+            <div class="logo-tag">Bondowoso · Est. 2024</div>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#home" class="t-nav-home">Beranda</a></li>
+                <li><a href="#about" class="t-nav-about">Tentang</a></li>
+                <li><a href="#menu" class="t-nav-menu">Menu</a></li>
+            </ul>
+            <div class="controls">
+                <button id="langBtn" class="icon-btn">EN</button>
+                <button id="themeBtn" class="icon-btn">🌙</button>
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#home" class="t-nav-home" onclick="closeMobileNav()">Beranda</a>
+        <a href="#about" class="t-nav-about" onclick="closeMobileNav()">Tentang</a>
+        <a href="#menu" class="t-nav-menu" onclick="closeMobileNav()">Menu</a>
+        <div class="mobile-controls">
+            <button id="langBtnM" class="icon-btn">EN</button>
+            <button id="themeBtnM" class="icon-btn">🌙</button>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section id="home" class="hero">
+        <div class="hero-video-container">
+            <video autoplay loop muted playsinline class="hero-video active" id="hv0">
+                <source src="vidio-2.webm" type="video/webm">
+            </video>
+            <video loop muted playsinline class="hero-video" id="hv1">
+                <source src="vidio-1.webm" type="video/webm">
+            </video>
+            <video loop muted playsinline class="hero-video" id="hv2">
+                <source src="vidio-3.webm" type="video/webm">
+            </video>
+            <video loop muted playsinline class="hero-video" id="hv3">
+                <source src="vidio-4.webm" type="video/webm">
+            </video>
+            <video loop muted playsinline class="hero-video" id="hv4">
+                <source src="vidio-5.webm" type="video/webm">
+            </video>
+            <video loop muted playsinline class="hero-video" id="hv5">
+                <source src="vidio-6.webm" type="video/webm">
+            </video>
+        </div>
+        <div class="hero-overlay"></div>
+
+        <div class="hero-video-dots" id="videoDots">
+            <button class="vdot active" data-idx="0"></button>
+            <button class="vdot" data-idx="1"></button>
+            <button class="vdot" data-idx="2"></button>
+            <button class="vdot" data-idx="3"></button>
+            <button class="vdot" data-idx="4"></button>
+            <button class="vdot" data-idx="5"></button>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-eyebrow t-hero-eyebrow">Bondowoso, Jawa Timur</div>
+            <h2 class="t-hero-title text-fade">Seduhan Jujur,<br>Harga <em>Saudara</em>.</h2>
+            <p class="hero-desc t-hero-desc text-fade">Nongkrong industrial-cozy di Bondowoso. Kopi mantap, suasana adem oren-abu, bikin betah dari senja sampe malam.</p>
+            <div class="hero-actions">
+                <a href="#menu" class="btn-primary t-hero-btn text-fade">
+                    Lihat Menu
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <a href="#about" class="btn-ghost t-hero-ghost text-fade">Tentang Kami</a>
+            </div>
+        </div>
+        <div class="hero-scroll">
+            <div class="scroll-line"></div>
+            <span class="scroll-label">Scroll</span>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-band">
+        <div class="stat-item reveal">
+            <span class="stat-num">50+</span>
+            <span class="stat-label t-stat-1">Item Menu</span>
+        </div>
+        <div class="stat-item reveal" style="transition-delay:0.1s">
+            <span class="stat-num">Rp5K</span>
+            <span class="stat-label t-stat-2">Mulai Dari</span>
+        </div>
+        <div class="stat-item reveal" style="transition-delay:0.2s">
+            <span class="stat-num">∞</span>
+            <span class="stat-label t-stat-3">Betah Nongkrong</span>
+        </div>
+        <div class="stat-item reveal" style="transition-delay:0.3s">
+            <span class="stat-num">1</span>
+            <span class="stat-label t-stat-4">Spot Terbaik</span>
+        </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="about-inner">
+            <div class="about-visual reveal">
+                <div class="about-img-frame">
+                    <img src="minuman-1bg.webp" alt="Warkop Mawar" class="about-img">
+                </div>
+                <div class="about-badge">
+                    <div class="badge-inner">
+                        <span class="badge-num">★</span>
+                        Kopi<br>Seger
+                    </div>
+                </div>
+            </div>
+            <div class="about-text-block">
+                <div class="reveal">
+                    <div class="section-eyebrow t-about-eyebrow">Cerita Kami</div>
+                    <h2 class="section-title t-about-title text-fade">Tentang<br>Warkop <em>Mawar</em></h2>
+                </div>
+                <p class="about-body t-about-p1 text-fade reveal" style="transition-delay:0.15s">
+                    Warkop Mawar memadukan <strong>konsep minimalis abu-abu industrial</strong> dengan kehangatan warna oren yang homey. Tempat paling pas di Bondowoso buat nemenin waktu santai lu.
+                </p>
+                <p class="about-body t-about-p2 text-fade reveal" style="transition-delay:0.25s">
+                    Kami percaya <strong>kopi enak ga harus mahal</strong>. Seduhan kami jujur, harganya saudara. Cek juga mawar cantik kami di area kasir, sentuhan kecil buat hari lu.
+                </p>
+                <div class="about-features reveal" style="transition-delay:0.35s">
+                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-1">Kopi Pilihan</span></div>
+                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-2">Harga Ramah</span></div>
+                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-3">Suasana Cozy</span></div>
+                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-4">Open Late</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY STRIP -->
+    <div class="gallery-strip">
+        <div class="gallery-track" id="galleryTrack">
+            <div class="gallery-item"><img src="minuman-1.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-1.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-2.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-2.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-3.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-3.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-4.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-4.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-5.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-5.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-6.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-6.webp" alt=""></div>
+            <!-- Duplicate for seamless loop -->
+            <div class="gallery-item"><img src="minuman-1.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-1.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-2.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-2.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-3.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-3.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-4.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-4.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-5.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-5.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-6.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-6.webp" alt=""></div>
+        </div>
+    </div>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+        <div class="marquee-track" id="marqueeTrack">
+            <span class="marquee-item">Kopi Segar<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Harga Teman<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Industrial Cozy<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Kopi Segar<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Harga Teman<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Industrial Cozy<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
+        </div>
+    </div>
+
+    <!-- MENU -->
+    <section id="menu">
+        <div class="menu-header">
+            <div class="menu-header-left reveal">
+                <div class="section-eyebrow t-menu-eyebrow">Pilihan Kami</div>
+                <h2 class="section-title t-menu-title text-fade">Menu <em>Andalan</em><br>Kami</h2>
+            </div>
+        </div>
+        <div class="menu-tabs">
+            <button class="tab-btn active t-tab-minuman" data-tab="minuman">☕ Minuman</button>
+            <button class="tab-btn t-tab-makanan" data-tab="makanan">🍛 Makanan</button>
+        </div>
+
+        <!-- MINUMAN -->
+        <div class="tab-content active menu-grid" id="tab-minuman">
+            <div class="menu-card reveal">
+                <div class="menu-img-wrap">
+                    <span class="menu-card-tag t-tag-bestseller">Best Seller</span>
+                    <img src="minuman-4.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-1">Es Kopi Susu Aren</div>
+                    <div class="menu-card-desc t-desc-1">Perpaduan espresso, susu segar, dan manisnya gula aren.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 10.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.1s">
+                <div class="menu-img-wrap">
+                    <img src="minuman-5.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-2">Kopi Hitam Mawar</div>
+                    <div class="menu-card-desc t-desc-2">Racikan murni, aroma khas, nendang buat melek semalaman.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 5.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.2s">
+                <div class="menu-img-wrap">
+                    <img src="minuman-2.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-7">Es Kopi Latte</div>
+                    <div class="menu-card-desc t-desc-7">Espresso lembut berpadu susu dingin yang creamy.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 10.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal">
+                <div class="menu-img-wrap">
+                    <img src="minuman-3.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-8">Es Kopi Susu</div>
+                    <div class="menu-card-desc t-desc-8">Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 8.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.1s">
+                <div class="menu-img-wrap">
+                    <img src="minuman-6.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-9">Kopi Susu Dingin</div>
+                    <div class="menu-card-desc t-desc-9">Segar, manis, dan dingin — teman terbaik sore hari.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 8.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.2s">
+                <div class="menu-img-wrap">
+                    <img src="minuman-1.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-10">Americano</div>
+                    <div class="menu-card-desc t-desc-10">Espresso dilute air dingin, bold dan clean.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 7.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAKANAN -->
+        <div class="tab-content menu-grid" id="tab-makanan">
+            <div class="menu-card reveal">
+                <div class="menu-img-wrap">
+                    <span class="menu-card-tag t-tag-bestseller">Best Seller</span>
+                    <img src="makanan-5.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-3">Nasi Ayam Saus Mawar</div>
+                    <div class="menu-card-desc t-desc-3">Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 15.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.1s">
+                <div class="menu-img-wrap">
+                    <img src="makanan-3.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-4">Mie Rebus Spesial</div>
+                    <div class="menu-card-desc t-desc-4">Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 10.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.2s">
+                <div class="menu-img-wrap">
+                    <img src="makanan-4.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-5">Tempe Mendoan + Sambal</div>
+                    <div class="menu-card-desc t-desc-5">Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 8.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal">
+                <div class="menu-img-wrap">
+                    <img src="makanan-2.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-6">Pisang Goreng Lumer</div>
+                    <div class="menu-card-desc t-desc-6">Manisnya pas, legit di dalem krispi di luar, taburan melimpah.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 10.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.1s">
+                <div class="menu-img-wrap">
+                    <img src="makanan-1.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-11">Nasi Ayam Hitam</div>
+                    <div class="menu-card-desc t-desc-11">Ayam dengan saus gelap gurih yang bikin nambah terus.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 15.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-card reveal" style="transition-delay:0.2s">
+                <div class="menu-img-wrap">
+                    <img src="makanan-6.webp" class="menu-img" alt="">
+                </div>
+                <div class="menu-card-body">
+                    <div class="menu-card-name t-menu-12">Nasi Ayam Geprek</div>
+                    <div class="menu-card-desc t-desc-12">Geprek pedas menggoda, cocok banget sambil teguk kopi.</div>
+                    <div class="menu-card-footer">
+                        <span class="menu-card-price">Rp 13.000</span>
+                        <button class="add-btn">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo-main t-logo-footer">Warkop <span>Mawar</span></div>
+                <p class="footer-tagline t-footer-tagline">Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#home" class="t-nav-home">Beranda</a>
+                <a href="#about" class="t-nav-about">Tentang</a>
+                <a href="#menu" class="t-nav-menu">Menu</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copy t-footer">&copy; 2026 <span>Warkop Mawar</span>. Dibuat oleh Nanda.</p>
+            <p class="footer-copy" style="color:rgba(244,239,230,0.1)">Bondowoso · Jawa Timur</p>
+        </div>
+    </footer>
+
+    <script>
+    // ── CURSOR ──
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animateCursor() {
+        cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+        rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    document.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursor.style.width = '20px'; cursor.style.height = '20px';
+            ring.style.width = '56px'; ring.style.height = '56px'; ring.style.opacity = '0.35';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursor.style.width = '12px'; cursor.style.height = '12px';
+            ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.6';
+        });
+    });
+
+    // ── PRELOADER ──
+    window.addEventListener('load', () => {
+        const pl = document.getElementById('preloader');
+        setTimeout(() => {
+            pl.style.opacity = '0';
+            setTimeout(() => { pl.style.visibility = 'hidden'; }, 900);
+        }, 700);
+    });
+
+    // ── HERO VIDEO SWITCHER ──
+    const heroVideos = document.querySelectorAll('.hero-video');
+    const vdots = document.querySelectorAll('.vdot');
+    let currentVideo = 0;
+    let videoInterval;
+
+    function switchVideo(idx) {
+        heroVideos[currentVideo].classList.remove('active');
+        vdots[currentVideo].classList.remove('active');
+        heroVideos[currentVideo].pause();
+        currentVideo = idx;
+        heroVideos[currentVideo].classList.add('active');
+        vdots[currentVideo].classList.add('active');
+        heroVideos[currentVideo].play();
+    }
+    function nextVideo() { switchVideo((currentVideo + 1) % heroVideos.length); }
+
+    vdots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            clearInterval(videoInterval);
+            switchVideo(parseInt(dot.dataset.idx));
+            videoInterval = setInterval(nextVideo, 8000);
+        });
+    });
+    videoInterval = setInterval(nextVideo, 8000);
+
+    // ── HAMBURGER ──
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('open');
+        mobileNav.classList.toggle('open');
+        document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+    });
+    function closeMobileNav() {
+        hamburger.classList.remove('open');
+        mobileNav.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    // ── SCROLL REVEAL ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
+    reveals.forEach(el => observer.observe(el));
+
+    // ── DARK MODE ──
+    function setTheme(dark) {
+        document.body.classList.toggle('dark', dark);
+        const icon = dark ? '☀️' : '🌙';
+        document.getElementById('themeBtn').textContent = icon;
+        document.getElementById('themeBtnM').textContent = icon;
+    }
+    document.getElementById('themeBtn').addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
+    document.getElementById('themeBtnM').addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
+
+    // ── TABS ──
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const target = btn.dataset.tab;
+            document.querySelectorAll('.tab-content').forEach(c => {
+                c.classList.remove('active');
+                if (c.id === 'tab-' + target) c.classList.add('active');
+            });
+            document.querySelectorAll('#tab-' + target + ' .reveal').forEach(el => {
+                el.classList.remove('active');
+                setTimeout(() => observer.observe(el), 50);
+            });
+        });
+    });
+
+    // ── LANGUAGE ──
+    let currentLang = 'id';
+    const dict = {
+        id: {
+            't-preloader': 'Warkop Mawar',
+            't-nav-home': 'Beranda', 't-nav-about': 'Tentang', 't-nav-menu': 'Menu',
+            't-hero-eyebrow': 'Bondowoso, Jawa Timur',
+            't-hero-title': 'Seduhan Jujur,<br>Harga <em>Saudara</em>.',
+            't-hero-desc': 'Nongkrong industrial-cozy di Bondowoso. Kopi mantap, suasana adem oren-abu, bikin betah dari senja sampe malam.',
+            't-hero-btn': 'Lihat Menu', 't-hero-ghost': 'Tentang Kami',
+            't-stat-1': 'Item Menu', 't-stat-2': 'Mulai Dari', 't-stat-3': 'Betah Nongkrong', 't-stat-4': 'Spot Terbaik',
+            't-about-eyebrow': 'Cerita Kami', 't-about-title': 'Tentang<br>Warkop <em>Mawar</em>',
+            't-about-p1': 'Warkop Mawar memadukan <strong>konsep minimalis abu-abu industrial</strong> dengan kehangatan warna oren yang homey. Tempat paling pas di Bondowoso buat nemenin waktu santai lu.',
+            't-about-p2': 'Kami percaya <strong>kopi enak ga harus mahal</strong>. Seduhan kami jujur, harganya saudara. Cek juga mawar cantik kami di area kasir, sentuhan kecil buat hari lu.',
+            't-feat-1': 'Kopi Pilihan', 't-feat-2': 'Harga Ramah', 't-feat-3': 'Suasana Cozy', 't-feat-4': 'Open Late',
+            't-menu-eyebrow': 'Pilihan Kami', 't-menu-title': 'Menu <em>Andalan</em><br>Kami',
+            't-tab-minuman': '☕ Minuman', 't-tab-makanan': '🍛 Makanan',
+            't-tag-bestseller': 'Best Seller',
+            't-menu-1': 'Es Kopi Susu Aren', 't-desc-1': 'Perpaduan espresso, susu segar, dan manisnya gula aren.',
+            't-menu-2': 'Kopi Hitam Mawar', 't-desc-2': 'Racikan murni, aroma khas, nendang buat melek semalaman.',
+            't-menu-3': 'Nasi Ayam Saus Mawar', 't-desc-3': 'Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.',
+            't-menu-4': 'Mie Rebus Spesial', 't-desc-4': 'Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.',
+            't-menu-5': 'Tempe Mendoan + Sambal', 't-desc-5': 'Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.',
+            't-menu-6': 'Pisang Goreng Lumer', 't-desc-6': 'Manisnya pas, legit di dalem krispi di luar, taburan melimpah.',
+            't-menu-7': 'Es Kopi Latte', 't-desc-7': 'Espresso lembut berpadu susu dingin yang creamy.',
+            't-menu-8': 'Es Kopi Susu', 't-desc-8': 'Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.',
+            't-menu-9': 'Kopi Susu Dingin', 't-desc-9': 'Segar, manis, dan dingin — teman terbaik sore hari.',
+            't-menu-10': 'Americano', 't-desc-10': 'Espresso dilute air dingin, bold dan clean.',
+            't-menu-11': 'Nasi Ayam Hitam', 't-desc-11': 'Ayam dengan saus gelap gurih yang bikin nambah terus.',
+            't-menu-12': 'Nasi Ayam Geprek', 't-desc-12': 'Geprek pedas menggoda, cocok banget sambil teguk kopi.',
+            't-footer-tagline': 'Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.',
+            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Dibuat oleh Nanda.',
+            't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
+        },
+        en: {
+            't-preloader': 'Warkop Mawar',
+            't-nav-home': 'Home', 't-nav-about': 'About', 't-nav-menu': 'Menu',
+            't-hero-eyebrow': 'Bondowoso, East Java',
+            't-hero-title': 'Honest Brew,<br>Friendly <em>Prices</em>.',
+            't-hero-desc': 'Cozy industrial hangout in Bondowoso. Great coffee, warm orange-grey vibes, perfect from dusk till night.',
+            't-hero-btn': 'View Menu', 't-hero-ghost': 'About Us',
+            't-stat-1': 'Menu Items', 't-stat-2': 'Starting From', 't-stat-3': 'Stay All Night', 't-stat-4': 'Best Spot',
+            't-about-eyebrow': 'Our Story', 't-about-title': 'About<br>Warkop <em>Mawar</em>',
+            't-about-p1': 'Warkop Mawar blends <strong>industrial minimalist grey</strong> with warm homey orange vibes. The perfect spot in Bondowoso to unwind.',
+            't-about-p2': 'We believe <strong>good coffee doesn\'t need to be expensive</strong>. Honest brew, friendly prices. Check our beautiful roses at the cashier too.',
+            't-feat-1': 'Quality Coffee', 't-feat-2': 'Friendly Price', 't-feat-3': 'Cozy Vibes', 't-feat-4': 'Open Late',
+            't-menu-eyebrow': 'Our Picks', 't-menu-title': 'Our <em>Best</em><br>Sellers',
+            't-tab-minuman': '☕ Drinks', 't-tab-makanan': '🍛 Food',
+            't-tag-bestseller': 'Best Seller',
+            't-menu-1': 'Iced Palm Sugar Latte', 't-desc-1': 'A mix of espresso, fresh milk, and creamy palm sugar.',
+            't-menu-2': 'Black Coffee Rose', 't-desc-2': 'Pure blend, signature aroma, kicks hard to keep you awake.',
+            't-menu-3': 'Signature Chicken Rice', 't-desc-3': 'Warm rice with crispy chicken coated in our secret sauce.',
+            't-menu-4': 'Special Boiled Noodles', 't-desc-4': 'The highest tier of instant noodles with rich broth and toppings.',
+            't-menu-5': 'Fried Tempeh & Sambal', 't-desc-5': 'Freshly fried, best served warm with sweet and spicy soy dip.',
+            't-menu-6': 'Sweet Fried Banana', 't-desc-6': 'Perfectly sweet, crispy outside, soft inside with generous toppings.',
+            't-menu-7': 'Iced Coffee Latte', 't-desc-7': 'Smooth espresso meets cold creamy milk.',
+            't-menu-8': 'Iced Milk Coffee', 't-desc-8': 'Classic and reliable. Cold milk coffee, no nonsense.',
+            't-menu-9': 'Cold Milk Coffee', 't-desc-9': 'Fresh, sweet, and cold — your best afternoon companion.',
+            't-menu-10': 'Americano', 't-desc-10': 'Espresso diluted with cold water, bold and clean.',
+            't-menu-11': 'Black Sauce Chicken Rice', 't-desc-11': 'Chicken in rich dark savory sauce that keeps you coming back.',
+            't-menu-12': 'Smashed Chicken Rice', 't-desc-12': 'Spicy smashed chicken — perfect alongside your coffee.',
+            't-footer-tagline': 'Honest brew for everyone. The best hangout spot in Bondowoso.',
+            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Built by Nanda.',
+            't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
+        }
+    };
+
+    function applyLang(lang) {
+        const keys = Object.keys(dict.id);
+        document.querySelectorAll(keys.map(k => '.' + k).join(',')).forEach(el => el.classList.add('out'));
+        setTimeout(() => {
+            keys.forEach(key => {
+                document.querySelectorAll('.' + key).forEach(el => {
+                    if (dict[lang][key]) el.innerHTML = dict[lang][key];
+                    el.classList.remove('out');
+                });
+            });
+        }, 400);
+    }
+
+    function toggleLang() {
+        currentLang = currentLang === 'id' ? 'en' : 'id';
+        const label = currentLang === 'id' ? 'EN' : 'ID';
+        document.getElementById('langBtn').textContent = label;
+        document.getElementById('langBtnM').textContent = label;
+        applyLang(currentLang);
+    }
+    document.getElementById('langBtn').addEventListener('click', toggleLang);
+    document.getElementById('langBtnM').addEventListener('click', toggleLang);
+
+    // ── NAVBAR SCROLL ──
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        header.style.boxShadow = window.scrollY > 60 ? '0 2px 24px rgba(26,15,8,0.08)' : 'none';
+    });
+    </script>
+</body>
+</html>
