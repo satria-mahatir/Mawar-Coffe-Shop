@@ -120,8 +120,28 @@
         }
 
         /* ── NAVBAR ── */
+        /* ── TOP BAR ── */
+        .top-bar {
+            position: fixed; top: 0; width: 100%; height: 36px;
+            background: var(--espresso);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1001;
+            border-bottom: 1px solid rgba(232,98,42,0.15);
+            transition: background 0.5s ease;
+        }
+        body.dark .top-bar { background: #0A0704; }
+        .top-bar a {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem; letter-spacing: 2px;
+            color: rgba(244,239,230,0.65); text-transform: uppercase;
+            display: flex; align-items: center; gap: 8px;
+            transition: color 0.3s;
+        }
+        .top-bar a:hover { color: var(--orange); }
+        .top-bar svg { flex-shrink: 0; }
+
         header {
-            position: fixed; top: 0; width: 100%; height: 72px;
+            position: fixed; top: 36px; width: 100%; height: 72px;
             background: var(--nav-bg);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
@@ -206,7 +226,7 @@
 
         /* Mobile Menu Overlay */
         .mobile-nav {
-            position: fixed; inset: 0; top: 72px;
+            position: fixed; inset: 0; top: 108px;
             background: var(--nav-bg);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             z-index: 999;
@@ -239,9 +259,10 @@
 
         /* ── HERO ── */
         .hero {
-            height: 100svh; width: 100%;
+            min-height: 100svh; width: 100%;
             display: flex; align-items: flex-end;
             position: relative; overflow: hidden;
+            padding-top: 108px;
         }
         .hero-video-container {
             position: absolute; inset: 0;
@@ -535,6 +556,85 @@
             100% { transform: translateX(-50%); }
         }
 
+        /* ── FOTO GALLERY SECTION ── */
+        #galeri { background: var(--bg2); }
+        .galeri-header { margin-bottom: clamp(40px, 6vw, 60px); }
+        .galeri-desc {
+            font-size: clamp(0.88rem, 2vw, 1rem); color: var(--muted);
+            max-width: 520px; line-height: 1.8; font-weight: 300; margin-top: 16px;
+        }
+        .galeri-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 260px;
+            gap: 14px;
+        }
+        .galeri-grid .galeri-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+        .galeri-grid .galeri-item:nth-child(4) { grid-column: span 2; }
+        .galeri-item {
+            border-radius: 12px; overflow: hidden;
+            position: relative; cursor: none;
+            background: var(--card-bg); border: 1px solid var(--border);
+        }
+        .galeri-placeholder {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem; letter-spacing: 2.5px;
+            color: var(--muted); text-transform: uppercase;
+            background: linear-gradient(135deg, var(--bg2) 0%, var(--card-bg) 100%);
+            transition: background 0.5s ease;
+        }
+        .galeri-placeholder svg { opacity: 0.25; }
+        .galeri-item:hover .galeri-placeholder { background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg2) 100%); }
+        .galeri-placeholder .gp-label { opacity: 0.5; }
+
+        /* ── LOCATION ── */
+        #lokasi { background: var(--bg); }
+        .lokasi-inner {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: clamp(40px, 6vw, 80px); align-items: center;
+        }
+        .lokasi-map-wrap {
+            width: 100%; aspect-ratio: 4/3;
+            border-radius: 14px; overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+        .lokasi-map-wrap iframe { width: 100%; height: 100%; border: none; }
+        .lokasi-info { display: flex; flex-direction: column; gap: 24px; }
+        .lokasi-address {
+            font-size: clamp(0.92rem, 2vw, 1.02rem);
+            line-height: 1.9; color: var(--muted); font-weight: 300;
+        }
+        .lokasi-address strong { color: var(--text); font-weight: 600; }
+        .lokasi-hours {
+            display: flex; flex-direction: column; gap: 8px;
+            padding: 20px; background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 10px;
+        }
+        .lokasi-hours-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem; letter-spacing: 3px;
+            color: var(--orange); text-transform: uppercase; margin-bottom: 4px;
+        }
+        .lokasi-hours-row {
+            display: flex; justify-content: space-between;
+            font-size: 0.88rem; color: var(--muted); font-weight: 300;
+        }
+        .lokasi-hours-row span:first-child { color: var(--text); font-weight: 500; }
+        .btn-maps {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: transparent; border: 1.5px solid var(--orange);
+            color: var(--orange); padding: 13px 28px; border-radius: 6px;
+            font-size: 0.78rem; font-weight: 600; letter-spacing: 2px;
+            text-transform: uppercase; transition: background 0.3s, color 0.3s, transform 0.3s;
+            cursor: none; width: fit-content;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .btn-maps:hover { background: var(--orange); color: #fff; transform: translateY(-3px); }
+
         /* ── MENU ── */
         #menu { background: var(--bg); }
         .menu-header {
@@ -697,6 +797,10 @@
             .hero-scroll { display: none; }
             section { padding: 72px 6%; }
             header { padding: 0 6%; }
+            .lokasi-inner { grid-template-columns: 1fr; }
+            .galeri-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 200px; }
+            .galeri-grid .galeri-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+            .galeri-grid .galeri-item:nth-child(4) { grid-column: span 1; }
         }
         @media (max-width: 640px) {
             .nav-links { display: none; }
@@ -715,6 +819,11 @@
             .about-features { grid-template-columns: 1fr; }
             #cursor, #cursor-ring { display: none; }
             body { cursor: auto; }
+            .galeri-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
+            .galeri-grid .galeri-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+            .galeri-grid .galeri-item:nth-child(4) { grid-column: span 1; }
+            .top-bar { height: 32px; }
+            .top-bar a { font-size: 0.5rem; letter-spacing: 1.5px; }
             a, button { cursor: pointer; }
             .hero h2 { letter-spacing: -1px; }
             .hero-content { padding: 0 6% 72px; }
@@ -726,6 +835,9 @@
         @media (max-width: 420px) {
             .menu-grid { grid-template-columns: 1fr; }
             .hero h2 { font-size: 2.2rem; }
+            .galeri-grid { grid-template-columns: 1fr; grid-auto-rows: 200px; }
+            .galeri-grid .galeri-item:nth-child(1),
+            .galeri-grid .galeri-item:nth-child(4) { grid-column: span 1; }
         }
     </style>
 </head>
@@ -741,6 +853,14 @@
         <div class="pl-sub">Menyeduh Kopi...</div>
     </div>
 
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <a href="https://maps.app.goo.gl/vrM4oaTqZerqoKH29" target="_blank" rel="noopener" class="t-topbar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Bondowoso, Jawa Timur — Buka di Maps
+        </a>
+    </div>
+
     <!-- HEADER -->
     <header>
         <div class="logo-wrap">
@@ -751,7 +871,9 @@
             <ul class="nav-links">
                 <li><a href="#home" class="t-nav-home">Beranda</a></li>
                 <li><a href="#about" class="t-nav-about">Tentang</a></li>
+                <li><a href="#galeri" class="t-nav-galeri">Galeri</a></li>
                 <li><a href="#menu" class="t-nav-menu">Menu</a></li>
+                <li><a href="#lokasi" class="t-nav-lokasi">Lokasi</a></li>
             </ul>
             <div class="controls">
                 <button id="langBtn" class="icon-btn">EN</button>
@@ -767,7 +889,9 @@
     <div class="mobile-nav" id="mobileNav">
         <a href="#home" class="t-nav-home" onclick="closeMobileNav()">Beranda</a>
         <a href="#about" class="t-nav-about" onclick="closeMobileNav()">Tentang</a>
+        <a href="#galeri" class="t-nav-galeri" onclick="closeMobileNav()">Galeri</a>
         <a href="#menu" class="t-nav-menu" onclick="closeMobileNav()">Menu</a>
+        <a href="#lokasi" class="t-nav-lokasi" onclick="closeMobileNav()">Lokasi</a>
         <div class="mobile-controls">
             <button id="langBtnM" class="icon-btn">EN</button>
             <button id="themeBtnM" class="icon-btn">🌙</button>
@@ -910,6 +1034,53 @@
             <div class="gallery-item"><img src="makanan-6.webp" alt=""></div>
         </div>
     </div>
+
+    <!-- GALERI FOTO -->
+    <section id="galeri">
+        <div class="galeri-header reveal">
+            <div class="section-eyebrow t-galeri-eyebrow">Suasana Kami</div>
+            <h2 class="section-title t-galeri-title text-fade">Galeri <em>Mawar</em></h2>
+            <p class="galeri-desc t-galeri-desc text-fade">Intip suasana Warkop Mawar — dari sudut favorit sampai momen seru pelanggan. Foto-foto di bawah ini bakal segera diupdate!</p>
+        </div>
+        <div class="galeri-grid">
+            <div class="galeri-item reveal">
+                <div class="galeri-placeholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span class="gp-label">Interior Warkop</span>
+                </div>
+            </div>
+            <div class="galeri-item reveal" style="transition-delay:0.1s">
+                <div class="galeri-placeholder">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span class="gp-label">Kopi Hits</span>
+                </div>
+            </div>
+            <div class="galeri-item reveal" style="transition-delay:0.2s">
+                <div class="galeri-placeholder">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span class="gp-label">Sunset View</span>
+                </div>
+            </div>
+            <div class="galeri-item reveal" style="transition-delay:0.15s">
+                <div class="galeri-placeholder">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span class="gp-label">Nongkrong Bareng</span>
+                </div>
+            </div>
+            <div class="galeri-item reveal" style="transition-delay:0.25s">
+                <div class="galeri-placeholder">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span class="gp-label">Detail Bar</span>
+                </div>
+            </div>
+            <div class="galeri-item reveal" style="transition-delay:0.3s">
+                <div class="galeri-placeholder">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span class="gp-label">Mawar Corner</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- MARQUEE -->
     <div class="marquee-wrap">
@@ -1109,6 +1280,33 @@
         </div>
     </section>
 
+    <!-- LOKASI -->
+    <section id="lokasi">
+        <div class="lokasi-inner">
+            <div class="lokasi-map-wrap reveal">
+                <iframe src="https://maps.google.com/maps?q=Warkop+Mawar+Bondowoso&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="lokasi-info">
+                <div class="reveal">
+                    <div class="section-eyebrow t-lokasi-eyebrow">Temukan Kami</div>
+                    <h2 class="section-title t-lokasi-title text-fade">Lokasi <em>Kami</em></h2>
+                </div>
+                <p class="lokasi-address t-lokasi-address reveal" style="transition-delay:0.1s">
+                    <strong>Warkop Mawar</strong> berlokasi di Bondowoso, Jawa Timur. Gampang dijangkau, parkir luas, dan tempatnya adem buat nongkrong dari sore sampe malam.
+                </p>
+                <div class="lokasi-hours reveal" style="transition-delay:0.2s">
+                    <div class="lokasi-hours-title t-lokasi-hours-title">Jam Buka</div>
+                    <div class="lokasi-hours-row"><span class="t-lokasi-day1">Senin – Sabtu</span><span>16:00 – 23:00</span></div>
+                    <div class="lokasi-hours-row"><span class="t-lokasi-day2">Minggu</span><span>14:00 – 23:00</span></div>
+                </div>
+                <a href="https://maps.app.goo.gl/vrM4oaTqZerqoKH29" target="_blank" rel="noopener" class="btn-maps reveal t-lokasi-btn" style="transition-delay:0.3s">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Buka Google Maps
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER -->
     <footer>
         <div class="footer-inner">
@@ -1119,7 +1317,9 @@
             <div class="footer-links">
                 <a href="#home" class="t-nav-home">Beranda</a>
                 <a href="#about" class="t-nav-about">Tentang</a>
+                <a href="#galeri" class="t-nav-galeri">Galeri</a>
                 <a href="#menu" class="t-nav-menu">Menu</a>
+                <a href="#lokasi" class="t-nav-lokasi">Lokasi</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -1243,6 +1443,8 @@
         id: {
             't-preloader': 'Warkop Mawar',
             't-nav-home': 'Beranda', 't-nav-about': 'Tentang', 't-nav-menu': 'Menu',
+            't-nav-galeri': 'Galeri', 't-nav-lokasi': 'Lokasi',
+            't-topbar': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Bondowoso, Jawa Timur \u2014 Buka di Maps',
             't-hero-eyebrow': 'Bondowoso, Jawa Timur',
             't-hero-title': 'Seduhan Jujur,<br>Harga <em>Saudara</em>.',
             't-hero-desc': 'Nongkrong industrial-cozy di Bondowoso. Kopi mantap, suasana adem oren-abu, bikin betah dari senja sampe malam.',
@@ -1252,8 +1454,10 @@
             't-about-p1': 'Warkop Mawar memadukan <strong>konsep minimalis abu-abu industrial</strong> dengan kehangatan warna oren yang homey. Tempat paling pas di Bondowoso buat nemenin waktu santai lu.',
             't-about-p2': 'Kami percaya <strong>kopi enak ga harus mahal</strong>. Seduhan kami jujur, harganya saudara. Cek juga mawar cantik kami di area kasir, sentuhan kecil buat hari lu.',
             't-feat-1': 'Kopi Pilihan', 't-feat-2': 'Harga Ramah', 't-feat-3': 'Suasana Cozy', 't-feat-4': 'Open Late',
+            't-galeri-eyebrow': 'Suasana Kami', 't-galeri-title': 'Galeri <em>Mawar</em>',
+            't-galeri-desc': 'Intip suasana Warkop Mawar \u2014 dari sudut favorit sampai momen seru pelanggan. Foto-foto di bawah ini bakal segera diupdate!',
             't-menu-eyebrow': 'Pilihan Kami', 't-menu-title': 'Menu <em>Andalan</em><br>Kami',
-            't-tab-minuman': '☕ Minuman', 't-tab-makanan': '🍛 Makanan',
+            't-tab-minuman': '\u2615 Minuman', 't-tab-makanan': '\uD83C\uDF5B Makanan',
             't-tag-bestseller': 'Best Seller',
             't-menu-1': 'Es Kopi Susu Aren', 't-desc-1': 'Perpaduan espresso, susu segar, dan manisnya gula aren.',
             't-menu-2': 'Kopi Hitam Mawar', 't-desc-2': 'Racikan murni, aroma khas, nendang buat melek semalaman.',
@@ -1263,10 +1467,15 @@
             't-menu-6': 'Pisang Goreng Lumer', 't-desc-6': 'Manisnya pas, legit di dalem krispi di luar, taburan melimpah.',
             't-menu-7': 'Es Kopi Latte', 't-desc-7': 'Espresso lembut berpadu susu dingin yang creamy.',
             't-menu-8': 'Es Kopi Susu', 't-desc-8': 'Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.',
-            't-menu-9': 'Kopi Susu Dingin', 't-desc-9': 'Segar, manis, dan dingin — teman terbaik sore hari.',
+            't-menu-9': 'Kopi Susu Dingin', 't-desc-9': 'Segar, manis, dan dingin \u2014 teman terbaik sore hari.',
             't-menu-10': 'Americano', 't-desc-10': 'Espresso dilute air dingin, bold dan clean.',
             't-menu-11': 'Nasi Ayam Hitam', 't-desc-11': 'Ayam dengan saus gelap gurih yang bikin nambah terus.',
             't-menu-12': 'Nasi Ayam Geprek', 't-desc-12': 'Geprek pedas menggoda, cocok banget sambil teguk kopi.',
+            't-lokasi-eyebrow': 'Temukan Kami', 't-lokasi-title': 'Lokasi <em>Kami</em>',
+            't-lokasi-address': '<strong>Warkop Mawar</strong> berlokasi di Bondowoso, Jawa Timur. Gampang dijangkau, parkir luas, dan tempatnya adem buat nongkrong dari sore sampe malam.',
+            't-lokasi-hours-title': 'Jam Buka',
+            't-lokasi-day1': 'Senin \u2013 Sabtu', 't-lokasi-day2': 'Minggu',
+            't-lokasi-btn': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Buka Google Maps',
             't-footer-tagline': 'Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.',
             't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Dibuat oleh Nanda.',
             't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
@@ -1274,6 +1483,8 @@
         en: {
             't-preloader': 'Warkop Mawar',
             't-nav-home': 'Home', 't-nav-about': 'About', 't-nav-menu': 'Menu',
+            't-nav-galeri': 'Gallery', 't-nav-lokasi': 'Location',
+            't-topbar': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Bondowoso, East Java \u2014 Open in Maps',
             't-hero-eyebrow': 'Bondowoso, East Java',
             't-hero-title': 'Honest Brew,<br>Friendly <em>Prices</em>.',
             't-hero-desc': 'Cozy industrial hangout in Bondowoso. Great coffee, warm orange-grey vibes, perfect from dusk till night.',
@@ -1283,8 +1494,10 @@
             't-about-p1': 'Warkop Mawar blends <strong>industrial minimalist grey</strong> with warm homey orange vibes. The perfect spot in Bondowoso to unwind.',
             't-about-p2': 'We believe <strong>good coffee doesn\'t need to be expensive</strong>. Honest brew, friendly prices. Check our beautiful roses at the cashier too.',
             't-feat-1': 'Quality Coffee', 't-feat-2': 'Friendly Price', 't-feat-3': 'Cozy Vibes', 't-feat-4': 'Open Late',
+            't-galeri-eyebrow': 'Our Vibes', 't-galeri-title': 'Mawar <em>Gallery</em>',
+            't-galeri-desc': 'Peek into the Warkop Mawar atmosphere \u2014 from favorite corners to fun customer moments. Photos below will be updated soon!',
             't-menu-eyebrow': 'Our Picks', 't-menu-title': 'Our <em>Best</em><br>Sellers',
-            't-tab-minuman': '☕ Drinks', 't-tab-makanan': '🍛 Food',
+            't-tab-minuman': '\u2615 Drinks', 't-tab-makanan': '\uD83C\uDF5B Food',
             't-tag-bestseller': 'Best Seller',
             't-menu-1': 'Iced Palm Sugar Latte', 't-desc-1': 'A mix of espresso, fresh milk, and creamy palm sugar.',
             't-menu-2': 'Black Coffee Rose', 't-desc-2': 'Pure blend, signature aroma, kicks hard to keep you awake.',
@@ -1294,10 +1507,15 @@
             't-menu-6': 'Sweet Fried Banana', 't-desc-6': 'Perfectly sweet, crispy outside, soft inside with generous toppings.',
             't-menu-7': 'Iced Coffee Latte', 't-desc-7': 'Smooth espresso meets cold creamy milk.',
             't-menu-8': 'Iced Milk Coffee', 't-desc-8': 'Classic and reliable. Cold milk coffee, no nonsense.',
-            't-menu-9': 'Cold Milk Coffee', 't-desc-9': 'Fresh, sweet, and cold — your best afternoon companion.',
+            't-menu-9': 'Cold Milk Coffee', 't-desc-9': 'Fresh, sweet, and cold \u2014 your best afternoon companion.',
             't-menu-10': 'Americano', 't-desc-10': 'Espresso diluted with cold water, bold and clean.',
             't-menu-11': 'Black Sauce Chicken Rice', 't-desc-11': 'Chicken in rich dark savory sauce that keeps you coming back.',
-            't-menu-12': 'Smashed Chicken Rice', 't-desc-12': 'Spicy smashed chicken — perfect alongside your coffee.',
+            't-menu-12': 'Smashed Chicken Rice', 't-desc-12': 'Spicy smashed chicken \u2014 perfect alongside your coffee.',
+            't-lokasi-eyebrow': 'Find Us', 't-lokasi-title': 'Our <em>Location</em>',
+            't-lokasi-address': '<strong>Warkop Mawar</strong> is located in Bondowoso, East Java. Easy to reach, spacious parking, and the perfect cozy spot to hang out from afternoon till night.',
+            't-lokasi-hours-title': 'Opening Hours',
+            't-lokasi-day1': 'Mon \u2013 Sat', 't-lokasi-day2': 'Sunday',
+            't-lokasi-btn': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Open Google Maps',
             't-footer-tagline': 'Honest brew for everyone. The best hangout spot in Bondowoso.',
             't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Built by Nanda.',
             't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
