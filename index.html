@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warkop Mawar — Seduhan Jujur, Harga Saudara</title>
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <meta name="theme-color" content="#E8622A">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/norwester" rel="stylesheet">
     <style>
         :root {
             --orange: #E8622A;
@@ -46,7 +56,6 @@
         a { text-decoration: none; color: inherit; }
         ul { list-style: none; }
 
-        /* ── GRAIN OVERLAY ── */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -57,7 +66,6 @@
             mix-blend-mode: overlay;
         }
 
-        /* ── CURSOR ── */
         #cursor {
             width: 12px; height: 12px;
             background: var(--orange);
@@ -67,8 +75,8 @@
             z-index: 99999;
             transform: translate(-50%, -50%);
             transition: transform 0.1s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
-            mix-blend-mode: multiply;
         }
+        body:not(.dark) #cursor { mix-blend-mode: multiply; }
         #cursor-ring {
             width: 36px; height: 36px;
             border: 1.5px solid var(--orange);
@@ -85,7 +93,6 @@
         ::-webkit-scrollbar-track { background: var(--bg2); }
         ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
 
-        /* ── PRELOADER ── */
         #preloader {
             position: fixed; inset: 0;
             background: var(--espresso);
@@ -104,7 +111,7 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #preloader .pl-wordmark {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Norwester', sans-serif;
             font-size: 1.5rem;
             color: var(--cream);
             letter-spacing: 4px;
@@ -119,8 +126,137 @@
             text-transform: uppercase;
         }
 
-        /* ── NAVBAR ── */
-        /* ── TOP BAR ── */
+        /* ── LIGHTBOX ── */
+        #lightbox {
+            position: fixed; inset: 0;
+            z-index: 99996;
+            background: rgba(10,5,2,0.94);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: none;
+        }
+        #lightbox.open { opacity: 1; pointer-events: all; }
+        #lightbox .lb-img-wrap {
+            position: relative;
+            max-width: 88vw; max-height: 88vh;
+            border-radius: 12px; overflow: hidden;
+            transform: scale(0.82) translateY(20px);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+        }
+        #lightbox.open .lb-img-wrap { transform: scale(1) translateY(0); }
+        #lightbox img {
+            max-width: 88vw; max-height: 84vh;
+            object-fit: contain; display: block;
+        }
+        .lb-close {
+            position: fixed; top: 28px; right: 36px;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(244,239,230,0.1);
+            border: 1px solid rgba(244,239,230,0.2);
+            color: rgba(244,239,230,0.8);
+            font-size: 1.3rem; cursor: none;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s, color 0.3s, transform 0.35s;
+            z-index: 2;
+        }
+        .lb-close:hover { background: var(--orange); color: #fff; transform: rotate(90deg); border-color: var(--orange); }
+        .lb-caption {
+            position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.58rem; letter-spacing: 3px;
+            color: rgba(244,239,230,0.35); text-transform: uppercase;
+            white-space: nowrap;
+        }
+        /* Story photos clickable indicator */
+        .sp-img {
+            cursor: none; position: relative; overflow: hidden;
+        }
+        .sp-img::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: rgba(232,98,42,0);
+            transition: background 0.3s;
+        }
+        .sp-img:hover::after { background: rgba(232,98,42,0.12); }
+        .sp-img .lb-zoom-icon {
+            position: absolute; bottom: 12px; right: 12px;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: rgba(232,98,42,0.85);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transform: scale(0.7);
+            transition: opacity 0.3s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            z-index: 2; pointer-events: none;
+        }
+        .sp-img:hover .lb-zoom-icon { opacity: 1; transform: scale(1); }
+
+        /* ECO SCREENSAVER */
+        #eco-screen {
+            position: fixed; inset: 0;
+            background: #0D0804;
+            z-index: 999999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 1.2s ease;
+            overflow: hidden;
+            cursor: none;
+        }
+        #eco-screen.visible { opacity: 1; pointer-events: all; }
+        .eco-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.18;
+            animation: orbFloat linear infinite;
+        }
+        .eco-orb:nth-child(1) { width: 400px; height: 400px; background: var(--orange); top: -100px; left: -80px; animation-duration: 18s; }
+        .eco-orb:nth-child(2) { width: 300px; height: 300px; background: #8B3A10; bottom: -60px; right: 10%; animation-duration: 24s; animation-delay: -6s; }
+        .eco-orb:nth-child(3) { width: 200px; height: 200px; background: var(--orange); top: 40%; right: -60px; animation-duration: 20s; animation-delay: -10s; }
+        @keyframes orbFloat {
+            0%   { transform: translateY(0px) scale(1); }
+            33%  { transform: translateY(-30px) scale(1.05); }
+            66%  { transform: translateY(15px) scale(0.97); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+        #eco-screen::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.05; pointer-events: none; z-index: 1; mix-blend-mode: overlay;
+        }
+        .eco-content {
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 32px;
+            max-width: 560px; padding: 0 32px;
+            text-align: center;
+        }
+        .eco-icon {
+            width: 64px; height: 64px;
+            border: 1.5px solid rgba(232,98,42,0.4);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            animation: ecoIconPulse 3s ease-in-out infinite;
+        }
+        @keyframes ecoIconPulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(232,98,42,0.0), 0 0 0 0 rgba(232,98,42,0.0); }
+            50%      { box-shadow: 0 0 0 12px rgba(232,98,42,0.08), 0 0 0 24px rgba(232,98,42,0.04); }
+        }
+        .eco-brand { font-family: 'Norwester', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem); color: var(--cream); letter-spacing: 3px; text-transform: uppercase; line-height: 1; }
+        .eco-brand span { color: var(--orange); }
+        .eco-divider { width: 40px; height: 1px; background: rgba(232,98,42,0.5); }
+        .eco-headline { font-family: 'Space Mono', monospace; font-size: clamp(0.6rem, 1.5vw, 0.72rem); letter-spacing: 3px; color: var(--orange); text-transform: uppercase; }
+        .eco-body { font-size: clamp(0.9rem, 2vw, 1.05rem); color: rgba(244,239,230,0.55); line-height: 1.85; font-weight: 300; max-width: 420px; }
+        .eco-cta { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 3px; color: rgba(244,239,230,0.3); text-transform: uppercase; animation: ctaBlink 2.5s ease-in-out infinite; }
+        @keyframes ctaBlink { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+        .eco-clock { position: absolute; bottom: 48px; right: 5%; font-family: 'Norwester', sans-serif; font-size: clamp(3rem, 8vw, 5rem); color: rgba(244,239,230,0.06); letter-spacing: -2px; z-index: 2; user-select: none; }
+
+        /* NAVBAR */
         .top-bar {
             position: fixed; top: 0; width: 100%; height: 36px;
             background: var(--espresso);
@@ -138,7 +274,6 @@
             transition: color 0.3s;
         }
         .top-bar a:hover { color: var(--orange); }
-        .top-bar svg { flex-shrink: 0; }
 
         header {
             position: fixed; top: 36px; width: 100%; height: 72px;
@@ -151,656 +286,275 @@
             transition: background 0.5s ease, border-color 0.5s ease;
         }
         .logo-wrap { display: flex; flex-direction: column; line-height: 1; gap: 2px; }
-        .logo-main {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.25rem, 4vw, 1.55rem);
-            font-weight: 900;
-            color: var(--text);
-            letter-spacing: -0.5px;
-        }
+        .logo-main { font-family: 'Norwester', sans-serif; font-size: clamp(1.25rem, 4vw, 1.55rem); font-weight: 400; color: var(--text); letter-spacing: 1px; text-transform: uppercase; }
         .logo-main span { color: var(--orange); }
-        .logo-tag {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.48rem;
-            letter-spacing: 2.5px;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
+        .logo-tag { font-family: 'Space Mono', monospace; font-size: 0.48rem; letter-spacing: 2.5px; color: var(--muted); text-transform: uppercase; }
         nav { display: flex; align-items: center; gap: 2rem; }
         .nav-links { display: flex; gap: 2rem; }
-        .nav-links a {
-            font-size: 0.78rem;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--muted);
-            position: relative;
-            padding-bottom: 4px;
-            transition: color 0.3s ease;
-        }
-        .nav-links a::after {
-            content: '';
-            position: absolute; left: 0; bottom: 0;
-            width: 0; height: 1.5px;
-            background: var(--orange);
-            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .nav-links a { font-size: 0.78rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); position: relative; padding-bottom: 4px; transition: color 0.3s ease; }
+        .nav-links a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 1.5px; background: var(--orange); transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
         .nav-links a:hover { color: var(--text); }
         .nav-links a:hover::after { width: 100%; }
         .controls { display: flex; gap: 8px; align-items: center; }
-        .icon-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.62rem;
-            letter-spacing: 1.5px;
-            cursor: none;
-            transition: background 0.3s, color 0.3s, transform 0.25s, border-color 0.3s;
-        }
+        .icon-btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 14px; border-radius: 100px; font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 1.5px; cursor: none; transition: background 0.3s, color 0.3s, transform 0.25s, border-color 0.3s; }
         .icon-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: scale(1.05); }
-
-        /* Hamburger */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: none;
-            padding: 6px;
-            border: none;
-            background: none;
-        }
-        .hamburger span {
-            display: block;
-            width: 22px; height: 2px;
-            background: var(--text);
-            border-radius: 2px;
-            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-            transform-origin: center;
-        }
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; padding: 6px; border: none; background: none; }
+        .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); transform-origin: center; }
         .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
         .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-        /* Mobile Menu Overlay */
-        .mobile-nav {
-            position: fixed; inset: 0; top: 108px;
-            background: var(--nav-bg);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            z-index: 999;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            gap: 40px;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
+        .mobile-nav { position: fixed; inset: 0; top: 108px; background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 40px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .mobile-nav.open { opacity: 1; pointer-events: all; }
-        .mobile-nav a {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.5px;
-            position: relative;
-            transition: color 0.3s;
-        }
-        .mobile-nav a::after {
-            content: '';
-            position: absolute; left: 0; bottom: -4px;
-            width: 0; height: 2px;
-            background: var(--orange);
-            transition: width 0.3s;
-        }
+        .mobile-nav a { font-family: 'Norwester', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--text); letter-spacing: -0.5px; position: relative; transition: color 0.3s; }
+        .mobile-nav a::after { content: ''; position: absolute; left: 0; bottom: -4px; width: 0; height: 2px; background: var(--orange); transition: width 0.3s; }
         .mobile-nav a:hover { color: var(--orange); }
         .mobile-nav a:hover::after { width: 100%; }
         .mobile-controls { display: flex; gap: 12px; margin-top: 12px; }
 
-        /* ── HERO ── */
-        .hero {
-            min-height: 100svh; width: 100%;
-            display: flex; align-items: flex-end;
-            position: relative; overflow: hidden;
-            padding-top: 108px;
-        }
-        .hero-video-container {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-        }
-        .hero-video {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transform: scale(1.08);
-            transition: opacity 1.2s ease, transform 12s ease-in-out;
-        }
-        .hero-video.active {
-            opacity: 1;
-            animation: heroZoom 14s ease-in-out infinite alternate;
-        }
+        /* HERO */
+        .hero { min-height: 100svh; width: 100%; display: flex; align-items: flex-end; position: relative; overflow: hidden; padding-top: 108px; }
+        .hero-video-container { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+        .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity 1.2s ease, transform 12s ease-in-out; }
+        .hero-video.active { opacity: 1; animation: heroZoom 14s ease-in-out infinite alternate; }
         @keyframes heroZoom { from { transform: scale(1.05); } to { transform: scale(1.13); } }
-        .hero-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(175deg, rgba(26,15,8,0.15) 0%, rgba(26,15,8,0.5) 45%, rgba(26,15,8,0.95) 100%);
-            z-index: 1;
-        }
-        /* Video dots */
-        .hero-video-dots {
-            position: absolute;
-            bottom: 40px; left: 8%;
-            z-index: 3;
-            display: flex; gap: 8px;
-            opacity: 0;
-            animation: fadeUp 0.8s 2.4s forwards;
-        }
-        .vdot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.35);
-            border: none;
-            cursor: none;
-            transition: background 0.3s, transform 0.3s;
-        }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(175deg, rgba(26,15,8,0.15) 0%, rgba(26,15,8,0.5) 45%, rgba(26,15,8,0.95) 100%); z-index: 1; }
+        .hero-video-dots { position: absolute; bottom: 40px; left: 8%; z-index: 3; display: flex; gap: 8px; opacity: 0; animation: fadeUp 0.8s 2.4s forwards; }
+        .vdot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); border: none; cursor: none; transition: background 0.3s, transform 0.3s; }
         .vdot.active { background: var(--orange); transform: scale(1.4); }
-
-        .hero-content {
-            position: relative; z-index: 2;
-            padding: 0 8% 8%;
-            max-width: 820px;
-        }
-        .hero-eyebrow {
-            font-family: 'Space Mono', monospace;
-            font-size: clamp(0.55rem, 1.5vw, 0.65rem);
-            letter-spacing: 4px;
-            color: var(--orange);
-            text-transform: uppercase;
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 20px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s 1.2s forwards;
-        }
-        .hero-eyebrow::before {
-            content: '';
-            display: block;
-            width: 28px; height: 1.5px;
-            background: var(--orange);
-        }
-        .hero h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.6rem, 6.5vw, 5.5rem);
-            line-height: 1.07;
-            color: #fff;
-            font-weight: 900;
-            letter-spacing: -2px;
-            margin-bottom: 22px;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeUp 0.9s 1.4s forwards;
-        }
-        .hero h2 em { color: var(--orange); font-style: italic; }
-        .hero-desc {
-            font-size: clamp(0.88rem, 2vw, 1rem);
-            color: rgba(244,239,230,0.62);
-            max-width: 480px;
-            line-height: 1.8;
-            font-weight: 300;
-            margin-bottom: 38px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s 1.6s forwards;
-        }
-        .hero-actions {
-            display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s 1.8s forwards;
-        }
-        .btn-primary {
-            background: var(--orange);
-            color: #fff;
-            padding: 13px 32px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            display: inline-flex; align-items: center; gap: 10px;
-            transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 6px 24px var(--orange-glow);
-            cursor: none;
-        }
+        .hero-content { position: relative; z-index: 2; padding: 0 8% 10%; padding-top: 20px; max-width: 820px; }
+        .hero-eyebrow { font-family: 'Space Mono', monospace; font-size: clamp(0.55rem, 1.5vw, 0.65rem); letter-spacing: 4px; color: var(--orange); text-transform: uppercase; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.2s forwards; }
+        .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 1.5px; background: var(--orange); }
+        .hero h2 { font-family: 'Norwester', sans-serif; font-size: clamp(2.6rem, 6.5vw, 5.5rem); line-height: 1.12; color: #fff; text-transform: uppercase; font-weight: 400; letter-spacing: 2px; margin-bottom: 22px; opacity: 0; transform: translateY(30px); animation: fadeUp 0.9s 1.4s forwards; }
+        .hero h2 em { color: var(--orange); font-style: normal; }
+        .hero-desc { font-size: clamp(0.88rem, 2vw, 1rem); color: rgba(244,239,230,0.62); max-width: 480px; line-height: 1.8; font-weight: 300; margin-bottom: 38px; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.6s forwards; }
+        .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.8s forwards; }
+        .btn-primary { background: var(--orange); color: #fff; padding: 13px 32px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; transition: background 0.3s, transform 0.3s, box-shadow 0.3s; box-shadow: 0 6px 24px var(--orange-glow); cursor: none; }
         .btn-primary:hover { background: var(--dark-orange); transform: translateY(-3px); box-shadow: 0 12px 32px var(--orange-glow); }
         .btn-primary svg { transition: transform 0.3s; }
         .btn-primary:hover svg { transform: translateX(4px); }
-        .btn-ghost {
-            color: rgba(244,239,230,0.65);
-            padding: 13px 0;
-            font-size: 0.78rem;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border-bottom: 1px solid rgba(244,239,230,0.3);
-            transition: color 0.3s, border-color 0.3s;
-            cursor: none;
-        }
+        .btn-ghost { color: rgba(244,239,230,0.65); padding: 13px 0; font-size: 0.78rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid rgba(244,239,230,0.3); transition: color 0.3s, border-color 0.3s; cursor: none; }
         .btn-ghost:hover { color: #fff; border-color: #fff; }
-        .hero-scroll {
-            position: absolute; bottom: 40px; right: 8%;
-            z-index: 2;
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-            opacity: 0;
-            animation: fadeUp 0.8s 2.2s forwards;
-        }
-        .scroll-line {
-            width: 1px; height: 50px;
-            background: linear-gradient(to bottom, rgba(232,98,42,0), var(--orange));
-            animation: scrollPulse 2s ease-in-out infinite;
-        }
+        .hero-scroll { position: absolute; bottom: 40px; right: 8%; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s 2.2s forwards; }
+        .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, rgba(232,98,42,0), var(--orange)); animation: scrollPulse 2s ease-in-out infinite; }
         @keyframes scrollPulse { 0%,100%{opacity:0.3;} 50%{opacity:1;} }
-        .scroll-label {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.5rem; letter-spacing: 3px;
-            color: var(--orange);
-            text-transform: uppercase;
-            writing-mode: vertical-rl;
-        }
+        .scroll-label { font-family: 'Space Mono', monospace; font-size: 0.5rem; letter-spacing: 3px; color: var(--orange); text-transform: uppercase; writing-mode: vertical-rl; }
         @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* ── STATS BAND ── */
-        .stats-band {
-            background: var(--espresso);
-            padding: 36px 8%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            overflow: hidden;
-        }
+        /* STATS BAND */
+        .stats-band { background: var(--espresso); padding: 36px 8%; display: flex; justify-content: space-between; align-items: center; gap: 16px; overflow: hidden; }
         body.dark .stats-band { background: #0D0A08; }
         .stat-item { text-align: center; flex: 1; position: relative; }
-        .stat-item:not(:last-child)::after {
-            content: '';
-            position: absolute; right: 0; top: 50%;
-            transform: translateY(-50%);
-            width: 1px; height: 36px;
-            background: rgba(244,239,230,0.1);
-        }
-        .stat-num {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
-            font-weight: 700; color: var(--orange);
-            display: block; line-height: 1;
-        }
-        .stat-label {
-            font-size: clamp(0.55rem, 1.2vw, 0.68rem);
-            letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(244,239,230,0.4);
-            margin-top: 6px;
-            font-family: 'Space Mono', monospace;
-            display: block;
-        }
+        .stat-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 36px; background: rgba(244,239,230,0.1); }
+        .stat-num { font-family: 'Norwester', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.4rem); font-weight: 700; color: var(--orange); display: block; line-height: 1; }
+        .stat-label { font-size: clamp(0.55rem, 1.2vw, 0.68rem); letter-spacing: 2px; text-transform: uppercase; color: rgba(244,239,230,0.4); margin-top: 6px; font-family: 'Space Mono', monospace; display: block; }
 
-        /* ── SECTION BASE ── */
+        /* SECTION BASE */
         section { padding: clamp(72px, 10vw, 120px) 8%; }
-        .section-eyebrow {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.6rem; letter-spacing: 4px; color: var(--orange);
-            text-transform: uppercase;
-            display: flex; align-items: center; gap: 10px;
-            margin-bottom: 16px;
-        }
-        .section-eyebrow::before {
-            content: '';
-            width: 24px; height: 1.5px; background: var(--orange); flex-shrink: 0;
-        }
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 4.5vw, 3.6rem);
-            font-weight: 900; color: var(--text);
-            letter-spacing: -1.5px; line-height: 1.1;
-        }
-        .section-title em { color: var(--orange); font-style: italic; }
+        .section-eyebrow { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 4px; color: var(--orange); text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .section-eyebrow::before { content: ''; width: 24px; height: 1.5px; background: var(--orange); flex-shrink: 0; }
+        .section-title { font-family: 'Norwester', sans-serif; font-size: clamp(2rem, 4.5vw, 3.6rem); font-weight: 400; color: var(--text); letter-spacing: 1px; line-height: 1.15; text-transform: uppercase; }
+        .section-title em { color: var(--orange); font-style: normal; }
 
-        /* ── ABOUT ── */
-        #about { background: var(--bg2); }
-        .about-inner {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(40px, 6vw, 80px);
-            align-items: center;
-        }
-        .about-visual { position: relative; }
-        .about-img-frame {
-            width: 100%; aspect-ratio: 4/5;
-            overflow: hidden; border-radius: 4px; position: relative;
-        }
-        .about-img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: block;
-        }
-        .about-img-frame:hover .about-img { transform: scale(1.06); }
-        .about-badge {
-            position: absolute;
-            bottom: -20px; right: -16px;
-            width: clamp(88px, 10vw, 110px); height: clamp(88px, 10vw, 110px);
-            background: var(--orange);
-            border-radius: 50%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            box-shadow: 0 12px 30px var(--orange-glow);
-            animation: badgeSpin 14s linear infinite;
-        }
-        .badge-inner {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.48rem; letter-spacing: 1.8px;
-            text-transform: uppercase; color: rgba(255,255,255,0.85);
-            text-align: center; line-height: 1.7;
-        }
-        .badge-num {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem; font-weight: 700; color: #fff; display: block;
-        }
-        @keyframes badgeSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        .about-text-block { display: flex; flex-direction: column; gap: 26px; }
-        .about-body {
-            font-size: clamp(0.95rem, 2vw, 1.05rem);
-            line-height: 1.9; color: var(--muted); font-weight: 300;
-        }
-        .about-body strong { color: var(--text); font-weight: 600; }
-        .about-features {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;
-        }
-        .feature-chip {
-            display: flex; align-items: center; gap: 10px;
-            background: var(--bg); border: 1px solid var(--border);
-            padding: 11px 15px; border-radius: 8px;
-            font-size: 0.82rem; font-weight: 500;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .feature-chip:hover { border-color: var(--orange); box-shadow: 0 4px 16px var(--orange-glow); }
-        .feature-chip .dot {
-            width: 7px; height: 7px; background: var(--orange);
-            border-radius: 50%; flex-shrink: 0;
-        }
+        /* ABOUT */
+        #about { background: var(--bg); padding: 0; overflow: hidden; }
+        .about-hero-stmt { background: var(--espresso); padding: clamp(80px, 12vw, 140px) 8% clamp(72px, 10vw, 120px); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(48px, 6vw, 96px); align-items: center; position: relative; overflow: hidden; }
+        .about-hero-stmt::before { content: 'MAWAR'; position: absolute; right: -1%; top: 50%; transform: translateY(-50%); font-family: 'Norwester', sans-serif; font-size: clamp(8rem, 18vw, 18rem); color: rgba(255,255,255,0.025); pointer-events: none; line-height: 1; user-select: none; white-space: nowrap; }
+        .about-stmt-left { position: relative; z-index: 1; }
+        .about-stmt-label { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 4px; color: var(--orange); text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+        .about-stmt-label::before { content: ''; width: 24px; height: 1.5px; background: var(--orange); }
+        .about-stmt-title { font-family: 'Norwester', sans-serif; font-size: clamp(2.6rem, 5.5vw, 5rem); line-height: 1.1; color: var(--cream); text-transform: uppercase; font-weight: 400; letter-spacing: 1px; }
+        .about-stmt-title em { color: var(--orange); font-style: normal; display: block; }
+        .about-stmt-right { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 24px; }
+        .about-stmt-body { font-size: clamp(1rem, 2vw, 1.12rem); line-height: 1.9; color: rgba(244,239,230,0.58); font-weight: 300; }
+        .about-stmt-body strong { color: var(--cream); font-weight: 600; }
+        .about-est { display: inline-flex; align-items: center; gap: 12px; padding: 12px 20px; border: 1px solid rgba(232,98,42,0.3); border-radius: 50px; width: fit-content; margin-top: 8px; }
+        .about-est-dot { width: 8px; height: 8px; background: var(--orange); border-radius: 50%; flex-shrink: 0; animation: pulseDot 2s ease-in-out infinite; }
+        @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.6} }
+        .about-est-text { font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 2.5px; color: rgba(244,239,230,0.5); text-transform: uppercase; }
+        .about-est-year { font-family: 'Norwester', sans-serif; font-size: 0.95rem; color: var(--orange); letter-spacing: 1px; }
 
-        /* ── GALLERY STRIP ── */
-        .gallery-strip {
-            background: var(--bg);
-            padding: 0 0 0 8%;
-            overflow: hidden;
-        }
-        .gallery-track {
-            display: flex; gap: 16px;
-            animation: galleryScroll 28s linear infinite;
-            width: max-content;
-        }
+        .about-photo-row { display: grid; grid-template-columns: 55% 45%; min-height: 520px; }
+        .about-photo-main { position: relative; overflow: hidden; }
+        .about-photo-main img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(0.25,0.46,0.45,0.94); display: block; }
+        .about-photo-main:hover img { transform: scale(1.06); }
+        .about-photo-overlay { position: absolute; inset: 0; background: linear-gradient(to right, transparent 60%, var(--bg2) 100%); }
+        body.dark .about-photo-overlay { background: linear-gradient(to right, transparent 60%, var(--bg2) 100%); }
+        .about-pullquote { background: var(--bg2); padding: clamp(48px, 6vw, 80px) clamp(40px, 5vw, 64px); display: flex; flex-direction: column; justify-content: center; gap: 28px; }
+        .pullquote-mark { font-family: 'Norwester', sans-serif; font-size: 4rem; color: var(--orange); line-height: 0.6; opacity: 0.4; display: block; }
+        .pullquote-text { font-family: 'Norwester', sans-serif; font-size: clamp(1.4rem, 2.8vw, 2rem); color: var(--text); line-height: 1.35; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; }
+        .pullquote-text em { color: var(--orange); font-style: normal; }
+        .pullquote-attr { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+        .pullquote-attr::before { content: ''; width: 20px; height: 1px; background: var(--muted); }
+
+        .about-values { background: var(--bg); padding: clamp(64px, 10vw, 100px) 8%; }
+        .about-values-header { margin-bottom: clamp(40px, 6vw, 64px); }
+        .about-values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+        .value-card { background: var(--card-bg); padding: 40px 32px; display: flex; flex-direction: column; gap: 16px; transition: background 0.3s, transform 0.3s; position: relative; overflow: hidden; }
+        .value-card::before { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--orange); transition: width 0.4s ease; }
+        .value-card:hover { background: var(--bg2); }
+        .value-card:hover::before { width: 100%; }
+        .value-num { font-family: 'Norwester', sans-serif; font-size: 2.5rem; color: rgba(232,98,42,0.15); line-height: 1; font-weight: 400; transition: color 0.3s; }
+        .value-card:hover .value-num { color: rgba(232,98,42,0.35); }
+        .value-title { font-family: 'Norwester', sans-serif; font-size: 1.1rem; text-transform: uppercase; color: var(--text); letter-spacing: 0.5px; }
+        .value-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+        .about-story-strip { background: var(--bg2); padding: clamp(64px, 8vw, 96px) 8%; display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(40px, 6vw, 80px); align-items: center; }
+        .story-text { display: flex; flex-direction: column; gap: 20px; }
+        .story-label { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 4px; color: var(--orange); text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+        .story-label::before { content: ''; width: 24px; height: 1.5px; background: var(--orange); }
+        .story-title { font-family: 'Norwester', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); text-transform: uppercase; color: var(--text); line-height: 1.2; letter-spacing: 0.5px; }
+        .story-title em { color: var(--orange); font-style: normal; }
+        .story-body { font-size: clamp(0.92rem, 1.8vw, 1rem); color: var(--muted); line-height: 1.9; font-weight: 300; }
+        .story-body strong { color: var(--text); font-weight: 600; }
+        .story-photos { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 200px 200px; gap: 12px; }
+        .story-photos .sp-img:first-child { grid-row: span 2; grid-column: 1; }
+        .story-photos .sp-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s ease; border-radius: 10px; }
+        .story-photos .sp-img:hover img { transform: scale(1.06); }
+
+        /* GALLERY STRIP */
+        .gallery-strip { background: var(--bg); padding: 0 0 0 8%; overflow: hidden; }
+        .gallery-track { display: flex; gap: 16px; animation: galleryScroll 28s linear infinite; width: max-content; }
         .gallery-track:hover { animation-play-state: paused; }
-        .gallery-item {
-            width: clamp(160px, 20vw, 220px);
-            aspect-ratio: 3/4;
-            border-radius: 8px; overflow: hidden; flex-shrink: 0;
-            position: relative;
-        }
-        .gallery-item img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.6s ease;
-        }
+        .gallery-item { width: clamp(160px, 20vw, 220px); aspect-ratio: 3/4; border-radius: 8px; overflow: hidden; flex-shrink: 0; position: relative; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
         .gallery-item:hover img { transform: scale(1.06); }
-        @keyframes galleryScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        @keyframes galleryScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
-        /* ── FOTO GALLERY SECTION ── */
-        #galeri { background: var(--bg2); }
-        .galeri-header { margin-bottom: clamp(40px, 6vw, 60px); }
-        .galeri-desc {
-            font-size: clamp(0.88rem, 2vw, 1rem); color: var(--muted);
-            max-width: 520px; line-height: 1.8; font-weight: 300; margin-top: 16px;
-        }
-        .galeri-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: 260px;
-            gap: 14px;
-        }
-        .galeri-grid .galeri-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
-        .galeri-grid .galeri-item:nth-child(4) { grid-column: span 2; }
-        .galeri-item {
-            border-radius: 12px; overflow: hidden;
-            position: relative; cursor: none;
-            background: var(--card-bg); border: 1px solid var(--border);
-        }
-        .galeri-placeholder {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 12px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.6rem; letter-spacing: 2.5px;
-            color: var(--muted); text-transform: uppercase;
-            background: linear-gradient(135deg, var(--bg2) 0%, var(--card-bg) 100%);
-            transition: background 0.5s ease;
-        }
-        .galeri-placeholder svg { opacity: 0.25; }
-        .galeri-item:hover .galeri-placeholder { background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg2) 100%); }
-        .galeri-placeholder .gp-label { opacity: 0.5; }
+        /* GALERI MASONRY */
+        #galeri { background: var(--bg2); padding: clamp(72px, 10vw, 120px) 8%; }
+        .galeri-header { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; margin-bottom: clamp(48px, 7vw, 72px); }
+        .galeri-header-right { display: flex; flex-direction: column; gap: 16px; align-items: flex-end; }
+        .galeri-desc { font-size: clamp(0.88rem, 2vw, 1rem); color: var(--muted); max-width: 360px; line-height: 1.8; font-weight: 300; text-align: right; }
+        .galeri-count { font-family: 'Norwester', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); color: rgba(232,98,42,0.15); line-height: 1; }
+        .galeri-masonry { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 60px; gap: 12px; }
+        .gm-item { border-radius: 10px; overflow: hidden; position: relative; background: var(--card-bg); cursor: none; }
+        .gm-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
+        .gm-item:hover img { transform: scale(1.07); }
+        .gm-caption { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,15,8,0.85) 0%, transparent 60%); display: flex; align-items: flex-end; padding: 16px; opacity: 0; transition: opacity 0.35s ease; }
+        .gm-item:hover .gm-caption { opacity: 1; }
+        .gm-caption-text { font-family: 'Space Mono', monospace; font-size: 0.55rem; letter-spacing: 2.5px; color: rgba(244,239,230,0.8); text-transform: uppercase; }
+        .gm-item:nth-child(1)  { grid-column: span 5; grid-row: span 8; }
+        .gm-item:nth-child(2)  { grid-column: span 4; grid-row: span 4; }
+        .gm-item:nth-child(3)  { grid-column: span 3; grid-row: span 4; }
+        .gm-item:nth-child(4)  { grid-column: span 4; grid-row: span 4; }
+        .gm-item:nth-child(5)  { grid-column: span 3; grid-row: span 4; }
+        .gm-item:nth-child(6)  { grid-column: span 4; grid-row: span 5; }
+        .gm-item:nth-child(7)  { grid-column: span 4; grid-row: span 5; }
+        .gm-item:nth-child(8)  { grid-column: span 4; grid-row: span 5; }
+        .gm-item:nth-child(9)  { grid-column: span 3; grid-row: span 4; }
+        .gm-item:nth-child(10) { grid-column: span 5; grid-row: span 4; }
+        .gm-item:nth-child(11) { grid-column: span 4; grid-row: span 4; }
+        .gm-item:nth-child(12) { grid-column: span 4; grid-row: span 5; }
 
-        /* ── LOCATION ── */
+        /* LOCATION */
         #lokasi { background: var(--bg); }
-        .lokasi-inner {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: clamp(40px, 6vw, 80px); align-items: center;
-        }
-        .lokasi-map-wrap {
-            width: 100%; aspect-ratio: 4/3;
-            border-radius: 14px; overflow: hidden;
-            border: 1px solid var(--border);
-            background: var(--card-bg);
-        }
+        .lokasi-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 80px); align-items: center; }
+        .lokasi-map-wrap { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--card-bg); }
         .lokasi-map-wrap iframe { width: 100%; height: 100%; border: none; }
         .lokasi-info { display: flex; flex-direction: column; gap: 24px; }
-        .lokasi-address {
-            font-size: clamp(0.92rem, 2vw, 1.02rem);
-            line-height: 1.9; color: var(--muted); font-weight: 300;
-        }
+        .lokasi-address { font-size: clamp(0.92rem, 2vw, 1.02rem); line-height: 1.9; color: var(--muted); font-weight: 300; }
         .lokasi-address strong { color: var(--text); font-weight: 600; }
-        .lokasi-hours {
-            display: flex; flex-direction: column; gap: 8px;
-            padding: 20px; background: var(--card-bg);
-            border: 1px solid var(--border); border-radius: 10px;
-        }
-        .lokasi-hours-title {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.6rem; letter-spacing: 3px;
-            color: var(--orange); text-transform: uppercase; margin-bottom: 4px;
-        }
-        .lokasi-hours-row {
-            display: flex; justify-content: space-between;
-            font-size: 0.88rem; color: var(--muted); font-weight: 300;
-        }
+        .lokasi-hours { display: flex; flex-direction: column; gap: 8px; padding: 20px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; }
+        .lokasi-hours-title { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 3px; color: var(--orange); text-transform: uppercase; margin-bottom: 4px; }
+        .lokasi-hours-row { display: flex; justify-content: space-between; font-size: 0.88rem; color: var(--muted); font-weight: 300; }
         .lokasi-hours-row span:first-child { color: var(--text); font-weight: 500; }
-        .btn-maps {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: transparent; border: 1.5px solid var(--orange);
-            color: var(--orange); padding: 13px 28px; border-radius: 6px;
-            font-size: 0.78rem; font-weight: 600; letter-spacing: 2px;
-            text-transform: uppercase; transition: background 0.3s, color 0.3s, transform 0.3s;
-            cursor: none; width: fit-content;
-            font-family: 'DM Sans', sans-serif;
-        }
+        .btn-maps { display: inline-flex; align-items: center; gap: 10px; background: transparent; border: 1.5px solid var(--orange); color: var(--orange); padding: 13px 28px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; transition: background 0.3s, color 0.3s, transform 0.3s; cursor: none; width: fit-content; font-family: 'DM Sans', sans-serif; }
         .btn-maps:hover { background: var(--orange); color: #fff; transform: translateY(-3px); }
 
-        /* ── MENU ── */
+        /* MENU */
         #menu { background: var(--bg); }
-        .menu-header {
-            display: flex;
-            justify-content: space-between; align-items: flex-end;
-            margin-bottom: clamp(40px, 6vw, 64px);
-            flex-wrap: wrap; gap: 20px;
-        }
+        .menu-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: clamp(40px, 6vw, 64px); flex-wrap: wrap; gap: 20px; }
         .menu-header-left { max-width: 520px; }
         .menu-tabs { display: flex; gap: 8px; margin-bottom: 44px; flex-wrap: wrap; }
-        .tab-btn {
-            padding: 9px 22px; border-radius: 100px;
-            font-size: 0.78rem; font-weight: 600;
-            letter-spacing: 1.5px; text-transform: uppercase;
-            border: 1.5px solid var(--border);
-            background: transparent; color: var(--muted);
-            cursor: none;
-            transition: all 0.3s ease;
-            font-family: 'DM Sans', sans-serif;
-        }
+        .tab-btn { padding: 9px 22px; border-radius: 100px; font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: none; transition: all 0.3s ease; font-family: 'DM Sans', sans-serif; }
         .tab-btn:hover { border-color: var(--orange); color: var(--orange); }
         .tab-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
-        .tab-content { display: none; }
-        .tab-content.active { display: grid; }
-        .menu-grid {
-            grid-template-columns: repeat(3, 1fr);
-            gap: clamp(18px, 2.5vw, 28px);
-        }
-        .menu-card {
-            background: var(--card-bg);
-            border-radius: 14px; overflow: hidden;
-            border: 1px solid var(--border);
-            transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
-                        box-shadow 0.4s ease, border-color 0.3s;
-            position: relative; cursor: none;
-        }
-        .menu-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 24px 48px rgba(26,15,8,0.12), 0 0 0 1.5px var(--orange);
-            border-color: var(--orange);
-        }
-        .menu-img-wrap {
-            width: 100%; aspect-ratio: 1/1;
-            overflow: hidden; position: relative;
-            background: var(--bg2);
-        }
-        .menu-img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
-            display: block;
-        }
+        .tab-content { display: none; flex-direction: column; gap: 0; }
+        .tab-content.active { display: flex; }
+        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.5vw, 28px); }
+        .menu-card { background: var(--card-bg); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.4s ease, border-color 0.3s; position: relative; cursor: none; }
+        .menu-card:hover { transform: translateY(-10px); box-shadow: 0 24px 48px rgba(26,15,8,0.12), 0 0 0 1.5px var(--orange); border-color: var(--orange); }
+        .menu-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; background: var(--bg2); }
+        .menu-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); display: block; }
         .menu-card:hover .menu-img { transform: scale(1.08); }
-        .menu-card-tag {
-            position: absolute; top: 12px; left: 12px;
-            background: var(--orange); color: #fff;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.52rem; letter-spacing: 2px;
-            padding: 5px 10px; border-radius: 3px;
-            text-transform: uppercase; z-index: 2;
-        }
+        .menu-card-tag { position: absolute; top: 12px; left: 12px; background: var(--orange); color: #fff; font-family: 'Space Mono', monospace; font-size: 0.52rem; letter-spacing: 2px; padding: 5px 10px; border-radius: 3px; text-transform: uppercase; z-index: 2; }
         .menu-card-body { padding: 20px 20px 22px; }
-        .menu-card-name {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            font-weight: 700; color: var(--text);
-            margin-bottom: 7px; letter-spacing: -0.3px;
-        }
-        .menu-card-desc {
-            font-size: 0.84rem; color: var(--muted);
-            line-height: 1.65; font-weight: 300; margin-bottom: 16px;
-        }
+        .menu-card-name { font-family: 'Norwester', sans-serif; font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 400; color: var(--text); margin-bottom: 7px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .menu-card-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.65; font-weight: 300; margin-bottom: 16px; }
         .menu-card-footer { display: flex; justify-content: space-between; align-items: center; }
-        .menu-card-price {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.95rem; font-weight: 700; color: var(--orange);
-        }
-        .add-btn {
-            width: 34px; height: 34px;
-            background: var(--orange); border: none; border-radius: 50%;
-            color: #fff; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-            cursor: none;
-            transition: background 0.25s, transform 0.3s;
-            flex-shrink: 0; line-height: 1;
-        }
+        .menu-card-price { font-family: 'Space Mono', monospace; font-size: 0.95rem; font-weight: 700; color: var(--orange); }
+        .add-btn { width: 34px; height: 34px; background: var(--orange); border: none; border-radius: 50%; color: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: none; transition: background 0.25s, transform 0.3s; flex-shrink: 0; line-height: 1; }
         .add-btn:hover { background: var(--dark-orange); transform: scale(1.12) rotate(90deg); }
 
-        /* ── MARQUEE ── */
-        .marquee-wrap {
-            background: var(--orange); padding: 17px 0;
-            overflow: hidden; white-space: nowrap;
-        }
-        .marquee-track {
-            display: inline-flex;
-            animation: marquee 20s linear infinite;
-        }
-        .marquee-item {
-            display: inline-flex; align-items: center; gap: 18px;
-            padding: 0 26px;
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(0.88rem, 2vw, 1rem);
-            font-style: italic; color: rgba(255,255,255,0.9); font-weight: 700;
-        }
+        /* MARQUEE */
+        .marquee-wrap { background: var(--orange); padding: 17px 0; overflow: hidden; white-space: nowrap; }
+        .marquee-track { display: inline-flex; animation: marquee 20s linear infinite; }
+        .marquee-item { display: inline-flex; align-items: center; gap: 18px; padding: 0 26px; font-family: 'Norwester', sans-serif; font-size: clamp(0.88rem, 2vw, 1rem); color: rgba(255,255,255,0.9); font-weight: 400; text-transform: uppercase; letter-spacing: 1.5px; }
         .marquee-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.45); border-radius: 50%; }
-        @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-33.33%)} }
 
-        /* ── FOOTER ── */
-        footer {
-            background: var(--footer-bg);
-            padding: clamp(48px, 6vw, 60px) 8% 36px;
-            transition: background 0.6s ease;
-        }
-        .footer-inner {
-            display: flex; justify-content: space-between;
-            align-items: flex-end; flex-wrap: wrap; gap: 28px;
-            border-bottom: 1px solid rgba(244,239,230,0.08);
-            padding-bottom: 36px; margin-bottom: 24px;
-        }
-        .footer-brand .logo-main { font-size: clamp(1.5rem, 4vw, 2rem); }
-        .footer-tagline {
-            font-size: 0.82rem; color: rgba(244,239,230,0.32);
-            margin-top: 8px; font-weight: 300;
-            max-width: 250px; line-height: 1.65;
-        }
+        /* SHOW MORE */
+        .menu-extra { display: none; }
+        .menu-extra.show { display: contents; }
+        .btn-show-more-wrap { display: flex; justify-content: center; padding: 32px 0 4px; grid-column: 1 / -1; }
+        .btn-show-more { font-family: 'Norwester', sans-serif; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); background: transparent; border: 1.5px solid var(--orange); padding: 13px 38px; border-radius: 50px; cursor: none; transition: background 0.3s, color 0.3s, transform 0.3s; }
+        .btn-show-more:hover { background: var(--orange); color: #fff; transform: scale(1.04); }
+
+        /* FOOTER */
+        footer { background: var(--footer-bg); padding: clamp(48px, 6vw, 60px) 8% 36px; transition: background 0.6s ease; }
+        .footer-inner { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 28px; border-bottom: 1px solid rgba(244,239,230,0.08); padding-bottom: 36px; margin-bottom: 24px; }
+        .footer-brand .logo-main { font-size: clamp(1.5rem, 4vw, 2rem); color: var(--cream); }
+        .footer-socials { display: flex; gap: 12px; margin-top: 16px; }
+        .social-link { width: 40px; height: 40px; border: 1px solid rgba(244,239,230,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: rgba(244,239,230,0.45); transition: color 0.3s, border-color 0.3s, transform 0.3s, background 0.3s; cursor: none; }
+        .social-link:hover { color: #fff; border-color: var(--orange); background: var(--orange); transform: scale(1.1); }
+        .footer-tagline { font-size: 0.82rem; color: rgba(244,239,230,0.32); margin-top: 8px; font-weight: 300; max-width: 250px; line-height: 1.65; }
         .footer-links { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
-        .footer-links a {
-            font-size: 0.75rem; letter-spacing: 2px;
-            text-transform: uppercase; color: rgba(244,239,230,0.38);
-            transition: color 0.3s; font-family: 'Space Mono', monospace;
-        }
+        .footer-links a { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(244,239,230,0.38); transition: color 0.3s; font-family: 'Space Mono', monospace; }
         .footer-links a:hover { color: var(--orange); }
-        .footer-bottom {
-            display: flex; justify-content: space-between;
-            align-items: center; flex-wrap: wrap; gap: 10px;
-        }
-        .footer-copy {
-            font-size: 0.72rem; color: rgba(244,239,230,0.22);
-            font-family: 'Space Mono', monospace;
-        }
+        .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .footer-copy { font-size: 0.72rem; color: rgba(244,239,230,0.22); font-family: 'Space Mono', monospace; }
         .footer-copy span { color: var(--orange); }
 
-        /* ── REVEAL ── */
-        .reveal {
-            opacity: 0; transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94),
-                        transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
-        }
+        /* REVEAL */
+        .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94); }
         .reveal.active { opacity: 1; transform: translateY(0); }
         .text-fade { transition: opacity 0.4s ease, transform 0.4s ease; }
         .text-fade.out { opacity: 0; transform: translateY(-8px); }
 
-        /* ── RESPONSIVE ── */
+        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .menu-grid { grid-template-columns: repeat(2, 1fr); }
+            .about-values-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .about-photo-row { grid-template-columns: 1fr; }
+            .about-photo-main { min-height: 360px; }
+            .about-photo-overlay { background: linear-gradient(to bottom, transparent 60%, var(--bg2) 100%); }
+            .galeri-header { grid-template-columns: 1fr; gap: 20px; }
+            .galeri-header-right { align-items: flex-start; }
+            .galeri-desc { text-align: left; }
         }
         @media (max-width: 768px) {
-            .about-inner { grid-template-columns: 1fr; gap: 48px; }
-            .about-badge { right: 8px; bottom: -16px; }
+            .about-hero-stmt { grid-template-columns: 1fr; }
+            .about-story-strip { grid-template-columns: 1fr; }
             .menu-header { flex-direction: column; align-items: flex-start; }
             .hero-scroll { display: none; }
             section { padding: 72px 6%; }
             header { padding: 0 6%; }
             .lokasi-inner { grid-template-columns: 1fr; }
-            .galeri-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 200px; }
-            .galeri-grid .galeri-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
-            .galeri-grid .galeri-item:nth-child(4) { grid-column: span 1; }
+            .galeri-masonry { grid-template-columns: repeat(6, 1fr); }
+            .gm-item:nth-child(1) { grid-column: span 4; grid-row: span 6; }
+            .gm-item:nth-child(2) { grid-column: span 2; grid-row: span 3; }
+            .gm-item:nth-child(3) { grid-column: span 2; grid-row: span 3; }
+            .gm-item:nth-child(4) { grid-column: span 3; grid-row: span 4; }
+            .gm-item:nth-child(5) { grid-column: span 3; grid-row: span 4; }
+            .gm-item:nth-child(6) { grid-column: span 3; grid-row: span 4; }
+            .gm-item:nth-child(7) { grid-column: span 3; grid-row: span 4; }
+            .gm-item:nth-child(8) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(9) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(10) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(11) { grid-column: span 3; grid-row: span 4; }
+            .gm-item:nth-child(12) { grid-column: span 3; grid-row: span 4; }
         }
         @media (max-width: 640px) {
             .nav-links { display: none; }
@@ -808,43 +562,418 @@
             .menu-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
             .stats-band { display: grid; grid-template-columns: repeat(2,1fr); gap: 0; }
             .stat-item:not(:last-child)::after { display: none; }
-            .stat-item {
-                padding: 20px 10px;
-                border-bottom: 1px solid rgba(244,239,230,0.08);
-            }
+            .stat-item { padding: 20px 10px; border-bottom: 1px solid rgba(244,239,230,0.08); }
             .stat-item:nth-child(1) { border-right: 1px solid rgba(244,239,230,0.08); }
             .stat-item:nth-child(2) { border-right: none; }
             .stat-item:nth-child(3) { border-right: 1px solid rgba(244,239,230,0.08); border-bottom: none; }
             .stat-item:nth-child(4) { border-bottom: none; }
-            .about-features { grid-template-columns: 1fr; }
+            .about-values-grid { grid-template-columns: 1fr; }
             #cursor, #cursor-ring { display: none; }
             body { cursor: auto; }
-            .galeri-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 180px; }
-            .galeri-grid .galeri-item:nth-child(1) { grid-column: span 2; grid-row: span 1; }
-            .galeri-grid .galeri-item:nth-child(4) { grid-column: span 1; }
+            .galeri-masonry { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 50px; }
+            .gm-item:nth-child(1) { grid-column: span 4; grid-row: span 5; }
+            .gm-item:nth-child(2) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(3) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(4) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(5) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(6) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(7) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(8) { grid-column: span 4; grid-row: span 5; }
+            .gm-item:nth-child(9) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(10) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(11) { grid-column: span 2; grid-row: span 4; }
+            .gm-item:nth-child(12) { grid-column: span 2; grid-row: span 4; }
             .top-bar { height: 32px; }
             .top-bar a { font-size: 0.5rem; letter-spacing: 1.5px; }
             a, button { cursor: pointer; }
             .hero h2 { letter-spacing: -1px; }
             .hero-content { padding: 0 6% 72px; }
             .hero-video-dots { left: 6%; bottom: 32px; }
-            section { padding: 60px 5%; }
-            header { padding: 0 5%; }
-            .menu-card-body { padding: 15px 15px 17px; }
+            .about-hero-stmt { padding: 72px 6%; }
+            .about-hero-stmt::before { display: none; }
+            .story-photos { grid-template-rows: 180px 180px; }
+            .eco-clock { display: none; }
         }
         @media (max-width: 420px) {
             .menu-grid { grid-template-columns: 1fr; }
             .hero h2 { font-size: 2.2rem; }
-            .galeri-grid { grid-template-columns: 1fr; grid-auto-rows: 200px; }
-            .galeri-grid .galeri-item:nth-child(1),
-            .galeri-grid .galeri-item:nth-child(4) { grid-column: span 1; }
         }
     </style>
+
+<!-- ══════════════════════════════════════════════
+     1. CSS — CART FEATURE
+     ══════════════════════════════════════════════ -->
+<style id="CART_CSS_PASTE_BEFORE_STYLE_CLOSING">
+
+/* ── CART FAB (floating button kanan bawah) ── */
+.cart-fab {
+    position: fixed;
+    bottom: 32px; right: 32px;
+    width: 62px; height: 62px;
+    background: var(--orange);
+    border: none; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9990;
+    cursor: none;
+    box-shadow: 0 8px 32px var(--orange-glow), 0 2px 8px rgba(0,0,0,0.18);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+    animation: fabPop 0.6s 1.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes fabPop { from { transform: scale(0) translateY(40px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+.cart-fab:hover { transform: scale(1.1); box-shadow: 0 14px 40px var(--orange-glow); }
+.cart-fab svg { width: 26px; height: 26px; color: #fff; flex-shrink: 0; }
+.cart-badge {
+    position: absolute;
+    top: -4px; right: -4px;
+    min-width: 22px; height: 22px;
+    background: #fff; color: var(--orange);
+    border-radius: 50%;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px;
+    opacity: 0; transform: scale(0);
+    transition: opacity 0.3s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    border: 2px solid var(--orange);
+    pointer-events: none;
+}
+.cart-badge.show { opacity: 1; transform: scale(1); }
+.cart-badge.pop { animation: badgePop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes badgePop { 0%{transform:scale(1)} 50%{transform:scale(1.45)} 100%{transform:scale(1)} }
+
+/* ── CART OVERLAY ── */
+.cart-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,5,2,0.6);
+    z-index: 9991;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    cursor: none;
+}
+.cart-overlay.open { opacity: 1; pointer-events: all; }
+
+/* ── CART DRAWER ── */
+.cart-drawer {
+    position: fixed;
+    top: 0; right: 0;
+    width: min(420px, 96vw);
+    height: 100dvh;
+    background: var(--espresso);
+    z-index: 9992;
+    display: flex; flex-direction: column;
+    transform: translateX(110%);
+    transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
+    box-shadow: -12px 0 48px rgba(0,0,0,0.35);
+    overflow: hidden;
+}
+body.dark .cart-drawer { background: #0D0A07; }
+.cart-drawer.open { transform: translateX(0); }
+
+/* header drawer */
+.cart-drawer-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid rgba(244,239,230,0.08);
+    flex-shrink: 0;
+}
+.cart-drawer-title {
+    font-family: 'Norwester', sans-serif;
+    font-size: 1.2rem; letter-spacing: 1px;
+    color: var(--cream); text-transform: uppercase;
+}
+.cart-drawer-title span { color: var(--orange); }
+.cart-close-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(244,239,230,0.06);
+    border: 1px solid rgba(244,239,230,0.12);
+    color: rgba(244,239,230,0.55);
+    font-size: 1.1rem; cursor: none;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s, color 0.3s, transform 0.3s;
+}
+.cart-close-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: rotate(90deg); }
+
+/* empty state */
+.cart-empty {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    padding: 32px;
+}
+.cart-empty-icon { opacity: 0.2; }
+.cart-empty-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 3px;
+    color: rgba(244,239,230,0.35); text-transform: uppercase;
+    text-align: center; line-height: 1.8;
+}
+
+/* items list */
+.cart-items-list {
+    flex: 1; overflow-y: auto;
+    padding: 12px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--orange) transparent;
+}
+.cart-items-list::-webkit-scrollbar { width: 3px; }
+.cart-items-list::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+
+.cart-item-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 28px;
+    border-bottom: 1px solid rgba(244,239,230,0.05);
+    transition: background 0.25s;
+    animation: itemIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
+}
+@keyframes itemIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+.cart-item-row:hover { background: rgba(244,239,230,0.03); }
+.cart-item-img {
+    width: 56px; height: 56px; border-radius: 8px;
+    object-fit: cover; display: block; background: rgba(244,239,230,0.06);
+    flex-shrink: 0;
+}
+.cart-item-info { min-width: 0; }
+.cart-item-name {
+    font-family: 'Norwester', sans-serif;
+    font-size: 0.88rem; color: var(--cream);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cart-item-price {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem; color: var(--orange);
+    margin-top: 3px;
+}
+.cart-item-subtotal {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; color: rgba(244,239,230,0.3);
+    margin-top: 2px;
+}
+
+/* qty control */
+.cart-qty-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px; flex-shrink: 0;
+}
+.qty-controls {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(244,239,230,0.06);
+    border: 1px solid rgba(244,239,230,0.1);
+    border-radius: 50px; padding: 4px 8px;
+}
+.qty-btn {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: none; background: transparent;
+    color: rgba(244,239,230,0.55); font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: none; transition: background 0.2s, color 0.2s, transform 0.2s;
+    line-height: 1; padding: 0; flex-shrink: 0;
+}
+.qty-btn:hover { background: var(--orange); color: #fff; transform: scale(1.1); }
+.qty-btn.minus:hover { background: rgba(220,50,50,0.7); }
+.qty-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem; font-weight: 700;
+    color: var(--cream); min-width: 18px; text-align: center;
+}
+.cart-delete-btn {
+    width: 20px; height: 20px;
+    background: none; border: none;
+    color: rgba(244,239,230,0.2); font-size: 0.75rem;
+    cursor: none; transition: color 0.25s, transform 0.25s;
+    display: flex; align-items: center; justify-content: center;
+}
+.cart-delete-btn:hover { color: rgba(220,50,50,0.7); transform: scale(1.15); }
+
+/* footer drawer */
+.cart-drawer-footer {
+    padding: 20px 28px 28px;
+    border-top: 1px solid rgba(244,239,230,0.08);
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.2);
+}
+.cart-total-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 8px;
+}
+.cart-total-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 3px;
+    color: rgba(244,239,230,0.4); text-transform: uppercase;
+}
+.cart-total-amount {
+    font-family: 'Norwester', sans-serif;
+    font-size: 1.6rem; color: var(--cream);
+    letter-spacing: 1px;
+}
+.cart-total-amount span { color: var(--orange); }
+.cart-item-count-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 2px;
+    color: rgba(244,239,230,0.25); text-transform: uppercase;
+    margin-bottom: 20px; display: block;
+}
+
+/* order divider */
+.order-divider {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.52rem; letter-spacing: 3px;
+    color: rgba(244,239,230,0.2); text-transform: uppercase;
+    text-align: center; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+}
+.order-divider::before, .order-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(244,239,230,0.08);
+}
+
+/* order buttons */
+.order-btns { display: flex; flex-direction: column; gap: 10px; }
+.order-btn {
+    width: 100%; padding: 14px 20px;
+    border-radius: 10px; border: none;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    cursor: none; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s, opacity 0.3s;
+    font-family: 'DM Sans', sans-serif;
+    position: relative; overflow: hidden;
+}
+.order-btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(255,255,255,0); transition: background 0.3s;
+}
+.order-btn:hover::before { background: rgba(255,255,255,0.08); }
+.order-btn:hover { transform: translateY(-2px); }
+.order-btn:active { transform: scale(0.97); }
+.order-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+.order-btn-wa {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.3);
+}
+.order-btn-wa:hover { box-shadow: 0 8px 28px rgba(37,211,102,0.45); }
+
+.order-btn-grab {
+    background: linear-gradient(135deg, #00b14f, #007f3a);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(0,177,79,0.25);
+}
+.order-btn-grab:hover { box-shadow: 0 8px 28px rgba(0,177,79,0.4); }
+
+.order-btn-shopee {
+    background: linear-gradient(135deg, #EE4D2D, #C73E23);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(238,77,45,0.25);
+}
+.order-btn-shopee:hover { box-shadow: 0 8px 28px rgba(238,77,45,0.4); }
+
+.order-btn-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+/* toast notif */
+.cart-toast {
+    position: fixed;
+    bottom: 108px; right: 32px;
+    background: var(--espresso);
+    border: 1px solid rgba(232,98,42,0.4);
+    border-left: 3px solid var(--orange);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 10px;
+    z-index: 9993;
+    transform: translateY(20px) scale(0.95);
+    opacity: 0; pointer-events: none;
+    transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1), opacity 0.35s;
+    max-width: 280px;
+}
+body.dark .cart-toast { background: #0D0A07; }
+.cart-toast.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: none; }
+.cart-toast-icon { font-size: 1rem; flex-shrink: 0; }
+.cart-toast-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 1.5px;
+    color: rgba(244,239,230,0.65); text-transform: uppercase;
+    line-height: 1.5;
+}
+.cart-toast-name {
+    display: block; color: var(--cream);
+    font-size: 0.65rem; letter-spacing: 1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* note input */
+.cart-note-wrap {
+    margin-top: 4px; margin-bottom: 14px;
+}
+.cart-note-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.52rem; letter-spacing: 2.5px;
+    color: rgba(244,239,230,0.3); text-transform: uppercase;
+    margin-bottom: 6px; display: block;
+}
+.cart-note-input {
+    width: 100%; background: rgba(244,239,230,0.05);
+    border: 1px solid rgba(244,239,230,0.1); border-radius: 8px;
+    color: rgba(244,239,230,0.7); font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem; padding: 10px 14px;
+    resize: none; outline: none;
+    transition: border-color 0.3s;
+    line-height: 1.5;
+}
+.cart-note-input:focus { border-color: rgba(232,98,42,0.5); }
+.cart-note-input::placeholder { color: rgba(244,239,230,0.2); }
+
+/* mobile cursor fix */
+@media (max-width: 640px) {
+    .cart-fab, .cart-close-btn, .qty-btn, .cart-delete-btn, .order-btn { cursor: pointer; }
+    .cart-fab { bottom: 24px; right: 24px; width: 56px; height: 56px; }
+    .cart-drawer { width: 100vw; }
+    .cart-item-row { padding: 14px 20px; }
+    .cart-drawer-header { padding: 20px 20px 16px; }
+    .cart-drawer-footer { padding: 16px 20px 24px; }
+}
+</style>
 </head>
 <body>
 
     <div id="cursor"></div>
     <div id="cursor-ring"></div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" onclick="handleLightboxClick(event)">
+        <button class="lb-close" onclick="closeLightbox()">&times;</button>
+        <div class="lb-img-wrap">
+            <img id="lb-img" src="" alt="">
+        </div>
+        <div class="lb-caption" id="lb-caption"></div>
+    </div>
+
+    <!-- ECO SCREENSAVER -->
+    <div id="eco-screen" onclick="dismissEcoScreen()" ontouchstart="dismissEcoScreen()">
+        <div class="eco-orb"></div>
+        <div class="eco-orb"></div>
+        <div class="eco-orb"></div>
+        <div class="eco-content">
+            <div class="eco-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E8622A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 22c1.25-1.25 2.5-3.5 2.5-6.5C4.5 11 7 8.5 12 8.5s7.5 2.5 7.5 7c0 3-1.25 5.25-2.5 6.5"/>
+                    <path d="M12 8.5V2"/><path d="M8 5.5l4-3.5 4 3.5"/>
+                </svg>
+            </div>
+            <div class="eco-brand t-eco-brand">Warkop <span>Mawar</span></div>
+            <div class="eco-divider"></div>
+            <div class="eco-headline t-eco-headline">Hargai lingkungan dengan tindakan sederhana</div>
+            <p class="eco-body t-eco-body">Ketika perangkat kamu sedang tidak digunakan atau kamu sedang menelusuri laman lain, tampilan layar ini akan muncul sehingga dapat mengurangi daya yang digunakan.</p>
+            <div class="eco-cta t-eco-cta">Klik di mana saja untuk melanjutkan</div>
+        </div>
+        <div class="eco-clock" id="ecoClockDisplay">00:00</div>
+    </div>
 
     <!-- PRELOADER -->
     <div id="preloader">
@@ -901,27 +1030,14 @@
     <!-- HERO -->
     <section id="home" class="hero">
         <div class="hero-video-container">
-            <video autoplay loop muted playsinline class="hero-video active" id="hv0">
-                <source src="vidio-2.webm" type="video/webm">
-            </video>
-            <video loop muted playsinline class="hero-video" id="hv1">
-                <source src="vidio-1.webm" type="video/webm">
-            </video>
-            <video loop muted playsinline class="hero-video" id="hv2">
-                <source src="vidio-3.webm" type="video/webm">
-            </video>
-            <video loop muted playsinline class="hero-video" id="hv3">
-                <source src="vidio-4.webm" type="video/webm">
-            </video>
-            <video loop muted playsinline class="hero-video" id="hv4">
-                <source src="vidio-5.webm" type="video/webm">
-            </video>
-            <video loop muted playsinline class="hero-video" id="hv5">
-                <source src="vidio-6.webm" type="video/webm">
-            </video>
+            <video autoplay loop muted playsinline class="hero-video active" id="hv0"><source src="vidio-2.webm" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv1"><source src="vidio-1.webm" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv2"><source src="vidio-3.webm" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv3"><source src="vidio-4.webm" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv4"><source src="vidio-5.webm" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv5"><source src="vidio-6.webm" type="video/webm"></video>
         </div>
         <div class="hero-overlay"></div>
-
         <div class="hero-video-dots" id="videoDots">
             <button class="vdot active" data-idx="0"></button>
             <button class="vdot" data-idx="1"></button>
@@ -930,9 +1046,8 @@
             <button class="vdot" data-idx="4"></button>
             <button class="vdot" data-idx="5"></button>
         </div>
-
         <div class="hero-content">
-            <div class="hero-eyebrow t-hero-eyebrow">Bondowoso, Jawa Timur</div>
+            <div class="hero-eyebrow t-hero-eyebrow">Warkop Mawar — Bondowoso</div>
             <h2 class="t-hero-title text-fade">Seduhan Jujur,<br>Harga <em>Saudara</em>.</h2>
             <p class="hero-desc t-hero-desc text-fade">Nongkrong industrial-cozy di Bondowoso. Kopi mantap, suasana adem oren-abu, bikin betah dari senja sampe malam.</p>
             <div class="hero-actions">
@@ -951,54 +1066,102 @@
 
     <!-- STATS -->
     <div class="stats-band">
-        <div class="stat-item reveal">
-            <span class="stat-num">50+</span>
-            <span class="stat-label t-stat-1">Item Menu</span>
-        </div>
-        <div class="stat-item reveal" style="transition-delay:0.1s">
-            <span class="stat-num">Rp5K</span>
-            <span class="stat-label t-stat-2">Mulai Dari</span>
-        </div>
-        <div class="stat-item reveal" style="transition-delay:0.2s">
-            <span class="stat-num">∞</span>
-            <span class="stat-label t-stat-3">Betah Nongkrong</span>
-        </div>
-        <div class="stat-item reveal" style="transition-delay:0.3s">
-            <span class="stat-num">1</span>
-            <span class="stat-label t-stat-4">Spot Terbaik</span>
-        </div>
+        <div class="stat-item reveal"><span class="stat-num">50+</span><span class="stat-label t-stat-1">Item Menu</span></div>
+        <div class="stat-item reveal" style="transition-delay:0.1s"><span class="stat-num">Rp5K</span><span class="stat-label t-stat-2">Mulai Dari</span></div>
+        <div class="stat-item reveal" style="transition-delay:0.2s"><span class="stat-num">∞</span><span class="stat-label t-stat-3">Betah Nongkrong</span></div>
+        <div class="stat-item reveal" style="transition-delay:0.3s"><span class="stat-num">1</span><span class="stat-label t-stat-4">Spot Terbaik</span></div>
     </div>
 
     <!-- ABOUT -->
     <section id="about">
-        <div class="about-inner">
-            <div class="about-visual reveal">
-                <div class="about-img-frame">
-                    <img src="minuman-1bg.webp" alt="Warkop Mawar" class="about-img">
-                </div>
-                <div class="about-badge">
-                    <div class="badge-inner">
-                        <span class="badge-num">★</span>
-                        Kopi<br>Seger
-                    </div>
+        <!-- Part 1 -->
+        <div class="about-hero-stmt">
+            <div class="about-stmt-left reveal">
+                <div class="about-stmt-label t-about-eyebrow">Cerita Kami</div>
+                <h2 class="about-stmt-title t-about-title">Tentang<br>Warkop<em>Mawar</em></h2>
+            </div>
+            <div class="about-stmt-right">
+                <p class="about-stmt-body t-about-p1 reveal" style="transition-delay:0.15s">Warkop Mawar lahir dari keyakinan sederhana — <strong>kopi yang enak seharusnya bisa dinikmati semua orang</strong>, tanpa perlu merogoh kantong dalam-dalam. Kami bukan sekadar warung kopi.</p>
+                <p class="about-stmt-body t-about-p2 reveal" style="transition-delay:0.25s">Kami adalah tempat di mana <strong>ide-ide besar lahir, cerita lama dikenang</strong>, dan sore hari terasa lebih panjang. Dengan konsep industrial abu-abu yang dibalut kehangatan warna oren, setiap sudut Warkop Mawar dirancang untuk bikin kamu betah.</p>
+                <div class="about-est reveal" style="transition-delay:0.35s">
+                    <div class="about-est-dot"></div>
+                    <span class="about-est-text">Berdiri Sejak</span>
+                    <span class="about-est-year">2024</span>
+                    <span class="about-est-text">· Bondowoso</span>
                 </div>
             </div>
-            <div class="about-text-block">
-                <div class="reveal">
-                    <div class="section-eyebrow t-about-eyebrow">Cerita Kami</div>
-                    <h2 class="section-title t-about-title text-fade">Tentang<br>Warkop <em>Mawar</em></h2>
+        </div>
+
+        <!-- Part 2 -->
+        <div class="about-photo-row">
+            <div class="about-photo-main reveal">
+                <img src="footage-tentang-1.webp" alt="Warkop Mawar Interior">
+                <div class="about-photo-overlay"></div>
+            </div>
+            <div class="about-pullquote">
+                <span class="pullquote-mark">"</span>
+                <p class="pullquote-text t-pullquote">Seduhan jujur,<br>untuk hati yang <em>lapar</em><br>dan jiwa yang<br><em>lelah.</em></p>
+                <div class="pullquote-attr t-pullquote-attr">Warkop Mawar, Bondowoso</div>
+            </div>
+        </div>
+
+        <!-- Part 3: Values -->
+        <div class="about-values">
+            <div class="about-values-header reveal">
+                <div class="section-eyebrow t-values-eyebrow">Kenapa Kami</div>
+                <h3 class="section-title t-values-title">Yang Bikin <em>Kami</em><br>Berbeda</h3>
+            </div>
+            <div class="about-values-grid">
+                <div class="value-card reveal">
+                    <div class="value-num">01</div>
+                    <div class="value-title t-val-1-title">Kopi Pilihan</div>
+                    <div class="value-desc t-val-1-desc">Biji kopi dipilih dengan teliti untuk menghadirkan cita rasa terbaik di setiap cangkir.</div>
                 </div>
-                <p class="about-body t-about-p1 text-fade reveal" style="transition-delay:0.15s">
-                    Warkop Mawar memadukan <strong>konsep minimalis abu-abu industrial</strong> dengan kehangatan warna oren yang homey. Tempat paling pas di Bondowoso buat nemenin waktu santai lu.
-                </p>
-                <p class="about-body t-about-p2 text-fade reveal" style="transition-delay:0.25s">
-                    Kami percaya <strong>kopi enak ga harus mahal</strong>. Seduhan kami jujur, harganya saudara. Cek juga mawar cantik kami di area kasir, sentuhan kecil buat hari lu.
-                </p>
-                <div class="about-features reveal" style="transition-delay:0.35s">
-                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-1">Kopi Pilihan</span></div>
-                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-2">Harga Ramah</span></div>
-                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-3">Suasana Cozy</span></div>
-                    <div class="feature-chip"><span class="dot"></span><span class="t-feat-4">Open Late</span></div>
+                <div class="value-card reveal" style="transition-delay:0.1s">
+                    <div class="value-num">02</div>
+                    <div class="value-title t-val-2-title">Harga Ramah</div>
+                    <div class="value-desc t-val-2-desc">Mulai dari Rp5.000, semua kalangan bisa menikmati kopi enak tanpa was-was soal dompet.</div>
+                </div>
+                <div class="value-card reveal" style="transition-delay:0.2s">
+                    <div class="value-num">03</div>
+                    <div class="value-title t-val-3-title">Suasana Cozy</div>
+                    <div class="value-desc t-val-3-desc">Industrial minimalis abu-abu bertemu oren hangat. Cocok buat kerja, ngobrol, atau sekadar diam.</div>
+                </div>
+                <div class="value-card reveal" style="transition-delay:0.3s">
+                    <div class="value-num">04</div>
+                    <div class="value-title t-val-4-title">Open Late</div>
+                    <div class="value-desc t-val-4-desc">Buka sampai tengah malam, Warkop Mawar setia menemani malam panjangmu setiap hari.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 4: Story Strip (foto clickable lightbox) -->
+        <div class="about-story-strip">
+            <div class="story-text">
+                <div class="story-label t-story-label">Lebih Dari Sekadar Kopi</div>
+                <h3 class="story-title t-story-title">Kami Ada untuk<br><em>Momen</em> Terbaik<br>Kamu</h3>
+                <p class="story-body t-story-body">Dari satu cangkir kopi susu pagi hari, hingga obrolan seru tengah malam — Warkop Mawar hadir untuk semua momen. Cek juga <strong>mawar cantik di area kasir</strong>, sentuhan kecil yang jadi kebanggaan kami.</p>
+                <p class="story-body t-story-body2" style="margin-top:-4px;">Kami juga melayani <strong>coffee booth untuk acara pernikahan & event</strong>. Bawa suasana kopi terbaik ke momen spesialmu.</p>
+            </div>
+            <!-- Foto klik = lightbox -->
+            <div class="story-photos reveal" style="transition-delay:0.1s">
+                <div class="sp-img" onclick="openLightbox('footage-tentang-2.webp','Good Story · Warkop Mawar')">
+                    <img src="footage-tentang-2.webp" alt="Suasana Warkop Mawar">
+                    <div class="lb-zoom-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                </div>
+                <div class="sp-img" onclick="openLightbox('visi-misi-tentang.webp','Visi & Misi · Warkop Mawar')">
+                    <img src="visi-misi-tentang.webp" alt="Visi Misi">
+                    <div class="lb-zoom-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
+                </div>
+                <div class="sp-img" onclick="openLightbox('tanget-pasar-tentang.webp','Target Pasar · Warkop Mawar')">
+                    <img src="tanget-pasar-tentang.webp" alt="Target Pasar">
+                    <div class="lb-zoom-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1009,75 +1172,121 @@
         <div class="gallery-track" id="galleryTrack">
             <div class="gallery-item"><img src="minuman-1.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-1.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-7.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-7.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-2.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-2.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-8.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-8.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-3.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-3.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-9.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-9.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-4.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-4.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-10.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-10.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-5.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-5.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-11.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-6.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-6.webp" alt=""></div>
-            <!-- Duplicate for seamless loop -->
+            <div class="gallery-item"><img src="minuman-12.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-13.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-14.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-15.webp" alt=""></div>
+            <!-- duplicate for seamless loop -->
             <div class="gallery-item"><img src="minuman-1.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-1.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-7.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-7.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-2.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-2.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-8.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-8.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-3.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-3.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-9.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-9.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-4.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-4.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-10.webp" alt=""></div>
+            <div class="gallery-item"><img src="makanan-10.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-5.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-5.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-11.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-6.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-6.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-12.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-13.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-14.webp" alt=""></div>
+            <div class="gallery-item"><img src="minuman-15.webp" alt=""></div>
         </div>
     </div>
 
-    <!-- GALERI FOTO -->
+    <!-- GALERI MASONRY (wedding-coffe-booth-1 & harga-menu dihapus, diganti visi-misi & target-pasar) -->
     <section id="galeri">
         <div class="galeri-header reveal">
-            <div class="section-eyebrow t-galeri-eyebrow">Suasana Kami</div>
-            <h2 class="section-title t-galeri-title text-fade">Galeri <em>Mawar</em></h2>
-            <p class="galeri-desc t-galeri-desc text-fade">Intip suasana Warkop Mawar — dari sudut favorit sampai momen seru pelanggan. Foto-foto di bawah ini bakal segera diupdate!</p>
+            <div>
+                <div class="section-eyebrow t-galeri-eyebrow">Suasana Kami</div>
+                <h2 class="section-title t-galeri-title">Galeri <em>Mawar</em></h2>
+            </div>
+            <div class="galeri-header-right">
+                <div class="galeri-count">12</div>
+                <p class="galeri-desc t-galeri-desc">Intip suasana Warkop Mawar — dari sudut favorit sampai momen seru pelanggan.</p>
+            </div>
         </div>
-        <div class="galeri-grid">
-            <div class="galeri-item reveal">
-                <div class="galeri-placeholder">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    <span class="gp-label">Interior Warkop</span>
-                </div>
+
+        <div class="galeri-masonry">
+            <div class="gm-item reveal">
+                <img src="footage-galeri-1.webp" alt="Interior Warkop Mawar">
+                <div class="gm-caption"><span class="gm-caption-text">Interior · Mawar</span></div>
             </div>
-            <div class="galeri-item reveal" style="transition-delay:0.1s">
-                <div class="galeri-placeholder">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    <span class="gp-label">Kopi Hits</span>
-                </div>
+            <div class="gm-item reveal" style="transition-delay:0.1s">
+                <img src="footage-tentang-2.webp" alt="Suasana">
+                <div class="gm-caption"><span class="gm-caption-text">Suasana Cozy</span></div>
             </div>
-            <div class="galeri-item reveal" style="transition-delay:0.2s">
-                <div class="galeri-placeholder">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    <span class="gp-label">Sunset View</span>
-                </div>
+            <div class="gm-item reveal" style="transition-delay:0.15s">
+                <img src="footage-galeri-2.webp" alt="Kopi">
+                <div class="gm-caption"><span class="gm-caption-text">Kopi Mawar</span></div>
             </div>
-            <div class="galeri-item reveal" style="transition-delay:0.15s">
-                <div class="galeri-placeholder">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    <span class="gp-label">Nongkrong Bareng</span>
-                </div>
+            <div class="gm-item reveal" style="transition-delay:0.2s">
+                <img src="footage-galeri-3.webp" alt="Nongkrong">
+                <div class="gm-caption"><span class="gm-caption-text">Nongkrong</span></div>
             </div>
-            <div class="galeri-item reveal" style="transition-delay:0.25s">
-                <div class="galeri-placeholder">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    <span class="gp-label">Detail Bar</span>
-                </div>
+            <!-- Item 5: ganti wedding-coffe-booth-1 → visi-misi-tentang -->
+            <div class="gm-item reveal" style="transition-delay:0.1s">
+                <img src="visi-misi-tentang.webp" alt="Visi & Misi">
+                <div class="gm-caption"><span class="gm-caption-text">Visi & Misi</span></div>
             </div>
-            <div class="galeri-item reveal" style="transition-delay:0.3s">
-                <div class="galeri-placeholder">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    <span class="gp-label">Mawar Corner</span>
-                </div>
+            <div class="gm-item reveal" style="transition-delay:0.2s">
+                <img src="wedding-coffe-booth-2.webp" alt="Event">
+                <div class="gm-caption"><span class="gm-caption-text">Coffee Booth</span></div>
+            </div>
+            <div class="gm-item reveal" style="transition-delay:0.15s">
+                <img src="poster-mading-1.webp" alt="Poster">
+                <div class="gm-caption"><span class="gm-caption-text">Poster Mawar</span></div>
+            </div>
+            <div class="gm-item reveal" style="transition-delay:0.25s">
+                <img src="poster-mading-2.webp" alt="Mading">
+                <div class="gm-caption"><span class="gm-caption-text">Mading</span></div>
+            </div>
+            <div class="gm-item reveal" style="transition-delay:0.1s">
+                <img src="poster-mading-3.webp" alt="Info">
+                <div class="gm-caption"><span class="gm-caption-text">Info Warkop</span></div>
+            </div>
+            <div class="gm-item reveal" style="transition-delay:0.2s">
+                <img src="poster-mading-4.webp" alt="Event">
+                <div class="gm-caption"><span class="gm-caption-text">Event Poster</span></div>
+            </div>
+            <div class="gm-item reveal" style="transition-delay:0.15s">
+                <img src="minuman-1bg.webp" alt="Minuman">
+                <div class="gm-caption"><span class="gm-caption-text">Signature Drink</span></div>
+            </div>
+            <!-- Item 12: ganti harga-menu → tanget-pasar-tentang -->
+            <div class="gm-item reveal" style="transition-delay:0.3s">
+                <img src="tanget-pasar-tentang.webp" alt="Target Pasar">
+                <div class="gm-caption"><span class="gm-caption-text">Target Pasar</span></div>
             </div>
         </div>
     </section>
@@ -1091,12 +1300,24 @@
             <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
             <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
             <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Warkop Mawar<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Open Late<span class="marquee-dot"></span></span>
             <span class="marquee-item">Kopi Segar<span class="marquee-dot"></span></span>
             <span class="marquee-item">Harga Teman<span class="marquee-dot"></span></span>
             <span class="marquee-item">Industrial Cozy<span class="marquee-dot"></span></span>
             <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
             <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
             <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Warkop Mawar<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Open Late<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Kopi Segar<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Harga Teman<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Industrial Cozy<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Warkop Mawar<span class="marquee-dot"></span></span>
+            <span class="marquee-item">Open Late<span class="marquee-dot"></span></span>
         </div>
     </div>
 
@@ -1113,168 +1334,142 @@
             <button class="tab-btn t-tab-makanan" data-tab="makanan">🍛 Makanan</button>
         </div>
 
-        <!-- MINUMAN -->
-        <div class="tab-content active menu-grid" id="tab-minuman">
-            <div class="menu-card reveal">
-                <div class="menu-img-wrap">
-                    <span class="menu-card-tag t-tag-bestseller">Best Seller</span>
-                    <img src="minuman-4.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-1">Es Kopi Susu Aren</div>
-                    <div class="menu-card-desc t-desc-1">Perpaduan espresso, susu segar, dan manisnya gula aren.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 10.000</span>
-                        <button class="add-btn">+</button>
+        <!-- ── MINUMAN ──
+             Struktur baru: grid → menu-extra → btn-show-more
+             (button selalu di bawah, termasuk saat extra items muncul) -->
+        <div class="tab-content active" id="tab-minuman">
+            <div class="menu-grid" id="grid-minuman">
+                <div class="menu-card reveal">
+                    <div class="menu-img-wrap">
+                        <span class="menu-card-tag t-tag-bestseller">Best Seller</span>
+                        <img src="minuman-4.webp" class="menu-img" alt="">
+                    </div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-1">Es Kopi Susu Aren</div>
+                        <div class="menu-card-desc t-desc-1">Perpaduan espresso, susu segar, dan manisnya gula aren.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.1s">
-                <div class="menu-img-wrap">
-                    <img src="minuman-5.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-2">Americano orange</div>
-                    <div class="menu-card-desc t-desc-2">Racikan murni, aroma khas, nendang buat melek semalaman.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 11.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.1s">
+                    <div class="menu-img-wrap"><img src="minuman-5.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-2">Americano Orange</div>
+                        <div class="menu-card-desc t-desc-2">Racikan murni, aroma khas, nendang buat melek semalaman.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 11.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.2s">
-                <div class="menu-img-wrap">
-                    <img src="minuman-2.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-7">Es Kopi Latte</div>
-                    <div class="menu-card-desc t-desc-7">Espresso lembut berpadu susu dingin yang creamy.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 10.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.2s">
+                    <div class="menu-img-wrap"><img src="minuman-2.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-7">Es Kopi Latte</div>
+                        <div class="menu-card-desc t-desc-7">Espresso lembut berpadu susu dingin yang creamy.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal">
-                <div class="menu-img-wrap">
-                    <img src="minuman-3.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-8">Es Kopi Susu</div>
-                    <div class="menu-card-desc t-desc-8">Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 8.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal">
+                    <div class="menu-img-wrap"><img src="minuman-3.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-8">Es Kopi Susu</div>
+                        <div class="menu-card-desc t-desc-8">Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.1s">
-                <div class="menu-img-wrap">
-                    <img src="minuman-6.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-9">Kopi Susu Dingin</div>
-                    <div class="menu-card-desc t-desc-9">Segar, manis, dan dingin — teman terbaik sore hari.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 8.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.1s">
+                    <div class="menu-img-wrap"><img src="minuman-6.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-9">Kopi Susu Dingin</div>
+                        <div class="menu-card-desc t-desc-9">Segar, manis, dan dingin — teman terbaik sore hari.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.2s">
-                <div class="menu-img-wrap">
-                    <img src="minuman-1.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-10">Americano</div>
-                    <div class="menu-card-desc t-desc-10">Espresso dilute air dingin, bold dan clean.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 10.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.2s">
+                    <div class="menu-img-wrap"><img src="minuman-1.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-10">Americano</div>
+                        <div class="menu-card-desc t-desc-10">Espresso dilute air dingin, bold dan clean.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
                     </div>
+                </div>
+                <!-- Extra items — tampil di dalam grid (display:contents) -->
+                <div class="menu-extra" id="extra-minuman">
+                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="minuman-7.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-13">Matcha Latte</div><div class="menu-card-desc t-desc-13">Matcha premium dengan susu creamy, manis pas bikin seger.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="minuman-8.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-14">Es Coklat</div><div class="menu-card-desc t-desc-14">Coklat dingin creamy, cocok buat yang ga suka kopi.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="minuman-9.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-15">Thai Tea</div><div class="menu-card-desc t-desc-15">Teh Thailand manis creamy, rasa otentik bikin nagih.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="minuman-10.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-16">Kopi Susu Gula Aren</div><div class="menu-card-desc t-desc-16">Varian klasik susu + gula aren yang legit dan nendang.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="minuman-11.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-17">Es Teh Mawar</div><div class="menu-card-desc t-desc-17">Teh segar dengan sentuhan bunga mawar, adem di tenggorokan.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 7.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="minuman-12.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-18">Es Jeruk Seger</div><div class="menu-card-desc t-desc-18">Jeruk peras segar, asem manis natural tanpa pengawet.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 7.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="minuman-13.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-19">Vietnam Drip</div><div class="menu-card-desc t-desc-19">Kopi drip ala Vietnam, strong dan bold buat pencinta pahit.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="minuman-14.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-20">Cappuccino</div><div class="menu-card-desc t-desc-20">Espresso dengan foam susu lembut, warm dan comforting.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="minuman-15.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-21">Milo Dinosaur</div><div class="menu-card-desc t-desc-21">Milo dingin + taburan milo bubuk, nostalgia masa kecil.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
+                </div>
+                <!-- Button di DALAM grid, setelah extra → selalu di bawah -->
+                <div class="btn-show-more-wrap">
+                    <button class="btn-show-more t-btn-more-minuman" onclick="toggleMore('minuman')">Lihat Menu Lainnya ▼</button>
                 </div>
             </div>
         </div>
 
-        <!-- MAKANAN -->
-        <div class="tab-content menu-grid" id="tab-makanan">
-            <div class="menu-card reveal">
-                <div class="menu-img-wrap">
-                    <span class="menu-card-tag t-tag-bestseller">Best Seller</span>
-                    <img src="makanan-5.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-3">Nasi Ayam Saus Mawar</div>
-                    <div class="menu-card-desc t-desc-3">Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 15.000</span>
-                        <button class="add-btn">+</button>
+        <!-- ── MAKANAN ── (sekarang punya show-more juga!) -->
+        <div class="tab-content" id="tab-makanan">
+            <div class="menu-grid" id="grid-makanan">
+                <div class="menu-card reveal">
+                    <div class="menu-img-wrap"><span class="menu-card-tag t-tag-bestseller">Best Seller</span><img src="makanan-5.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-3">Nasi Ayam Saus Mawar</div>
+                        <div class="menu-card-desc t-desc-3">Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.1s">
-                <div class="menu-img-wrap">
-                    <img src="makanan-3.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-4">Mie Rebus Spesial</div>
-                    <div class="menu-card-desc t-desc-4">Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 10.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.1s">
+                    <div class="menu-img-wrap"><img src="makanan-3.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-4">Mie Rebus Spesial</div>
+                        <div class="menu-card-desc t-desc-4">Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.2s">
-                <div class="menu-img-wrap">
-                    <img src="makanan-4.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-5">Tempe Mendoan + Sambal</div>
-                    <div class="menu-card-desc t-desc-5">Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 8.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.2s">
+                    <div class="menu-img-wrap"><img src="makanan-4.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-5">Tempe Mendoan + Sambal</div>
+                        <div class="menu-card-desc t-desc-5">Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal">
-                <div class="menu-img-wrap">
-                    <img src="makanan-2.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-6">Pisang Goreng Lumer</div>
-                    <div class="menu-card-desc t-desc-6">Manisnya pas, legit di dalem krispi di luar, taburan melimpah.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 10.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal">
+                    <div class="menu-img-wrap"><img src="makanan-2.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-6">Pisang Goreng Lumer</div>
+                        <div class="menu-card-desc t-desc-6">Manisnya pas, legit di dalem krispi di luar, taburan melimpah.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.1s">
-                <div class="menu-img-wrap">
-                    <img src="makanan-1.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-11">Nasi Ayam Hitam</div>
-                    <div class="menu-card-desc t-desc-11">Ayam dengan saus gelap gurih yang bikin nambah terus.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 15.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.1s">
+                    <div class="menu-img-wrap"><img src="makanan-1.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-11">Nasi Ayam Hitam</div>
+                        <div class="menu-card-desc t-desc-11">Ayam dengan saus gelap gurih yang bikin nambah terus.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div>
                     </div>
                 </div>
-            </div>
-            <div class="menu-card reveal" style="transition-delay:0.2s">
-                <div class="menu-img-wrap">
-                    <img src="makanan-6.webp" class="menu-img" alt="">
-                </div>
-                <div class="menu-card-body">
-                    <div class="menu-card-name t-menu-12">Nasi Ayam Geprek</div>
-                    <div class="menu-card-desc t-desc-12">Geprek pedas menggoda, cocok banget sambil teguk kopi.</div>
-                    <div class="menu-card-footer">
-                        <span class="menu-card-price">Rp 13.000</span>
-                        <button class="add-btn">+</button>
+                <div class="menu-card reveal" style="transition-delay:0.2s">
+                    <div class="menu-img-wrap"><img src="makanan-6.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body">
+                        <div class="menu-card-name t-menu-12">Nasi Ayam Geprek</div>
+                        <div class="menu-card-desc t-desc-12">Geprek pedas menggoda, cocok banget sambil teguk kopi.</div>
+                        <div class="menu-card-footer"><span class="menu-card-price">Rp 13.000</span><button class="add-btn">+</button></div>
                     </div>
+                </div>
+                <!-- Extra makanan (footage baru makanan-7 s/d makanan-10) -->
+                <div class="menu-extra" id="extra-makanan">
+                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="makanan-7.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-22">Mie Goreng Spesial</div><div class="menu-card-desc t-desc-22">Mie goreng dengan bumbu racikan, telur mata sapi, dan sayur segar.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="makanan-8.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-23">Soto Ayam Mawar</div><div class="menu-card-desc t-desc-23">Kuah bening kaya rempah dengan ayam suwir, tauge, dan perasan jeruk.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="makanan-9.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-24">Nasi Goreng Mawar</div><div class="menu-card-desc t-desc-24">Nasi goreng bumbu rahasia khas warkop, harum dan bikin nagih.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
+                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="makanan-10.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-25">Bakso Kuah</div><div class="menu-card-desc t-desc-25">Bakso segar dengan kuah kaldu gurih, cocok banget buat malam-malam.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
+                </div>
+                <!-- Button di DALAM grid, setelah extra -->
+                <div class="btn-show-more-wrap">
+                    <button class="btn-show-more t-btn-more-makanan" onclick="toggleMore('makanan')">Lihat Menu Lainnya ▼</button>
                 </div>
             </div>
         </div>
@@ -1291,9 +1486,7 @@
                     <div class="section-eyebrow t-lokasi-eyebrow">Temukan Kami</div>
                     <h2 class="section-title t-lokasi-title text-fade">Lokasi <em>Kami</em></h2>
                 </div>
-                <p class="lokasi-address t-lokasi-address reveal" style="transition-delay:0.1s">
-                    <strong>Warkop Mawar</strong> berlokasi di Bondowoso, Jawa Timur. Gampang dijangkau, parkir luas, dan tempatnya adem buat nongkrong dari sore sampe malam.
-                </p>
+                <p class="lokasi-address t-lokasi-address reveal" style="transition-delay:0.1s"><strong>Warkop Mawar</strong> berlokasi di Bondowoso, Jawa Timur. Gampang dijangkau, parkir luas, dan tempatnya adem buat nongkrong dari sore sampe malam.</p>
                 <div class="lokasi-hours reveal" style="transition-delay:0.2s">
                     <div class="lokasi-hours-title t-lokasi-hours-title">Jam Buka</div>
                     <div class="lokasi-hours-row"><span class="t-lokasi-day1">Everyday</span><span>09:00 – 00:00</span></div>
@@ -1312,6 +1505,14 @@
             <div class="footer-brand">
                 <div class="logo-main t-logo-footer">Warkop <span>Mawar</span></div>
                 <p class="footer-tagline t-footer-tagline">Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.</p>
+                <div class="footer-socials">
+                    <a href="https://www.tiktok.com/@warkopmawar.bws?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener" class="social-link" aria-label="TikTok">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.52a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.7a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.13z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/warkopmawar.bws?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                </div>
             </div>
             <div class="footer-links">
                 <a href="#home" class="t-nav-home">Beranda</a>
@@ -1327,6 +1528,95 @@
         </div>
     </footer>
 
+<!-- ══════════════════════════════════════════════════════════
+     2. HTML — CART FEATURE
+     ══════════════════════════════════════════════════════════ -->
+
+<!-- CART FAB -->
+<button class="cart-fab" id="cartFab" aria-label="Keranjang">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 0 1-8 0"/>
+    </svg>
+    <span class="cart-badge" id="cartBadge">0</span>
+</button>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay"></div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cartDrawer">
+    <!-- Header -->
+    <div class="cart-drawer-header">
+        <div class="cart-drawer-title">Keranjang <span>Pesanan</span></div>
+        <button class="cart-close-btn" id="cartCloseBtn" aria-label="Tutup">✕</button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="cart-empty" id="cartEmpty">
+        <svg class="cart-empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(244,239,230,0.3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <div class="cart-empty-text">Belum ada pesanan<br>Yuk pilih menu dulu!</div>
+    </div>
+
+    <!-- Items List -->
+    <div class="cart-items-list" id="cartItemsList" style="display:none"></div>
+
+    <!-- Footer -->
+    <div class="cart-drawer-footer" id="cartFooter" style="display:none">
+        <div class="cart-total-row">
+            <span class="cart-total-label">Total Pesanan</span>
+            <div class="cart-total-amount">Rp <span id="cartTotalNum">0</span></div>
+        </div>
+        <span class="cart-item-count-label" id="cartItemCountLabel">0 item</span>
+
+        <!-- Note -->
+        <div class="cart-note-wrap">
+            <label class="cart-note-label" for="cartNote">Catatan (opsional)</label>
+            <textarea class="cart-note-input" id="cartNote" rows="2" placeholder="Contoh: tanpa es, extra pedas..."></textarea>
+        </div>
+
+        <div class="order-divider">Pesan Via</div>
+        <div class="order-btns">
+            <!-- WhatsApp -->
+            <button class="order-btn order-btn-wa" id="btnOrderWa">
+                <svg class="order-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.122 1.529 5.855L.057 23.428a.5.5 0 0 0 .611.611l5.577-1.466A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.5-5.187-1.374l-.371-.219-3.843 1.011 1.027-3.744-.238-.389A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                </svg>
+                WhatsApp
+            </button>
+            <!-- GrabFood -->
+            <button class="order-btn order-btn-grab" id="btnOrderGrab">
+                <svg class="order-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                </svg>
+                GrabFood
+            </button>
+            <!-- ShopeeFood -->
+            <button class="order-btn order-btn-shopee" id="btnOrderShopee">
+                <svg class="order-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-2-9h4v2h-4zm0-3h4v2h-4zm0 6h4v2h-4z"/>
+                </svg>
+                ShopeeFood
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="cart-toast" id="cartToast">
+    <span class="cart-toast-icon">🛒</span>
+    <div class="cart-toast-text">
+        Ditambahkan ke keranjang
+        <span class="cart-toast-name" id="cartToastName"></span>
+    </div>
+</div>
+
     <script>
     // ── CURSOR ──
     const cursor = document.getElementById('cursor');
@@ -1340,72 +1630,79 @@
         requestAnimationFrame(animateCursor);
     }
     animateCursor();
-    document.querySelectorAll('a, button').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursor.style.width = '20px'; cursor.style.height = '20px';
-            ring.style.width = '56px'; ring.style.height = '56px'; ring.style.opacity = '0.35';
-        });
-        el.addEventListener('mouseleave', () => {
-            cursor.style.width = '12px'; cursor.style.height = '12px';
-            ring.style.width = '36px'; ring.style.height = '36px'; ring.style.opacity = '0.6';
-        });
+    document.querySelectorAll('a, button, .sp-img, .gm-item').forEach(el => {
+        el.addEventListener('mouseenter', () => { cursor.style.width='20px'; cursor.style.height='20px'; ring.style.width='56px'; ring.style.height='56px'; ring.style.opacity='0.35'; });
+        el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='36px'; ring.style.height='36px'; ring.style.opacity='0.6'; });
     });
 
     // ── PRELOADER ──
     window.addEventListener('load', () => {
         const pl = document.getElementById('preloader');
-        setTimeout(() => {
-            pl.style.opacity = '0';
-            setTimeout(() => { pl.style.visibility = 'hidden'; }, 900);
-        }, 700);
+        setTimeout(() => { pl.style.opacity = '0'; setTimeout(() => { pl.style.visibility = 'hidden'; }, 900); }, 700);
     });
+
+    // ── LIGHTBOX ──
+    function openLightbox(src, caption) {
+        const lb = document.getElementById('lightbox');
+        document.getElementById('lb-img').src = src;
+        document.getElementById('lb-caption').textContent = caption || '';
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+        setTimeout(() => { document.getElementById('lb-img').src = ''; }, 450);
+    }
+    function handleLightboxClick(e) {
+        if (e.target === document.getElementById('lightbox')) closeLightbox();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // ── ECO SCREENSAVER ──
+    const ecoScreen = document.getElementById('eco-screen');
+    const ecoClockEl = document.getElementById('ecoClockDisplay');
+    const IDLE_TIMEOUT = 3 * 60 * 1000;
+    let idleTimer = null, ecoVisible = false;
+    function updateEcoClock() {
+        const now = new Date();
+        ecoClockEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    }
+    setInterval(updateEcoClock, 1000); updateEcoClock();
+    function showEcoScreen() { if (ecoVisible) return; ecoVisible = true; ecoScreen.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+    function dismissEcoScreen() { if (!ecoVisible) return; ecoVisible = false; ecoScreen.classList.remove('visible'); document.body.style.overflow = ''; resetIdleTimer(); }
+    function resetIdleTimer() { clearTimeout(idleTimer); if (!ecoVisible) idleTimer = setTimeout(showEcoScreen, IDLE_TIMEOUT); }
+    ['mousemove','mousedown','keydown','scroll','touchstart','wheel','click'].forEach(evt => {
+        document.addEventListener(evt, () => { if (!ecoVisible) resetIdleTimer(); }, { passive: true });
+    });
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) { idleTimer = setTimeout(showEcoScreen, 30000); }
+        else { clearTimeout(idleTimer); if (ecoVisible) dismissEcoScreen(); else resetIdleTimer(); }
+    });
+    resetIdleTimer();
 
     // ── HERO VIDEO SWITCHER ──
     const heroVideos = document.querySelectorAll('.hero-video');
     const vdots = document.querySelectorAll('.vdot');
-    let currentVideo = 0;
-    let videoInterval;
-
+    let currentVideo = 0, videoInterval;
     function switchVideo(idx) {
-        heroVideos[currentVideo].classList.remove('active');
-        vdots[currentVideo].classList.remove('active');
-        heroVideos[currentVideo].pause();
-        currentVideo = idx;
-        heroVideos[currentVideo].classList.add('active');
-        vdots[currentVideo].classList.add('active');
-        heroVideos[currentVideo].play();
+        heroVideos[currentVideo].classList.remove('active'); vdots[currentVideo].classList.remove('active'); heroVideos[currentVideo].pause();
+        currentVideo = idx; heroVideos[currentVideo].classList.add('active'); vdots[currentVideo].classList.add('active'); heroVideos[currentVideo].play();
     }
     function nextVideo() { switchVideo((currentVideo + 1) % heroVideos.length); }
-
-    vdots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            clearInterval(videoInterval);
-            switchVideo(parseInt(dot.dataset.idx));
-            videoInterval = setInterval(nextVideo, 8000);
-        });
-    });
+    vdots.forEach(dot => { dot.addEventListener('click', () => { clearInterval(videoInterval); switchVideo(parseInt(dot.dataset.idx)); videoInterval = setInterval(nextVideo, 8000); }); });
     videoInterval = setInterval(nextVideo, 8000);
 
     // ── HAMBURGER ──
     const hamburger = document.getElementById('hamburger');
     const mobileNav = document.getElementById('mobileNav');
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('open');
-        mobileNav.classList.toggle('open');
-        document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
-    });
-    function closeMobileNav() {
-        hamburger.classList.remove('open');
-        mobileNav.classList.remove('open');
-        document.body.style.overflow = '';
-    }
+    hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileNav.classList.toggle('open'); document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : ''; });
+    function closeMobileNav() { hamburger.classList.remove('open'); mobileNav.classList.remove('open'); document.body.style.overflow = ''; }
 
     // ── SCROLL REVEAL ──
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); }
-        });
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); } });
     }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
     reveals.forEach(el => observer.observe(el));
 
@@ -1425,16 +1722,25 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             const target = btn.dataset.tab;
-            document.querySelectorAll('.tab-content').forEach(c => {
-                c.classList.remove('active');
-                if (c.id === 'tab-' + target) c.classList.add('active');
-            });
-            document.querySelectorAll('#tab-' + target + ' .reveal').forEach(el => {
-                el.classList.remove('active');
-                setTimeout(() => observer.observe(el), 50);
-            });
+            document.querySelectorAll('.tab-content').forEach(c => { c.classList.remove('active'); if (c.id === 'tab-' + target) c.classList.add('active'); });
+            document.querySelectorAll('#tab-' + target + ' .reveal').forEach(el => { el.classList.remove('active'); setTimeout(() => observer.observe(el), 50); });
         });
     });
+
+    // ── SHOW MORE (button selalu di bawah karena ada di dalam grid setelah menu-extra) ──
+    function toggleMore(tab) {
+        const extra = document.getElementById('extra-' + tab);
+        const btn = document.querySelector('.t-btn-more-' + tab);
+        if (!extra) return;
+        extra.classList.toggle('show');
+        const isOpen = extra.classList.contains('show');
+        btn.textContent = isOpen
+            ? (currentLang === 'id' ? 'Tutup ▲' : 'Show Less ▲')
+            : (currentLang === 'id' ? 'Lihat Menu Lainnya ▼' : 'Show More ▼');
+        if (isOpen) {
+            extra.querySelectorAll('.reveal').forEach(el => { el.classList.remove('active'); setTimeout(() => observer.observe(el), 50); });
+        }
+    }
 
     // ── LANGUAGE ──
     let currentLang = 'id';
@@ -1444,22 +1750,32 @@
             't-nav-home': 'Beranda', 't-nav-about': 'Tentang', 't-nav-menu': 'Menu',
             't-nav-galeri': 'Galeri', 't-nav-lokasi': 'Lokasi',
             't-topbar': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Bondowoso, Jawa Timur \u2014 Buka di Maps',
-            't-hero-eyebrow': 'Bondowoso, Jawa Timur',
+            't-hero-eyebrow': 'Warkop Mawar \u2014 Bondowoso',
             't-hero-title': 'Seduhan Jujur,<br>Harga <em>Saudara</em>.',
             't-hero-desc': 'Nongkrong industrial-cozy di Bondowoso. Kopi mantap, suasana adem oren-abu, bikin betah dari senja sampe malam.',
             't-hero-btn': 'Lihat Menu', 't-hero-ghost': 'Tentang Kami',
             't-stat-1': 'Item Menu', 't-stat-2': 'Mulai Dari', 't-stat-3': 'Betah Nongkrong', 't-stat-4': 'Spot Terbaik',
             't-about-eyebrow': 'Cerita Kami', 't-about-title': 'Tentang<br>Warkop <em>Mawar</em>',
-            't-about-p1': 'Warkop Mawar memadukan <strong>konsep minimalis abu-abu industrial</strong> dengan kehangatan warna oren yang homey. Tempat paling pas di Bondowoso buat nemenin waktu santai lu.',
-            't-about-p2': 'Kami percaya <strong>kopi enak ga harus mahal</strong>. Seduhan kami jujur, harganya saudara. Cek juga mawar cantik kami di area kasir, sentuhan kecil buat hari lu.',
-            't-feat-1': 'Kopi Pilihan', 't-feat-2': 'Harga Ramah', 't-feat-3': 'Suasana Cozy', 't-feat-4': 'Open Late',
+            't-about-p1': 'Warkop Mawar lahir dari keyakinan sederhana \u2014 <strong>kopi yang enak seharusnya bisa dinikmati semua orang</strong>, tanpa perlu merogoh kantong dalam-dalam.',
+            't-about-p2': 'Kami adalah tempat di mana <strong>ide-ide besar lahir, cerita lama dikenang</strong>, dan sore hari terasa lebih panjang. Dengan konsep industrial abu-abu yang dibalut kehangatan warna oren.',
+            't-pullquote': 'Seduhan jujur,<br>untuk hati yang <em>lapar</em><br>dan jiwa yang<br><em>lelah.</em>',
+            't-pullquote-attr': 'Warkop Mawar, Bondowoso',
+            't-values-eyebrow': 'Kenapa Kami', 't-values-title': 'Yang Bikin <em>Kami</em><br>Berbeda',
+            't-val-1-title': 'Kopi Pilihan', 't-val-1-desc': 'Biji kopi dipilih dengan teliti untuk menghadirkan cita rasa terbaik di setiap cangkir.',
+            't-val-2-title': 'Harga Ramah', 't-val-2-desc': 'Mulai dari Rp5.000, semua kalangan bisa menikmati kopi enak tanpa was-was soal dompet.',
+            't-val-3-title': 'Suasana Cozy', 't-val-3-desc': 'Industrial minimalis abu-abu bertemu oren hangat. Cocok buat kerja, ngobrol, atau sekadar diam.',
+            't-val-4-title': 'Open Late', 't-val-4-desc': 'Buka sampai tengah malam, Warkop Mawar setia menemani malam panjangmu setiap hari.',
+            't-story-label': 'Lebih Dari Sekadar Kopi',
+            't-story-title': 'Kami Ada untuk<br><em>Momen</em> Terbaik<br>Kamu',
+            't-story-body': 'Dari satu cangkir kopi susu pagi hari, hingga obrolan seru tengah malam \u2014 Warkop Mawar hadir untuk semua momen. Cek juga <strong>mawar cantik di area kasir</strong>, sentuhan kecil yang jadi kebanggaan kami.',
+            't-story-body2': 'Kami juga melayani <strong>coffee booth untuk acara pernikahan & event</strong>. Bawa suasana kopi terbaik ke momen spesialmu.',
             't-galeri-eyebrow': 'Suasana Kami', 't-galeri-title': 'Galeri <em>Mawar</em>',
-            't-galeri-desc': 'Intip suasana Warkop Mawar \u2014 dari sudut favorit sampai momen seru pelanggan. Foto-foto di bawah ini bakal segera diupdate!',
+            't-galeri-desc': 'Intip suasana Warkop Mawar \u2014 dari sudut favorit sampai momen seru pelanggan.',
             't-menu-eyebrow': 'Pilihan Kami', 't-menu-title': 'Menu <em>Andalan</em><br>Kami',
             't-tab-minuman': '\u2615 Minuman', 't-tab-makanan': '\uD83C\uDF5B Makanan',
             't-tag-bestseller': 'Best Seller',
             't-menu-1': 'Es Kopi Susu Aren', 't-desc-1': 'Perpaduan espresso, susu segar, dan manisnya gula aren.',
-            't-menu-2': 'Kopi Hitam Mawar', 't-desc-2': 'Racikan murni, aroma khas, nendang buat melek semalaman.',
+            't-menu-2': 'Americano Orange', 't-desc-2': 'Racikan murni, aroma khas, nendang buat melek semalaman.',
             't-menu-3': 'Nasi Ayam Saus Mawar', 't-desc-3': 'Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.',
             't-menu-4': 'Mie Rebus Spesial', 't-desc-4': 'Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.',
             't-menu-5': 'Tempe Mendoan + Sambal', 't-desc-5': 'Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.',
@@ -1470,36 +1786,55 @@
             't-menu-10': 'Americano', 't-desc-10': 'Espresso dilute air dingin, bold dan clean.',
             't-menu-11': 'Nasi Ayam Hitam', 't-desc-11': 'Ayam dengan saus gelap gurih yang bikin nambah terus.',
             't-menu-12': 'Nasi Ayam Geprek', 't-desc-12': 'Geprek pedas menggoda, cocok banget sambil teguk kopi.',
+            't-menu-22': 'Mie Goreng Spesial', 't-desc-22': 'Mie goreng dengan bumbu racikan, telur mata sapi, dan sayur segar.',
+            't-menu-23': 'Soto Ayam Mawar', 't-desc-23': 'Kuah bening kaya rempah dengan ayam suwir, tauge, dan perasan jeruk.',
+            't-menu-24': 'Nasi Goreng Mawar', 't-desc-24': 'Nasi goreng bumbu rahasia khas warkop, harum dan bikin nagih.',
+            't-menu-25': 'Bakso Kuah', 't-desc-25': 'Bakso segar dengan kuah kaldu gurih, cocok banget buat malam-malam.',
+            't-btn-more-minuman': 'Lihat Menu Lainnya \u25bc',
+            't-btn-more-makanan': 'Lihat Menu Lainnya \u25bc',
             't-lokasi-eyebrow': 'Temukan Kami', 't-lokasi-title': 'Lokasi <em>Kami</em>',
             't-lokasi-address': '<strong>Warkop Mawar</strong> berlokasi di Bondowoso, Jawa Timur. Gampang dijangkau, parkir luas, dan tempatnya adem buat nongkrong dari sore sampe malam.',
-            't-lokasi-hours-title': 'Jam Buka',
-            't-lokasi-day1': 'Senin \u2013 Sabtu', 't-lokasi-day2': 'Minggu',
+            't-lokasi-hours-title': 'Jam Buka', 't-lokasi-day1': 'Everyday',
             't-lokasi-btn': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Buka Google Maps',
             't-footer-tagline': 'Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.',
-            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Dibuat oleh Nanda.',
+            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Dibuat oleh Tama.',
             't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
+            't-eco-brand': 'Warkop <span>Mawar</span>',
+            't-eco-headline': 'Hargai lingkungan dengan tindakan sederhana',
+            't-eco-body': 'Ketika perangkat kamu sedang tidak digunakan atau kamu sedang menelusuri laman lain, tampilan layar ini akan muncul sehingga dapat mengurangi daya yang digunakan.',
+            't-eco-cta': 'Klik di mana saja untuk melanjutkan',
         },
         en: {
             't-preloader': 'Warkop Mawar',
             't-nav-home': 'Home', 't-nav-about': 'About', 't-nav-menu': 'Menu',
             't-nav-galeri': 'Gallery', 't-nav-lokasi': 'Location',
             't-topbar': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Bondowoso, East Java \u2014 Open in Maps',
-            't-hero-eyebrow': 'Bondowoso, East Java',
+            't-hero-eyebrow': 'Warkop Mawar \u2014 Bondowoso',
             't-hero-title': 'Honest Brew,<br>Friendly <em>Prices</em>.',
             't-hero-desc': 'Cozy industrial hangout in Bondowoso. Great coffee, warm orange-grey vibes, perfect from dusk till night.',
             't-hero-btn': 'View Menu', 't-hero-ghost': 'About Us',
             't-stat-1': 'Menu Items', 't-stat-2': 'Starting From', 't-stat-3': 'Stay All Night', 't-stat-4': 'Best Spot',
             't-about-eyebrow': 'Our Story', 't-about-title': 'About<br>Warkop <em>Mawar</em>',
-            't-about-p1': 'Warkop Mawar blends <strong>industrial minimalist grey</strong> with warm homey orange vibes. The perfect spot in Bondowoso to unwind.',
-            't-about-p2': 'We believe <strong>good coffee doesn\'t need to be expensive</strong>. Honest brew, friendly prices. Check our beautiful roses at the cashier too.',
-            't-feat-1': 'Quality Coffee', 't-feat-2': 'Friendly Price', 't-feat-3': 'Cozy Vibes', 't-feat-4': 'Open Late',
+            't-about-p1': 'Warkop Mawar was born from a simple belief \u2014 <strong>good coffee should be enjoyed by everyone</strong>, without breaking the bank.',
+            't-about-p2': 'We are a place where <strong>big ideas are born, old stories are remembered</strong>, and afternoons feel longer. With an industrial grey concept wrapped in warm orange tones.',
+            't-pullquote': 'Honest brew,<br>for hearts that are <em>hungry</em><br>and souls that are<br><em>tired.</em>',
+            't-pullquote-attr': 'Warkop Mawar, Bondowoso',
+            't-values-eyebrow': 'Why Us', 't-values-title': 'What Makes <em>Us</em><br>Different',
+            't-val-1-title': 'Quality Coffee', 't-val-1-desc': 'Coffee beans carefully selected to deliver the best flavor in every cup.',
+            't-val-2-title': 'Friendly Price', 't-val-2-desc': 'Starting from Rp5,000, everyone can enjoy great coffee without worrying about their wallet.',
+            't-val-3-title': 'Cozy Vibes', 't-val-3-desc': 'Industrial minimalist grey meets warm orange. Perfect for working, chatting, or just being quiet.',
+            't-val-4-title': 'Open Late', 't-val-4-desc': 'Open until midnight, Warkop Mawar faithfully accompanies your long nights every day.',
+            't-story-label': 'More Than Just Coffee',
+            't-story-title': 'We\'re Here for<br>Your Best <em>Moments</em>',
+            't-story-body': 'From a cup of morning coffee latte to late-night conversations \u2014 Warkop Mawar is here for all moments. Check out our <strong>beautiful roses at the cashier</strong>, a small touch we\'re proud of.',
+            't-story-body2': 'We also offer <strong>coffee booths for weddings & events</strong>. Bring the best coffee atmosphere to your special moments.',
             't-galeri-eyebrow': 'Our Vibes', 't-galeri-title': 'Mawar <em>Gallery</em>',
-            't-galeri-desc': 'Peek into the Warkop Mawar atmosphere \u2014 from favorite corners to fun customer moments. Photos below will be updated soon!',
+            't-galeri-desc': 'Peek into the Warkop Mawar atmosphere \u2014 from favorite corners to fun customer moments.',
             't-menu-eyebrow': 'Our Picks', 't-menu-title': 'Our <em>Best</em><br>Sellers',
             't-tab-minuman': '\u2615 Drinks', 't-tab-makanan': '\uD83C\uDF5B Food',
             't-tag-bestseller': 'Best Seller',
             't-menu-1': 'Iced Palm Sugar Latte', 't-desc-1': 'A mix of espresso, fresh milk, and creamy palm sugar.',
-            't-menu-2': 'Black Coffee Rose', 't-desc-2': 'Pure blend, signature aroma, kicks hard to keep you awake.',
+            't-menu-2': 'Americano Orange', 't-desc-2': 'Pure blend, signature aroma, kicks hard to keep you awake.',
             't-menu-3': 'Signature Chicken Rice', 't-desc-3': 'Warm rice with crispy chicken coated in our secret sauce.',
             't-menu-4': 'Special Boiled Noodles', 't-desc-4': 'The highest tier of instant noodles with rich broth and toppings.',
             't-menu-5': 'Fried Tempeh & Sambal', 't-desc-5': 'Freshly fried, best served warm with sweet and spicy soy dip.',
@@ -1510,14 +1845,23 @@
             't-menu-10': 'Americano', 't-desc-10': 'Espresso diluted with cold water, bold and clean.',
             't-menu-11': 'Black Sauce Chicken Rice', 't-desc-11': 'Chicken in rich dark savory sauce that keeps you coming back.',
             't-menu-12': 'Smashed Chicken Rice', 't-desc-12': 'Spicy smashed chicken \u2014 perfect alongside your coffee.',
+            't-menu-22': 'Special Fried Noodles', 't-desc-22': 'Fried noodles with house seasoning, sunny-side egg, and fresh greens.',
+            't-menu-23': 'Mawar Chicken Soto', 't-desc-23': 'Clear broth rich in spices with shredded chicken, bean sprouts, and citrus.',
+            't-menu-24': 'Mawar Fried Rice', 't-desc-24': 'Signature fried rice with the warkop\'s secret blend, aromatic and addictive.',
+            't-menu-25': 'Meatball Soup', 't-desc-25': 'Fresh meatballs in rich savory broth, perfect for late-night cravings.',
+            't-btn-more-minuman': 'Show More \u25bc',
+            't-btn-more-makanan': 'Show More \u25bc',
             't-lokasi-eyebrow': 'Find Us', 't-lokasi-title': 'Our <em>Location</em>',
-            't-lokasi-address': '<strong>Warkop Mawar</strong> is located in Bondowoso, East Java. Easy to reach, spacious parking, and the perfect cozy spot to hang out from afternoon till night.',
-            't-lokasi-hours-title': 'Opening Hours',
-            't-lokasi-day1': 'Mon \u2013 Sat', 't-lokasi-day2': 'Sunday',
+            't-lokasi-address': '<strong>Warkop Mawar</strong> is located in Bondowoso, East Java. Easy to reach, spacious parking, and the perfect cozy spot from afternoon till night.',
+            't-lokasi-hours-title': 'Opening Hours', 't-lokasi-day1': 'Everyday',
             't-lokasi-btn': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Open Google Maps',
             't-footer-tagline': 'Honest brew for everyone. The best hangout spot in Bondowoso.',
-            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Built by Nanda.',
+            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Built by Tama.',
             't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
+            't-eco-brand': 'Warkop <span>Mawar</span>',
+            't-eco-headline': 'Care for the environment with simple actions',
+            't-eco-body': 'When your device is idle or you\'re browsing other tabs, this screen will appear to help reduce power usage.',
+            't-eco-cta': 'Click anywhere to continue',
         }
     };
 
@@ -1533,7 +1877,6 @@
             });
         }, 400);
     }
-
     function toggleLang() {
         currentLang = currentLang === 'id' ? 'en' : 'id';
         const label = currentLang === 'id' ? 'EN' : 'ID';
@@ -1550,5 +1893,234 @@
         header.style.boxShadow = window.scrollY > 60 ? '0 2px 24px rgba(26,15,8,0.08)' : 'none';
     });
     </script>
+
+<!-- ══════════════════════════════════════════════════════════
+     3. JS — CART FEATURE
+     ══════════════════════════════════════════════════════════ -->
+<script id="CART_JS_PASTE_BEFORE_SCRIPT_CLOSING">
+
+// ── CART STATE ──
+let cart = []; // [{name, price, qty, img}]
+let cartOpen = false;
+let toastTimer = null;
+
+const WA_NUMBER = '62822440195960'; // 082244019596 → format internasional tanpa +
+
+// ── CART TOGGLE ──
+function toggleCart() {
+    cartOpen = !cartOpen;
+    document.getElementById('cartDrawer').classList.toggle('open', cartOpen);
+    document.getElementById('cartOverlay').classList.toggle('open', cartOpen);
+    document.body.style.overflow = cartOpen ? 'hidden' : '';
+}
+document.getElementById('cartFab').addEventListener('click', toggleCart);
+document.getElementById('cartCloseBtn').addEventListener('click', toggleCart);
+document.getElementById('cartOverlay').addEventListener('click', toggleCart);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && cartOpen) toggleCart(); });
+
+// ── ADD TO CART ──
+function addToCart(name, price, img) {
+    const existing = cart.find(i => i.name === name);
+    if (existing) {
+        existing.qty++;
+    } else {
+        cart.push({ name, price, qty: 1, img });
+    }
+    renderCart();
+    showToast(name);
+    animateFab();
+}
+
+// ── UPDATE QTY ──
+function updateQty(name, delta) {
+    const idx = cart.findIndex(i => i.name === name);
+    if (idx === -1) return;
+    cart[idx].qty += delta;
+    if (cart[idx].qty <= 0) cart.splice(idx, 1);
+    renderCart();
+}
+
+// ── REMOVE ITEM ──
+function removeCartItem(name) {
+    cart = cart.filter(i => i.name !== name);
+    renderCart();
+}
+
+// ── RENDER CART ──
+function renderCart() {
+    const totalItems = cart.reduce((s, i) => s + i.qty, 0);
+    const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+    // Badge
+    const badge = document.getElementById('cartBadge');
+    badge.textContent = totalItems;
+    badge.classList.toggle('show', totalItems > 0);
+
+    // Empty vs filled
+    const isEmpty = cart.length === 0;
+    document.getElementById('cartEmpty').style.display = isEmpty ? 'flex' : 'none';
+    document.getElementById('cartItemsList').style.display = isEmpty ? 'none' : 'block';
+    document.getElementById('cartFooter').style.display = isEmpty ? 'none' : 'block';
+
+    if (!isEmpty) {
+        // Render items
+        const listEl = document.getElementById('cartItemsList');
+        listEl.innerHTML = cart.map(item => `
+            <div class="cart-item-row">
+                <img class="cart-item-img"
+                     src="${item.img}"
+                     alt="${item.name}"
+                     onerror="this.style.background='rgba(232,98,42,0.1)';this.src=''">
+                <div class="cart-item-info">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price">${formatRp(item.price)}</div>
+                    <div class="cart-item-subtotal">Subtotal: ${formatRp(item.price * item.qty)}</div>
+                </div>
+                <div class="cart-qty-wrap">
+                    <div class="qty-controls">
+                        <button class="qty-btn minus" onclick="updateQty('${escapeAttr(item.name)}', -1)">−</button>
+                        <span class="qty-num">${item.qty}</span>
+                        <button class="qty-btn" onclick="updateQty('${escapeAttr(item.name)}', 1)">+</button>
+                    </div>
+                    <button class="cart-delete-btn" onclick="removeCartItem('${escapeAttr(item.name)}')" title="Hapus">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        // Total
+        document.getElementById('cartTotalNum').textContent = totalPrice.toLocaleString('id-ID');
+        document.getElementById('cartItemCountLabel').textContent =
+            `${totalItems} item · ${cart.length} jenis`;
+
+        // Disable order buttons if empty (safety)
+        const disabled = totalItems === 0;
+        ['btnOrderWa','btnOrderGrab','btnOrderShopee'].forEach(id => {
+            document.getElementById(id).disabled = disabled;
+        });
+    }
+}
+
+// ── FORMAT HELPERS ──
+function formatRp(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
+function escapeAttr(s) { return s.replace(/'/g, "\\'"); }
+
+// ── TOAST ──
+function showToast(name) {
+    const t = document.getElementById('cartToast');
+    document.getElementById('cartToastName').textContent = name;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── FAB ANIMATE ──
+function animateFab() {
+    const b = document.getElementById('cartBadge');
+    b.classList.remove('pop');
+    void b.offsetWidth;
+    b.classList.add('pop');
+}
+
+// ── ORDER VIA WHATSAPP ──
+document.getElementById('btnOrderWa').addEventListener('click', function() {
+    if (cart.length === 0) return;
+    const note = document.getElementById('cartNote').value.trim();
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const itemLines = cart.map(i =>
+        `• ${i.name} x${i.qty} = ${formatRp(i.price * i.qty)}`
+    ).join('\n');
+    const msg = [
+        '🌹 *Halo Warkop Mawar!*',
+        '',
+        'Saya mau pesan:',
+        itemLines,
+        '',
+        `*Total: ${formatRp(total)}*`,
+        note ? `\nCatatan: ${note}` : '',
+        '',
+        '_(Pesanan via Website Warkop Mawar)_'
+    ].join('\n');
+    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+});
+
+// ── ORDER VIA GRABFOOD ──
+document.getElementById('btnOrderGrab').addEventListener('click', function() {
+    // Ganti URL ini dengan link toko GrabFood Warkop Mawar
+    window.open('https://food.grab.com/id/en/', '_blank');
+    // Tampilkan info jika belum ada toko
+    showExternalOrderInfo('GrabFood');
+});
+
+// ── ORDER VIA SHOPEEFOOD ──
+document.getElementById('btnOrderShopee').addEventListener('click', function() {
+    // Ganti URL ini dengan link toko ShopeeFood Warkop Mawar
+    window.open('https://shopee.co.id/food', '_blank');
+    showExternalOrderInfo('ShopeeFood');
+});
+
+function showExternalOrderInfo(platform) {
+    const t = document.getElementById('cartToast');
+    document.getElementById('cartToastName').textContent = `Membuka ${platform}...`;
+    const icon = document.querySelector('.cart-toast-icon');
+    if (icon) icon.textContent = platform === 'GrabFood' ? '🟢' : '🟠';
+    const textEl = document.querySelector('.cart-toast-text');
+    if (textEl) {
+        const firstNode = textEl.firstChild;
+        if (firstNode && firstNode.nodeType === 3) firstNode.nodeValue = 'Diarahkan ke ';
+    }
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+        t.classList.remove('show');
+        // Reset toast icon
+        setTimeout(() => {
+            if (icon) icon.textContent = '🛒';
+            if (textEl && textEl.firstChild && textEl.firstChild.nodeType === 3)
+                textEl.firstChild.nodeValue = 'Ditambahkan ke keranjang';
+        }, 400);
+    }, 2800);
+}
+
+// ── HOOK ADD BUTTONS (event delegation on menu grids) ──
+// Fungsi ini menghubungkan tombol + di setiap menu card ke keranjang
+function initCartButtons() {
+    document.querySelectorAll('.add-btn').forEach(btn => {
+        // Hapus listener lama (kalau ada)
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        newBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const card = this.closest('.menu-card');
+            if (!card) return;
+            const name  = card.querySelector('.menu-card-name')?.textContent?.trim() || 'Menu';
+            const priceText = card.querySelector('.menu-card-price')?.textContent || '0';
+            const price = parseInt(priceText.replace(/[^0-9]/g, '')) || 0;
+            // Ambil src gambar dari img.menu-img
+            const imgEl = card.querySelector('.menu-img');
+            const img   = imgEl ? imgEl.src : '';
+            addToCart(name, price, img);
+        });
+    });
+}
+
+// Init saat halaman load
+initCartButtons();
+
+// Re-init saat tab menu diganti (karena menu-extra bisa baru muncul)
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => setTimeout(initCartButtons, 100));
+});
+
+// Re-init saat show more diklik
+const origToggleMore = window.toggleMore;
+window.toggleMore = function(tab) {
+    origToggleMore(tab);
+    setTimeout(initCartButtons, 100);
+};
+
+</script>
 </body>
 </html>
