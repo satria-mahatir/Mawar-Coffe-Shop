@@ -67,14 +67,11 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
   <title>Kelola Menu | Admin Mawar</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  <?php include 'includes/header.php'; ?>
   <!-- DataTables CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap4.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* Styling Tombol Export DataTables */
     .dt-buttons .btn {

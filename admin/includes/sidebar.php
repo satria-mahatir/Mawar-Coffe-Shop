@@ -1,7 +1,13 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #1A0F08;">
-    <a href="index.php" class="brand-link" style="border-bottom: 1px solid #E8622A;">
-        <span class="brand-text font-weight-light" style="color: #E8622A; font-weight: bold;">Admin Mawar</span>
-    </a>
+    <!-- Logo Brand Section -->
+    <div class="sidebar-brand">
+        <a href="index.php" class="brand-full">
+            <img src="../images/logo-mawar.png" alt="Warkop Mawar Logo">
+        </a>
+        <a href="index.php" class="brand-icon">
+            <img src="../images/favicon-32x32.png" alt="Mawar Icon">
+        </a>
+    </div>
 
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex" style="border-bottom: 1px solid #E8622A;">
