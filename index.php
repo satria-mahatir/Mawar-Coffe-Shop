@@ -1,3 +1,17 @@
+<?php
+include 'koneksi.php';
+
+$q_minuman = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='minuman' ORDER BY id_menu DESC");
+
+$q_makanan = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='makanan' ORDER BY id_menu DESC");
+
+$q_galeri = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC LIMIT 9");
+
+$tentang = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE id=1"));
+
+$pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE id=1"));
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1060,6 +1074,65 @@
             .platform-btn-label { display: none; }
             .platform-btn-tooltip { display: none; }
         }
+        /* Hilangin bar biru/abu Google di atas */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
+        /* ─── BUNUH SEMUA ELEMEN VISUAL GOOGLE TRANSLATE SECARA TOTAL ─── */
+        .goog-te-gadget,
+        .goog-te-banner-frame,
+        .goog-te-balloon-frame,
+        .skiptranslate,
+        .goog-te-menu-frame,
+        .goog-te-menu2,
+        .goog-te-gadget-icon,
+        .goog-te-spinner,
+        .goog-te-spinner-pos,
+        #goog-gt-tt,
+        iframe[class*="goog"],
+        div[class*="goog-te"],
+        img[class*="goog"],
+        *[class*="goog-te"],
+        #\3a 1\.container, 
+        #\3a 2\.container {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            position: absolute !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            overflow: hidden !important;
+        }
+
+        /* Hilangkan highlight teks terjemahan */
+        .goog-text-highlight {
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        /* Reset body yang sering diganggu Google */
+        body {
+            top: 0px !important;
+            position: static !important;
+        }
+
+        .hidden-translate-container {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            visibility: hidden;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -1120,16 +1193,16 @@
         </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="#home" class="t-nav-home">Beranda</a></li>
+                <li><a href="index.php" class="t-nav-home">Beranda</a></li>
                 <li><a href="#about" class="t-nav-about">Tentang</a></li>
                 <li><a href="#galeri" class="t-nav-galeri">Galeri</a></li>
                 <li><a href="#menu" class="t-nav-menu">Menu</a></li>
                 <li><a href="#lokasi" class="t-nav-lokasi">Lokasi</a></li>
             </ul>
             <div class="controls">
-                <button id="langBtn" class="icon-btn">EN</button>
-                <button id="themeBtn" class="icon-btn">🌙</button>
-                <button class="hamburger" id="hamburger" aria-label="Menu">
+                <button id="langBtn" class="icon-btn" translate="no">EN</button>
+                <button id="themeBtn" class="icon-btn" translate="no">🌙</button>
+                <button class="hamburger" id="hamburger" aria-label="Menu" translate="no">
                     <span></span><span></span><span></span>
                 </button>
             </div>
@@ -1138,14 +1211,14 @@
 
     <!-- MOBILE NAV -->
     <div class="mobile-nav" id="mobileNav">
-        <a href="#home" class="t-nav-home" onclick="closeMobileNav()">Beranda</a>
+        <a href="index.php" class="t-nav-home" onclick="closeMobileNav()">Beranda</a>
         <a href="#about" class="t-nav-about" onclick="closeMobileNav()">Tentang</a>
         <a href="#galeri" class="t-nav-galeri" onclick="closeMobileNav()">Galeri</a>
         <a href="#menu" class="t-nav-menu" onclick="closeMobileNav()">Menu</a>
         <a href="#lokasi" class="t-nav-lokasi" onclick="closeMobileNav()">Lokasi</a>
         <div class="mobile-controls">
-            <button id="langBtnM" class="icon-btn">EN</button>
-            <button id="themeBtnM" class="icon-btn">🌙</button>
+                <button id="langBtnM" class="icon-btn" translate="no">EN</button>
+            <button id="themeBtnM" class="icon-btn" translate="no">🌙</button>
         </div>
     </div>
 
@@ -1213,15 +1286,18 @@
             </div>
         </div>
 
+        <!-- BAGIAN QUOTE & FOTO UTAMA (DINAMIS) -->
         <div class="about-photo-row">
             <div class="about-photo-main reveal">
-                <img src="images/footage-tentang-1.webp" alt="Warkop Mawar Interior">
+                <!-- Foto ditarik dari database kolom foto_utama -->
+                <img src="images/<?= $tentang['foto_utama']; ?>" alt="Warkop Mawar Interior">
                 <div class="about-photo-overlay"></div>
             </div>
             <div class="about-pullquote">
                 <span class="pullquote-mark">"</span>
-                <p class="pullquote-text t-pullquote">Seduhan jujur,<br>untuk hati yang <em>lapar</em><br>dan jiwa yang<br><em>lelah.</em></p>
-                <div class="pullquote-attr t-pullquote-attr">Warkop Mawar, Bondowoso</div>
+                <!-- Teks ditarik dari database kolom quote_text -->
+                <p class="pullquote-text"><?= nl2br($tentang['quote_text']); ?></p>
+                <div class="pullquote-attr">Warkop Mawar, Bondowoso</div>
             </div>
         </div>
 
@@ -1261,17 +1337,21 @@
                 <p class="story-body t-story-body">Dari satu cangkir kopi susu pagi hari, hingga obrolan seru tengah malam — Warkop Mawar hadir untuk semua momen. Cek juga <strong>mawar cantik di area kasir</strong>, sentuhan kecil yang jadi kebanggaan kami.</p>
                 <p class="story-body t-story-body2" style="margin-top:-4px;">Kami juga melayani <strong>coffee booth untuk acara pernikahan & event</strong>. Bawa suasana kopi terbaik ke momen spesialmu.</p>
             </div>
+            <!-- BAGIAN 3 FOTO MOMEN (DINAMIS) -->
             <div class="story-photos reveal" style="transition-delay:0.1s">
-                <div class="sp-img" onclick="openLightbox('images/footage-tentang-2.webp','Good Story · Warkop Mawar')">
-                    <img src="images/footage-tentang-2.webp" alt="Suasana Warkop Mawar">
+                <!-- Foto 1 -->
+                <div class="sp-img" onclick="openLightbox('images/<?= $tentang['foto_1']; ?>','Momen 1 · Warkop Mawar')">
+                    <img src="images/<?= $tentang['foto_1']; ?>" alt="Suasana Warkop Mawar">
                     <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
-                <div class="sp-img" onclick="openLightbox('images/visi-misi-tentang.webp','Visi & Misi · Warkop Mawar')">
-                    <img src="images/visi-misi-tentang.webp" alt="Visi Misi">
+                <!-- Foto 2 -->
+                <div class="sp-img" onclick="openLightbox('images/<?= $tentang['foto_2']; ?>','Momen 2 · Warkop Mawar')">
+                    <img src="images/<?= $tentang['foto_2']; ?>" alt="Visi Misi">
                     <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
-                <div class="sp-img" onclick="openLightbox('images/tanget-pasar-tentang.webp','Target Pasar · Warkop Mawar')">
-                    <img src="images/tanget-pasar-tentang.webp" alt="Target Pasar">
+                <!-- Foto 3 -->
+                <div class="sp-img" onclick="openLightbox('images/<?= $tentang['foto_3']; ?>','Momen 3 · Warkop Mawar')">
+                    <img src="images/<?= $tentang['foto_3']; ?>" alt="Target Pasar">
                     <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
             </div>
@@ -1335,28 +1415,36 @@
         </div>
     </div>
 
-    <!-- GALERI MASONRY -->
+    <!-- GALERI MASONRY (Udah Diperbaiki) -->
     <section id="galeri">
         <div class="galeri-header reveal">
             <div>
                 <div class="section-eyebrow t-galeri-eyebrow">Suasana Kami</div>
-                <h2 class="section-title t-galeri-title">Galeri <em>Mawar</em></h2>
+                <h2 class="section-title t-galeri-title text-fade">Galeri <em>Mawar</em></h2>
             </div>
             <div class="galeri-header-right">
-                <div class="galeri-count">9</div>
-                <p class="galeri-desc t-galeri-desc">Intip suasana Warkop Mawar — dari sudut favorit sampai momen seru pelanggan.</p>
+                <p class="galeri-desc t-galeri-desc text-fade">Intip suasana Warkop Mawar — dari sudut favorit sampai momen seru pelanggan.</p>
+                <div class="galeri-count t-galeri-count">
+                    <!-- Menghitung otomatis ada berapa foto di database -->
+                    <?= mysqli_num_rows($q_galeri); ?>+
+                </div>
             </div>
         </div>
+
         <div class="galeri-masonry">
-            <div class="gm-item reveal"><img src="images/footage-galeri-1.webp" alt="Interior Warkop Mawar"><div class="gm-caption"><span class="gm-caption-text">Interior · Mawar</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.15s"><img src="images/footage-galeri-2.webp" alt="Kopi"><div class="gm-caption"><span class="gm-caption-text">Kopi Mawar</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.2s"><img src="images/footage-galeri-3.webp" alt="Nongkrong"><div class="gm-caption"><span class="gm-caption-text">Nongkrong</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.2s"><img src="images/wedding-coffe-booth-2.webp" alt="Event"><div class="gm-caption"><span class="gm-caption-text">Coffee Booth</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.15s"><img src="images/poster-mading-1.webp" alt="Poster"><div class="gm-caption"><span class="gm-caption-text">Poster Mawar</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.25s"><img src="images/poster-mading-2.webp" alt="Mading"><div class="gm-caption"><span class="gm-caption-text">Mading</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.1s"><img src="images/poster-mading-3.webp" alt="Info"><div class="gm-caption"><span class="gm-caption-text">Info Warkop</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.2s"><img src="images/poster-mading-4.webp" alt="Event"><div class="gm-caption"><span class="gm-caption-text">Event Poster</span></div></div>
-            <div class="gm-item reveal" style="transition-delay:0.15s"><img src="images/minuman-1bg.webp" alt="Minuman"><div class="gm-caption"><span class="gm-caption-text">Signature Drink</span></div></div>
+            <?php 
+            // Kita reset cursor databasenya biar loopingnya aman
+            mysqli_data_seek($q_galeri, 0); 
+            while($g = mysqli_fetch_assoc($q_galeri)) { 
+            ?>
+                <!-- Tambahin onclick biar fotonya bisa di-klik & muncul gede (Lightbox) -->
+                <div class="gm-item reveal" onclick="openLightbox('images/<?= $g['gambar']; ?>','<?= $g['judul']; ?>')">
+                    <img src="images/<?= $g['gambar']; ?>" alt="<?= $g['judul']; ?>">
+                    <div class="gm-caption">
+                        <span class="gm-caption-text"><?= $g['judul']; ?></span>
+                    </div>
+                </div>
+            <?php } ?>
         </div>
     </section>
 
@@ -1384,6 +1472,7 @@
                 <h2 class="section-title t-menu-title text-fade">Menu <em>Andalan</em><br>Kami</h2>
             </div>
         </div>
+
         <div class="menu-tabs">
             <button class="tab-btn active t-tab-minuman" data-tab="minuman">☕ Minuman</button>
             <button class="tab-btn t-tab-makanan" data-tab="makanan">🍛 Makanan</button>
@@ -1392,92 +1481,72 @@
         <!-- MINUMAN -->
         <div class="tab-content active" id="tab-minuman">
             <div class="menu-grid" id="grid-minuman">
-                <div class="menu-card reveal">
-                    <div class="menu-img-wrap"><span class="menu-card-tag t-tag-bestseller">Best Seller</span><img src="images/minuman-4.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-1">Es Kopi Susu Aren</div><div class="menu-card-desc t-desc-1">Perpaduan espresso, susu segar, dan manisnya gula aren.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.1s">
-                    <div class="menu-img-wrap"><img src="images/minuman-5.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-2">Americano Orange</div><div class="menu-card-desc t-desc-2">Racikan murni, aroma khas, nendang buat melek semalaman.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 11.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.2s">
-                    <div class="menu-img-wrap"><img src="images/minuman-2.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-7">Es Kopi Latte</div><div class="menu-card-desc t-desc-7">Espresso lembut berpadu susu dingin yang creamy.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal">
-                    <div class="menu-img-wrap"><img src="images/minuman-3.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-8">Es Kopi Susu</div><div class="menu-card-desc t-desc-8">Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.1s">
-                    <div class="menu-img-wrap"><img src="images/minuman-6.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-9">Kopi Susu Dingin</div><div class="menu-card-desc t-desc-9">Segar, manis, dan dingin — teman terbaik sore hari.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.2s">
-                    <div class="menu-img-wrap"><img src="images/minuman-1.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-10">Americano</div><div class="menu-card-desc t-desc-10">Espresso dilute air dingin, bold dan clean.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-extra" id="extra-minuman">
-                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="images/minuman-7.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-13">Matcha Latte</div><div class="menu-card-desc t-desc-13">Matcha premium dengan susu creamy, manis pas bikin seger.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="images/minuman-8.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-14">Es Coklat</div><div class="menu-card-desc t-desc-14">Coklat dingin creamy, cocok buat yang ga suka kopi.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="images/minuman-9.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-15">Thai Tea</div><div class="menu-card-desc t-desc-15">Teh Thailand manis creamy, rasa otentik bikin nagih.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="images/minuman-10.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-16">Kopi Susu Gula Aren</div><div class="menu-card-desc t-desc-16">Varian klasik susu + gula aren yang legit dan nendang.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="images/minuman-11.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-17">Es Teh Mawar</div><div class="menu-card-desc t-desc-17">Teh segar dengan sentuhan bunga mawar, adem di tenggorokan.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 7.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="images/minuman-12.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-18">Es Jeruk Seger</div><div class="menu-card-desc t-desc-18">Jeruk peras segar, asem manis natural tanpa pengawet.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 7.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="images/minuman-13.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-19">Vietnam Drip</div><div class="menu-card-desc t-desc-19">Kopi drip ala Vietnam, strong dan bold buat pencinta pahit.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="images/minuman-14.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-20">Cappuccino</div><div class="menu-card-desc t-desc-20">Espresso dengan foam susu lembut, warm dan comforting.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="images/minuman-15.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-21">Milo Dinosaur</div><div class="menu-card-desc t-desc-21">Milo dingin + taburan milo bubuk, nostalgia masa kecil.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
-                </div>
-                <div class="btn-show-more-wrap">
-                    <button class="btn-show-more t-btn-more-minuman" onclick="toggleMore('minuman')">Lihat Menu Lainnya ▼</button>
-                </div>
+                <?php while($row = mysqli_fetch_assoc($q_minuman)) { ?>
+                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                        <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
+                            <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
+                                <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
+                            <?php endif; ?>
+                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="<?= $row['nama_menu']; ?>">
+                        </div>
+                        <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
+                            <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
+                            <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                            <div class="menu-card-footer">
+                                <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
+                                <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
+                                    <button class="add-btn">+</button>
+                                <?php else: ?>
+                                    <button class="add-btn" disabled style="background: #ccc; cursor: not-allowed;">×</button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
-        </div>
+        </div> <!-- PENUTUP tab-minuman (Tadinya lu lupa naruh ini brok!) -->
 
         <!-- MAKANAN -->
         <div class="tab-content" id="tab-makanan">
             <div class="menu-grid" id="grid-makanan">
-                <div class="menu-card reveal">
-                    <div class="menu-img-wrap"><span class="menu-card-tag t-tag-bestseller">Best Seller</span><img src="images/makanan-5.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-3">Nasi Ayam Saus Mawar</div><div class="menu-card-desc t-desc-3">Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.1s">
-                    <div class="menu-img-wrap"><img src="images/makanan-3.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-4">Mie Rebus Spesial</div><div class="menu-card-desc t-desc-4">Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.2s">
-                    <div class="menu-img-wrap"><img src="images/makanan-4.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-5">Tempe Mendoan + Sambal</div><div class="menu-card-desc t-desc-5">Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal">
-                    <div class="menu-img-wrap"><img src="images/makanan-2.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-6">Pisang Goreng Lumer</div><div class="menu-card-desc t-desc-6">Manisnya pas, legit di dalem krispi di luar, taburan melimpah.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.1s">
-                    <div class="menu-img-wrap"><img src="images/makanan-1.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-11">Nasi Ayam Hitam</div><div class="menu-card-desc t-desc-11">Ayam dengan saus gelap gurih yang bikin nambah terus.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-card reveal" style="transition-delay:0.2s">
-                    <div class="menu-img-wrap"><img src="images/makanan-6.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body"><div class="menu-card-name t-menu-12">Nasi Ayam Geprek</div><div class="menu-card-desc t-desc-12">Geprek pedas menggoda, cocok banget sambil teguk kopi.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 13.000</span><button class="add-btn">+</button></div></div>
-                </div>
-                <div class="menu-extra" id="extra-makanan">
-                    <div class="menu-card reveal"><div class="menu-img-wrap"><img src="images/makanan-7.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-22">Mie Goreng Spesial</div><div class="menu-card-desc t-desc-22">Mie goreng dengan bumbu racikan, telur mata sapi, dan sayur segar.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="images/makanan-8.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-23">Soto Ayam Mawar</div><div class="menu-card-desc t-desc-23">Kuah bening kaya rempah dengan ayam suwir, tauge, dan perasan jeruk.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="images/makanan-9.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-24">Nasi Goreng Mawar</div><div class="menu-card-desc t-desc-24">Nasi goreng bumbu rahasia khas warkop, harum dan bikin nagih.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
-                    <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="images/makanan-10.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-25">Bakso Kuah</div><div class="menu-card-desc t-desc-25">Bakso segar dengan kuah kaldu gurih, cocok banget buat malam-malam.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
-                </div>
-                <div class="btn-show-more-wrap">
-                    <button class="btn-show-more t-btn-more-makanan" onclick="toggleMore('makanan')">Lihat Menu Lainnya ▼</button>
-                </div>
+                <?php while($row = mysqli_fetch_assoc($q_makanan)) { ?>
+                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                        <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
+                            <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
+                                <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
+                            <?php endif; ?>
+                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="<?= $row['nama_menu']; ?>">
+                        </div>
+                        <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
+                            <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
+                            <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                            <div class="menu-card-footer">
+                                <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
+                                <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
+                                    <button class="add-btn">+</button>
+                                <?php else: ?>
+                                    <button class="add-btn" disabled style="background: #ccc; cursor: not-allowed;">×</button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
-        </div>
+        </div> <!-- PENUTUP tab-makanan -->
     </section>
 
     <!-- LOKASI -->
     <section id="lokasi">
         <div class="lokasi-inner">
             <div class="lokasi-map-wrap reveal" style="position: relative; z-index: 1;">
-                <iframe class="google-map-embed" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3950.6!2d113.8143!3d-7.9272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd6d1ef8d98a60b%3A0xcf8b1460cc42ed6b!2sWarkop%20Mawar!5e0!3m2!1sid!2sid!4v1697000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <!-- Metode Search Query - Lebih Akurat buat Nampilin Pin -->
+                <iframe 
+                    class="google-map-embed" 
+                    src="https://www.google.com/maps?q=Warkop%20Mawar%20Bondowoso&output=embed" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
             </div>
             <div class="lokasi-info">
                 <div class="reveal">
@@ -1489,7 +1558,7 @@
                     <div class="lokasi-hours-title t-lokasi-hours-title">Jam Buka</div>
                     <div class="lokasi-hours-row"><span class="t-lokasi-day1">Everyday</span><span>09:00 – 00:00</span></div>
                 </div>
-                <a href="https://maps.app.goo.gl/vrM4oaTqZerqoKH29" target="_blank" rel="noopener" class="btn-maps reveal t-lokasi-btn" style="transition-delay:0.3s">
+                <a href="https://maps.app.goo.gl/9RTebsetSZj2gxDX6" target="_blank" rel="noopener" class="btn-maps reveal t-lokasi-btn" style="transition-delay:0.3s">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     Buka Google Maps
                 </a>
@@ -1504,10 +1573,10 @@
                 <div class="logo-main t-logo-footer">Warkop <span>Mawar</span></div>
                 <p class="footer-tagline t-footer-tagline">Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.</p>
                 <div class="footer-socials">
-                    <a href="https://www.tiktok.com/@warkopmawar.bws?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener" class="social-link" aria-label="TikTok">
+                    <a href="<?= $pengaturan['tiktok_url']; ?>" target="_blank" rel="noopener" class="social-link" aria-label="TikTok">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.52a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.7a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.13z"/></svg>
                     </a>
-                    <a href="https://www.instagram.com/warkopmawar.bws?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                    <a href="<?= $pengaturan['instagram_url']; ?>" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                     </a>
                 </div>
@@ -1742,165 +1811,71 @@
         }
     }
 
-    // ── LANGUAGE ──
-    let currentLang = 'id';
-    const dict = {
-        id: {
-            't-preloader': 'Warkop Mawar',
-            't-nav-home': 'Beranda', 't-nav-about': 'Tentang', 't-nav-menu': 'Menu',
-            't-nav-galeri': 'Galeri', 't-nav-lokasi': 'Lokasi',
-            't-topbar': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Bondowoso, Jawa Timur \u2014 Buka di Maps',
-            't-hero-eyebrow': 'Warkop Mawar \u2014 Bondowoso',
-            't-hero-title': 'Seduhan Jujur,<br>Harga <em>Saudara</em>.',
-            't-hero-desc': 'Nongkrong industrial-cozy di Bondowoso. Kopi mantap, suasana adem oren-abu, bikin betah dari senja sampe malam.',
-            't-hero-btn': 'Lihat Menu', 't-hero-ghost': 'Tentang Kami',
-            't-stat-1': 'Item Menu', 't-stat-2': 'Mulai Dari', 't-stat-3': 'Betah Nongkrong', 't-stat-4': 'Spot Terbaik',
-            't-about-eyebrow': 'Cerita Kami', 't-about-title': 'Tentang<br>Warkop <em>Mawar</em>',
-            't-about-p1': 'Warkop Mawar lahir dari keyakinan sederhana \u2014 <strong>kopi yang enak seharusnya bisa dinikmati semua orang</strong>, tanpa perlu merogoh kantong dalam-dalam.',
-            't-about-p2': 'Kami adalah tempat di mana <strong>ide-ide besar lahir, cerita lama dikenang</strong>, dan sore hari terasa lebih panjang. Dengan konsep industrial abu-abu yang dibalut kehangatan warna oren.',
-            't-pullquote': 'Seduhan jujur,<br>untuk hati yang <em>lapar</em><br>dan jiwa yang<br><em>lelah.</em>',
-            't-pullquote-attr': 'Warkop Mawar, Bondowoso',
-            't-values-eyebrow': 'Kenapa Kami', 't-values-title': 'Yang Bikin <em>Kami</em><br>Berbeda',
-            't-val-1-title': 'Kopi Pilihan', 't-val-1-desc': 'Biji kopi dipilih dengan teliti untuk menghadirkan cita rasa terbaik di setiap cangkir.',
-            't-val-2-title': 'Harga Ramah', 't-val-2-desc': 'Mulai dari Rp5.000, semua kalangan bisa menikmati kopi enak tanpa was-was soal dompet.',
-            't-val-3-title': 'Suasana Cozy', 't-val-3-desc': 'Industrial minimalis abu-abu bertemu oren hangat. Cocok buat kerja, ngobrol, atau sekadar diam.',
-            't-val-4-title': 'Open Late', 't-val-4-desc': 'Buka sampai tengah malam, Warkop Mawar setia menemani malam panjangmu setiap hari.',
-            't-story-label': 'Lebih Dari Sekadar Kopi',
-            't-story-title': 'Kami Ada untuk<br><em>Momen</em> Terbaik<br>Kamu',
-            't-story-body': 'Dari satu cangkir kopi susu pagi hari, hingga obrolan seru tengah malam \u2014 Warkop Mawar hadir untuk semua momen. Cek juga <strong>mawar cantik di area kasir</strong>, sentuhan kecil yang jadi kebanggaan kami.',
-            't-story-body2': 'Kami juga melayani <strong>coffee booth untuk acara pernikahan & event</strong>. Bawa suasana kopi terbaik ke momen spesialmu.',
-            't-galeri-eyebrow': 'Suasana Kami', 't-galeri-title': 'Galeri <em>Mawar</em>',
-            't-galeri-desc': 'Intip suasana Warkop Mawar \u2014 dari sudut favorit sampai momen seru pelanggan.',
-            't-menu-eyebrow': 'Pilihan Kami', 't-menu-title': 'Menu <em>Andalan</em><br>Kami',
-            't-tab-minuman': '\u2615 Minuman', 't-tab-makanan': '\uD83C\uDF5B Makanan',
-            't-tag-bestseller': 'Best Seller',
-            't-menu-1': 'Es Kopi Susu Aren', 't-desc-1': 'Perpaduan espresso, susu segar, dan manisnya gula aren.',
-            't-menu-2': 'Americano Orange', 't-desc-2': 'Racikan murni, aroma khas, nendang buat melek semalaman.',
-            't-menu-3': 'Nasi Ayam Saus Mawar', 't-desc-3': 'Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.',
-            't-menu-4': 'Mie Rebus Spesial', 't-desc-4': 'Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.',
-            't-menu-5': 'Tempe Mendoan + Sambal', 't-desc-5': 'Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.',
-            't-menu-6': 'Pisang Goreng Lumer', 't-desc-6': 'Manisnya pas, legit di dalem krispi di luar, taburan melimpah.',
-            't-menu-7': 'Es Kopi Latte', 't-desc-7': 'Espresso lembut berpadu susu dingin yang creamy.',
-            't-menu-8': 'Es Kopi Susu', 't-desc-8': 'Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.',
-            't-menu-9': 'Kopi Susu Dingin', 't-desc-9': 'Segar, manis, dan dingin \u2014 teman terbaik sore hari.',
-            't-menu-10': 'Americano', 't-desc-10': 'Espresso dilute air dingin, bold dan clean.',
-            't-menu-11': 'Nasi Ayam Hitam', 't-desc-11': 'Ayam dengan saus gelap gurih yang bikin nambah terus.',
-            't-menu-12': 'Nasi Ayam Geprek', 't-desc-12': 'Geprek pedas menggoda, cocok banget sambil teguk kopi.',
-            't-menu-13': 'Matcha Latte', 't-desc-13': 'Matcha premium dengan susu creamy, manis pas bikin seger.',
-            't-menu-14': 'Es Coklat', 't-desc-14': 'Coklat dingin creamy, cocok buat yang ga suka kopi.',
-            't-menu-15': 'Thai Tea', 't-desc-15': 'Teh Thailand manis creamy, rasa otentik bikin nagih.',
-            't-menu-16': 'Kopi Susu Gula Aren', 't-desc-16': 'Varian klasik susu + gula aren yang legit dan nendang.',
-            't-menu-17': 'Es Teh Mawar', 't-desc-17': 'Teh segar dengan sentuhan bunga mawar, adem di tenggorokan.',
-            't-menu-18': 'Es Jeruk Seger', 't-desc-18': 'Jeruk peras segar, asem manis natural tanpa pengawet.',
-            't-menu-19': 'Vietnam Drip', 't-desc-19': 'Kopi drip ala Vietnam, strong dan bold buat pencinta pahit.',
-            't-menu-20': 'Cappuccino', 't-desc-20': 'Espresso dengan foam susu lembut, warm dan comforting.',
-            't-menu-21': 'Milo Dinosaur', 't-desc-21': 'Milo dingin + taburan milo bubuk, nostalgia masa kecil.',
-            't-menu-22': 'Mie Goreng Spesial', 't-desc-22': 'Mie goreng dengan bumbu racikan, telur mata sapi, dan sayur segar.',
-            't-menu-23': 'Soto Ayam Mawar', 't-desc-23': 'Kuah bening kaya rempah dengan ayam suwir, tauge, dan perasan jeruk.',
-            't-menu-24': 'Nasi Goreng Mawar', 't-desc-24': 'Nasi goreng bumbu rahasia khas warkop, harum dan bikin nagih.',
-            't-menu-25': 'Bakso Kuah', 't-desc-25': 'Bakso segar dengan kuah kaldu gurih, cocok banget buat malam-malam.',
-            't-btn-more-minuman': 'Lihat Menu Lainnya \u25bc',
-            't-btn-more-makanan': 'Lihat Menu Lainnya \u25bc',
-            't-lokasi-eyebrow': 'Temukan Kami', 't-lokasi-title': 'Lokasi <em>Kami</em>',
-            't-lokasi-address': '<strong>Warkop Mawar</strong> berlokasi di Bondowoso, Jawa Timur. Gampang dijangkau, parkir luas, dan tempatnya adem buat nongkrong dari sore sampe malam.',
-            't-lokasi-hours-title': 'Jam Buka', 't-lokasi-day1': 'Everyday',
-            't-lokasi-btn': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Buka Google Maps',
-            't-footer-tagline': 'Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.',
-            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Dibuat oleh Tama.',
-            't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
-            't-eco-brand': 'Warkop <span>Mawar</span>',
-            't-eco-headline': 'Hargai lingkungan dengan tindakan sederhana',
-            't-eco-body': 'Ketika perangkat kamu sedang tidak digunakan atau kamu sedang menelusuri laman lain, tampilan layar ini akan muncul sehingga dapat mengurangi daya yang digunakan.',
-            't-eco-cta': 'Klik di mana saja untuk melanjutkan',
-        },
-        en: {
-            't-preloader': 'Warkop Mawar',
-            't-nav-home': 'Home', 't-nav-about': 'About', 't-nav-menu': 'Menu',
-            't-nav-galeri': 'Gallery', 't-nav-lokasi': 'Location',
-            't-topbar': '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Bondowoso, East Java \u2014 Open in Maps',
-            't-hero-eyebrow': 'Warkop Mawar \u2014 Bondowoso',
-            't-hero-title': 'Honest Brew,<br>Friendly <em>Prices</em>.',
-            't-hero-desc': 'Cozy industrial hangout in Bondowoso. Great coffee, warm orange-grey vibes, perfect from dusk till night.',
-            't-hero-btn': 'View Menu', 't-hero-ghost': 'About Us',
-            't-stat-1': 'Menu Items', 't-stat-2': 'Starting From', 't-stat-3': 'Stay All Night', 't-stat-4': 'Best Spot',
-            't-about-eyebrow': 'Our Story', 't-about-title': 'About<br>Warkop <em>Mawar</em>',
-            't-about-p1': 'Warkop Mawar was born from a simple belief \u2014 <strong>good coffee should be enjoyed by everyone</strong>, without breaking the bank.',
-            't-about-p2': 'We are a place where <strong>big ideas are born, old stories are remembered</strong>, and afternoons feel longer. With an industrial grey concept wrapped in warm orange tones.',
-            't-pullquote': 'Honest brew,<br>for hearts that are <em>hungry</em><br>and souls that are<br><em>tired.</em>',
-            't-pullquote-attr': 'Warkop Mawar, Bondowoso',
-            't-values-eyebrow': 'Why Us', 't-values-title': 'What Makes <em>Us</em><br>Different',
-            't-val-1-title': 'Quality Coffee', 't-val-1-desc': 'Coffee beans carefully selected to deliver the best flavor in every cup.',
-            't-val-2-title': 'Friendly Price', 't-val-2-desc': 'Starting from Rp5,000, everyone can enjoy great coffee without worrying about their wallet.',
-            't-val-3-title': 'Cozy Vibes', 't-val-3-desc': 'Industrial minimalist grey meets warm orange. Perfect for working, chatting, or just being quiet.',
-            't-val-4-title': 'Open Late', 't-val-4-desc': 'Open until midnight, Warkop Mawar faithfully accompanies your long nights every day.',
-            't-story-label': 'More Than Just Coffee',
-            't-story-title': 'We\'re Here for<br>Your Best <em>Moments</em>',
-            't-story-body': 'From a cup of morning coffee latte to late-night conversations \u2014 Warkop Mawar is here for all moments.',
-            't-story-body2': 'We also offer <strong>coffee booths for weddings & events</strong>. Bring the best coffee atmosphere to your special moments.',
-            't-galeri-eyebrow': 'Our Vibes', 't-galeri-title': 'Mawar <em>Gallery</em>',
-            't-galeri-desc': 'Peek into the Warkop Mawar atmosphere \u2014 from favorite corners to fun customer moments.',
-            't-menu-eyebrow': 'Our Picks', 't-menu-title': 'Our <em>Best</em><br>Sellers',
-            't-tab-minuman': '\u2615 Drinks', 't-tab-makanan': '\uD83C\uDF5B Food',
-            't-tag-bestseller': 'Best Seller',
-            't-menu-1': 'Iced Palm Sugar Latte', 't-desc-1': 'A mix of espresso, fresh milk, and creamy palm sugar.',
-            't-menu-2': 'Americano Orange', 't-desc-2': 'Pure blend, signature aroma, kicks hard to keep you awake.',
-            't-menu-3': 'Signature Chicken Rice', 't-desc-3': 'Warm rice with crispy chicken coated in our secret sauce.',
-            't-menu-4': 'Special Boiled Noodles', 't-desc-4': 'The highest tier of instant noodles with rich broth and toppings.',
-            't-menu-5': 'Fried Tempeh & Sambal', 't-desc-5': 'Freshly fried, best served warm with sweet and spicy soy dip.',
-            't-menu-6': 'Sweet Fried Banana', 't-desc-6': 'Perfectly sweet, crispy outside, soft inside with generous toppings.',
-            't-menu-7': 'Iced Coffee Latte', 't-desc-7': 'Smooth espresso meets cold creamy milk.',
-            't-menu-8': 'Iced Milk Coffee', 't-desc-8': 'Classic and reliable. Cold milk coffee, no nonsense.',
-            't-menu-9': 'Cold Milk Coffee', 't-desc-9': 'Fresh, sweet, and cold \u2014 your best afternoon companion.',
-            't-menu-10': 'Americano', 't-desc-10': 'Espresso diluted with cold water, bold and clean.',
-            't-menu-11': 'Black Sauce Chicken Rice', 't-desc-11': 'Chicken in rich dark savory sauce that keeps you coming back.',
-            't-menu-12': 'Smashed Chicken Rice', 't-desc-12': 'Spicy smashed chicken \u2014 perfect alongside your coffee.',
-            't-menu-13': 'Matcha Latte', 't-desc-13': 'Premium matcha with creamy milk, sweet and refreshing.',
-            't-menu-14': 'Iced Chocolate', 't-desc-14': 'Cold creamy chocolate drink, great for non-coffee lovers.',
-            't-menu-15': 'Thai Tea', 't-desc-15': 'Sweet creamy Thai tea, authentic taste and totally addictive.',
-            't-menu-16': 'Palm Sugar Milk Coffee', 't-desc-16': 'Classic milk coffee with rich palm sugar sweetness.',
-            't-menu-17': 'Rose Iced Tea', 't-desc-17': 'Fresh tea with a hint of rose, cool and soothing.',
-            't-menu-18': 'Fresh Orange Juice', 't-desc-18': 'Hand-pressed orange, naturally tangy and sweet, no preservatives.',
-            't-menu-19': 'Vietnam Drip Coffee', 't-desc-19': 'Vietnamese-style drip coffee, strong and bold for bitter lovers.',
-            't-menu-20': 'Cappuccino', 't-desc-20': 'Espresso with soft milk foam, warm and comforting.',
-            't-menu-21': 'Milo Dinosaur', 't-desc-21': 'Iced Milo topped with Milo powder, a nostalgic childhood treat.',
-            't-menu-22': 'Special Fried Noodles', 't-desc-22': 'Fried noodles with house seasoning, sunny-side egg, and fresh greens.',
-            't-menu-23': 'Mawar Chicken Soto', 't-desc-23': 'Clear broth rich in spices with shredded chicken, bean sprouts, and citrus.',
-            't-menu-24': 'Mawar Fried Rice', 't-desc-24': 'Signature fried rice with the warkop\'s secret blend, aromatic and addictive.',
-            't-menu-25': 'Meatball Soup', 't-desc-25': 'Fresh meatballs in rich savory broth, perfect for late-night cravings.',
-            't-btn-more-minuman': 'Show More \u25bc',
-            't-btn-more-makanan': 'Show More \u25bc',
-            't-lokasi-eyebrow': 'Find Us', 't-lokasi-title': 'Our <em>Location</em>',
-            't-lokasi-address': '<strong>Warkop Mawar</strong> is located in Bondowoso, East Java. Easy to reach, spacious parking, and the perfect cozy spot from afternoon till night.',
-            't-lokasi-hours-title': 'Opening Hours', 't-lokasi-day1': 'Everyday',
-            't-lokasi-btn': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Open Google Maps',
-            't-footer-tagline': 'Honest brew for everyone. The best hangout spot in Bondowoso.',
-            't-footer': '&copy; 2026 <span>Warkop Mawar</span>. Built by Tama.',
-            't-logo': 'Warkop <span>Mawar</span>', 't-logo-footer': 'Warkop <span>Mawar</span>',
-            't-eco-brand': 'Warkop <span>Mawar</span>',
-            't-eco-headline': 'Care for the environment with simple actions',
-            't-eco-body': 'When your device is idle or you\'re browsing other tabs, this screen will appear to help reduce power usage.',
-            't-eco-cta': 'Click anywhere to continue',
-        }
-    };
+    // ── LANGUAGE (Google Translate Control - Cookie Method) ──
+    // ========== GOOGLE TRANSLATE TANPA UI & TANPA LOADING ==========
+    function cleanGoogleTranslateUI() {
+        const selectors = [
+            '.goog-te-gadget', '.goog-te-banner-frame', '.goog-te-balloon-frame',
+            '.skiptranslate', '.goog-te-menu-frame', '.goog-te-menu2',
+            '.goog-te-gadget-icon', '.goog-te-spinner', '.goog-te-spinner-pos',
+            '#goog-gt-tt', 'iframe[class*="goog"]', 'div[class*="goog-te"]',
+            'img[class*="goog"]', '*[class*="goog-te-"]'
+        ];
+        selectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => el.remove());
+        });
+        
+        // Hentikan semua animasi loading yang mungkin dibuat Google
+        const style = document.createElement('style');
+        style.textContent = `
+            .goog-te-spinner, .goog-te-spinner-pos, .goog-te-spinner-animation {
+                display: none !important;
+                animation: none !important;
+                visibility: hidden !important;
+            }
+        `;
+        document.head.appendChild(style);
 
-    function applyLang(lang) {
-        const keys = Object.keys(dict.id);
-        document.querySelectorAll(keys.map(k => '.' + k).join(',')).forEach(el => el.classList.add('out'));
-        setTimeout(() => {
-            keys.forEach(key => {
-                document.querySelectorAll('.' + key).forEach(el => {
-                    if (dict[lang][key]) el.innerHTML = dict[lang][key];
-                    el.classList.remove('out');
-                });
-            });
-        }, 400);
+        if (document.body.style.top !== '0px' && document.body.style.top !== '') {
+            document.body.style.top = '0px';
+            document.body.style.position = '';
+        }
     }
+
+    // Pantau dan bersihkan setiap 300ms selama 6 detik
+    let cleanInterval = setInterval(cleanGoogleTranslateUI, 300);
+    setTimeout(() => clearInterval(cleanInterval), 6000);
+    document.addEventListener('DOMContentLoaded', cleanGoogleTranslateUI);
+
+    function getTransCookie() {
+        let match = document.cookie.match(/googtrans=([^;]+)/);
+        return match ? match[1] : '/id/id';
+    }
+
+    let currentTrans = getTransCookie();
+    let currentLang = currentTrans.includes('/id/en') ? 'en' : 'id';
+    
+    // Set label awal sesuai bahasa yang aktif
+    const initLabel = currentLang === 'id' ? 'EN' : 'ID';
+    document.getElementById('langBtn').textContent = initLabel;
+    document.getElementById('langBtnM').textContent = initLabel;
+
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'id',
+            autoDisplay: false
+        }, 'google_translate_element');
+        
+        if (!document.cookie.match('googtrans')) {
+            document.cookie = "googtrans=/id/id; path=/";
+        }
+    }
+
     function toggleLang() {
-        currentLang = currentLang === 'id' ? 'en' : 'id';
-        const label = currentLang === 'id' ? 'EN' : 'ID';
-        document.getElementById('langBtn').textContent = label;
-        document.getElementById('langBtnM').textContent = label;
-        applyLang(currentLang);
+        let targetLang = currentLang === 'id' ? '/id/en' : '/id/id';
+        document.cookie = `googtrans=${targetLang}; path=/`;
+        document.cookie = `googtrans=${targetLang}; path=/; domain=${window.location.hostname}`;
+        location.reload();
     }
     document.getElementById('langBtn').addEventListener('click', toggleLang);
     document.getElementById('langBtnM').addEventListener('click', toggleLang);
@@ -1915,7 +1890,7 @@
     let cart = [];
     let cartOpen = false;
     let toastTimer = null;
-    const WA_NUMBER = '6282244019596';
+    const WA_NUMBER = '<?= $pengaturan['wa_number']; ?>';
 
     function toggleCart() {
         cartOpen = !cartOpen;
@@ -2031,7 +2006,7 @@
         window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
     });
 
-    document.getElementById('btnGrab').addEventListener('click', () => window.open('https://food.grab.com/id/en/', '_blank'));
+    document.getElementById('btnGrab').addEventListener('click', () => window.location.href = 'https://food.grab.com/id/id/restaurant/warkop-mawar-badean-delivery/6-C3CYEXEEBA5XR6');
     document.getElementById('btnShopee').addEventListener('click', () => window.open('https://shopee.co.id/food', '_blank'));
 
     function initCartButtons() {
@@ -2058,5 +2033,10 @@
     window.toggleMore = function(tab) { origToggleMore(tab); setTimeout(initCartButtons, 50); };
 
     </script>
+    <!-- Kontainer Tersembunyi di Luar Nav/notranslate -->
+    <div class="hidden-translate-container">
+        <div id="google_translate_element"></div>
+    </div>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
