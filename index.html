@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/norwester" rel="stylesheet">
+
     <style>
         :root {
             --orange: #E8622A;
@@ -172,7 +173,6 @@
             color: rgba(244,239,230,0.35); text-transform: uppercase;
             white-space: nowrap;
         }
-        /* Story photos clickable indicator */
         .sp-img {
             cursor: none; position: relative; overflow: hidden;
         }
@@ -328,8 +328,8 @@
         .hero h2 em { color: var(--orange); font-style: normal; }
         .hero-desc { font-size: clamp(0.88rem, 2vw, 1rem); color: rgba(244,239,230,0.62); max-width: 480px; line-height: 1.8; font-weight: 300; margin-bottom: 38px; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.6s forwards; }
         .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.8s forwards; }
-        .btn-primary { background: var(--orange); color: #fff; padding: 13px 32px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; transition: background 0.3s, transform 0.3s, box-shadow 0.3s; box-shadow: 0 6px 24px var(--orange-glow); cursor: none; }
-        .btn-primary:hover { background: var(--dark-orange); transform: translateY(-3px); box-shadow: 0 12px 32px var(--orange-glow); }
+        .btn-primary { background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); color: #fff; padding: 14px 36px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 8px 28px var(--orange-glow); cursor: none; border: 1px solid transparent; }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--dark-orange) 0%, var(--orange) 100%); transform: translateY(-4px); box-shadow: 0 16px 40px var(--orange-glow); border-color: rgba(255,255,255,0.3); }
         .btn-primary svg { transition: transform 0.3s; }
         .btn-primary:hover svg { transform: translateX(4px); }
         .btn-ghost { color: rgba(244,239,230,0.65); padding: 13px 0; font-size: 0.78rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid rgba(244,239,230,0.3); transition: color 0.3s, border-color 0.3s; cursor: none; }
@@ -389,9 +389,9 @@
         .about-values { background: var(--bg); padding: clamp(64px, 10vw, 100px) 8%; }
         .about-values-header { margin-bottom: clamp(40px, 6vw, 64px); }
         .about-values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-        .value-card { background: var(--card-bg); padding: 40px 32px; display: flex; flex-direction: column; gap: 16px; transition: background 0.3s, transform 0.3s; position: relative; overflow: hidden; }
-        .value-card::before { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--orange); transition: width 0.4s ease; }
-        .value-card:hover { background: var(--bg2); }
+        .value-card { background: var(--card-bg); padding: 40px 32px; display: flex; flex-direction: column; gap: 16px; transition: all 0.35s cubic-bezier(0.25,0.46,0.45,0.94); position: relative; overflow: hidden; border: 1.5px solid rgba(232,98,42,0.1); border-radius: 12px; }
+        .value-card::before { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px; background: linear-gradient(90deg, var(--orange), var(--dark-orange)); transition: width 0.5s ease; }
+        .value-card:hover { background: var(--bg2); border-color: var(--orange); transform: translateY(-6px); box-shadow: 0 12px 32px rgba(232,98,42,0.12); }
         .value-card:hover::before { width: 100%; }
         .value-num { font-family: 'Norwester', sans-serif; font-size: 2.5rem; color: rgba(232,98,42,0.15); line-height: 1; font-weight: 400; transition: color 0.3s; }
         .value-card:hover .value-num { color: rgba(232,98,42,0.35); }
@@ -413,10 +413,12 @@
 
         /* GALLERY STRIP */
         .gallery-strip { background: var(--bg); padding: 0 0 0 8%; overflow: hidden; }
-        .gallery-track { display: flex; gap: 16px; animation: galleryScroll 28s linear infinite; width: max-content; }
-        .gallery-track:hover { animation-play-state: paused; }
+        .gallery-track { display: flex; gap: 16px; animation: galleryScroll 45s linear infinite; width: max-content; }
+        @media (hover: hover) and (pointer: fine) {
+            .gallery-track:hover { animation-play-state: paused; }
+        }
         .gallery-item { width: clamp(160px, 20vw, 220px); aspect-ratio: 3/4; border-radius: 8px; overflow: hidden; flex-shrink: 0; position: relative; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; -webkit-user-drag: none; user-select: none; -webkit-touch-callout: none; }
         .gallery-item:hover img { transform: scale(1.06); }
         @keyframes galleryScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
@@ -427,8 +429,8 @@
         .galeri-desc { font-size: clamp(0.88rem, 2vw, 1rem); color: var(--muted); max-width: 360px; line-height: 1.8; font-weight: 300; text-align: right; }
         .galeri-count { font-family: 'Norwester', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); color: rgba(232,98,42,0.15); line-height: 1; }
         .galeri-masonry { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 60px; gap: 12px; }
-        .gm-item { border-radius: 10px; overflow: hidden; position: relative; background: var(--card-bg); cursor: none; }
-        .gm-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
+        .gm-item { border-radius: 10px; overflow: hidden; position: relative; background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg2) 100%); cursor: none; border: 1px solid rgba(232,98,42,0.08); }
+        .gm-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); background: var(--card-bg); }
         .gm-item:hover img { transform: scale(1.07); }
         .gm-caption { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,15,8,0.85) 0%, transparent 60%); display: flex; align-items: flex-end; padding: 16px; opacity: 0; transition: opacity 0.35s ease; }
         .gm-item:hover .gm-caption { opacity: 1; }
@@ -449,8 +451,8 @@
         /* LOCATION */
         #lokasi { background: var(--bg); }
         .lokasi-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 80px); align-items: center; }
-        .lokasi-map-wrap { width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--card-bg); }
-        .lokasi-map-wrap iframe { width: 100%; height: 100%; border: none; }
+        .lokasi-map-wrap { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; border: 2px solid var(--orange); background: var(--card-bg); z-index: 1; box-shadow: 0 16px 48px rgba(232,98,42,0.15); }
+        .google-map-embed { width: 100%; height: 100%; border: none; display: block; }
         .lokasi-info { display: flex; flex-direction: column; gap: 24px; }
         .lokasi-address { font-size: clamp(0.92rem, 2vw, 1.02rem); line-height: 1.9; color: var(--muted); font-weight: 300; }
         .lokasi-address strong { color: var(--text); font-weight: 600; }
@@ -458,47 +460,89 @@
         .lokasi-hours-title { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 3px; color: var(--orange); text-transform: uppercase; margin-bottom: 4px; }
         .lokasi-hours-row { display: flex; justify-content: space-between; font-size: 0.88rem; color: var(--muted); font-weight: 300; }
         .lokasi-hours-row span:first-child { color: var(--text); font-weight: 500; }
-        .btn-maps { display: inline-flex; align-items: center; gap: 10px; background: transparent; border: 1.5px solid var(--orange); color: var(--orange); padding: 13px 28px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; transition: background 0.3s, color 0.3s, transform 0.3s; cursor: none; width: fit-content; font-family: 'DM Sans', sans-serif; }
-        .btn-maps:hover { background: var(--orange); color: #fff; transform: translateY(-3px); }
+        .btn-maps { display: inline-flex; align-items: center; gap: 10px; background: transparent; border: 2px solid var(--orange); color: var(--orange); padding: 14px 32px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); cursor: none; width: fit-content; font-family: 'DM Sans', sans-serif; }
+        .btn-maps:hover { background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); color: #fff; transform: translateY(-4px); box-shadow: 0 10px 32px rgba(232,98,42,0.4); }
 
         /* MENU */
         #menu { background: var(--bg); }
         .menu-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: clamp(40px, 6vw, 64px); flex-wrap: wrap; gap: 20px; }
         .menu-header-left { max-width: 520px; }
         .menu-tabs { display: flex; gap: 8px; margin-bottom: 44px; flex-wrap: wrap; }
-        .tab-btn { padding: 9px 22px; border-radius: 100px; font-size: 0.78rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: none; transition: all 0.3s ease; font-family: 'DM Sans', sans-serif; }
-        .tab-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .tab-btn.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+        .tab-btn { padding: 10px 24px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; border: 2px solid var(--border); background: transparent; color: var(--muted); cursor: none; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); font-family: 'DM Sans', sans-serif; }
+        .tab-btn:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+        .tab-btn.active { background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); color: #fff; border-color: transparent; box-shadow: 0 6px 20px rgba(232,98,42,0.4); }
         .tab-content { display: none; flex-direction: column; gap: 0; }
         .tab-content.active { display: flex; }
         .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.5vw, 28px); }
-        .menu-card { background: var(--card-bg); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.4s ease, border-color 0.3s; position: relative; cursor: none; }
-        .menu-card:hover { transform: translateY(-10px); box-shadow: 0 24px 48px rgba(26,15,8,0.12), 0 0 0 1.5px var(--orange); border-color: var(--orange); }
-        .menu-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; background: var(--bg2); }
-        .menu-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); display: block; }
+        .menu-card { background: var(--card-bg); border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border); transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94); position: relative; cursor: none; }
+        .menu-card:hover { transform: translateY(-12px); box-shadow: 0 28px 56px rgba(26,15,8,0.16), 0 0 0 2px var(--orange); border-color: var(--orange); }
+        .menu-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg2) 100%); box-shadow: inset 0 0 0 1px rgba(232,98,42,0.1); }
+        .menu-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); display: block; background: var(--card-bg); }
         .menu-card:hover .menu-img { transform: scale(1.08); }
-        .menu-card-tag { position: absolute; top: 12px; left: 12px; background: var(--orange); color: #fff; font-family: 'Space Mono', monospace; font-size: 0.52rem; letter-spacing: 2px; padding: 5px 10px; border-radius: 3px; text-transform: uppercase; z-index: 2; }
+        .menu-card-tag { position: absolute; top: 12px; left: 12px; background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); color: #fff; font-family: 'Space Mono', monospace; font-size: 0.52rem; letter-spacing: 2px; padding: 6px 12px; border-radius: 6px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(232,98,42,0.4); font-weight: 700; }
         .menu-card-body { padding: 20px 20px 22px; }
         .menu-card-name { font-family: 'Norwester', sans-serif; font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 400; color: var(--text); margin-bottom: 7px; letter-spacing: 0.5px; text-transform: uppercase; }
         .menu-card-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.65; font-weight: 300; margin-bottom: 16px; }
         .menu-card-footer { display: flex; justify-content: space-between; align-items: center; }
         .menu-card-price { font-family: 'Space Mono', monospace; font-size: 0.95rem; font-weight: 700; color: var(--orange); }
-        .add-btn { width: 34px; height: 34px; background: var(--orange); border: none; border-radius: 50%; color: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: none; transition: background 0.25s, transform 0.3s; flex-shrink: 0; line-height: 1; }
-        .add-btn:hover { background: var(--dark-orange); transform: scale(1.12) rotate(90deg); }
+        .add-btn { width: 38px; height: 38px; background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); border: none; border-radius: 50%; color: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: none; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); flex-shrink: 0; line-height: 1; box-shadow: 0 4px 16px rgba(232,98,42,0.35); }
+        .add-btn:hover { background: linear-gradient(135deg, var(--dark-orange) 0%, var(--orange) 100%); transform: scale(1.15) rotate(90deg); box-shadow: 0 8px 24px rgba(232,98,42,0.5); }
 
-        /* MARQUEE */
-        .marquee-wrap { background: var(--orange); padding: 17px 0; overflow: hidden; white-space: nowrap; }
-        .marquee-track { display: inline-flex; animation: marquee 20s linear infinite; }
-        .marquee-item { display: inline-flex; align-items: center; gap: 18px; padding: 0 26px; font-family: 'Norwester', sans-serif; font-size: clamp(0.88rem, 2vw, 1rem); color: rgba(255,255,255,0.9); font-weight: 400; text-transform: uppercase; letter-spacing: 1.5px; }
-        .marquee-dot { width: 5px; height: 5px; background: rgba(255,255,255,0.45); border-radius: 50%; }
-        @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-33.33%)} }
+        /* DYNAMIC MOTTO */
+        .dynamic-motto-wrap {
+            background: var(--orange);
+            padding: 18px 8%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .dynamic-motto {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Norwester', sans-serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: rgba(255,255,255,0.95);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .rolling-words {
+            height: clamp(1.2rem, 3vw, 1.8rem);
+            overflow: hidden;
+            position: relative;
+            color: var(--espresso);
+            text-align: left;
+            min-width: 240px;
+            background: rgba(255,255,255,0.9);
+            padding: 0 16px;
+            border-radius: 4px;
+        }
+        .rolling-words-inner {
+            display: flex;
+            flex-direction: column;
+            animation: rollWords 8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+        }
+        .rolling-words-inner span {
+            height: clamp(1.2rem, 3vw, 1.8rem);
+            line-height: clamp(1.2rem, 3vw, 1.8rem);
+            white-space: nowrap;
+        }
+        @keyframes rollWords {
+            0%, 18% { transform: translateY(0); }
+            25%, 43% { transform: translateY(-20%); }
+            50%, 68% { transform: translateY(-40%); }
+            75%, 93% { transform: translateY(-60%); }
+            100% { transform: translateY(-80%); }
+        }
 
         /* SHOW MORE */
         .menu-extra { display: none; }
         .menu-extra.show { display: contents; }
         .btn-show-more-wrap { display: flex; justify-content: center; padding: 32px 0 4px; grid-column: 1 / -1; }
-        .btn-show-more { font-family: 'Norwester', sans-serif; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); background: transparent; border: 1.5px solid var(--orange); padding: 13px 38px; border-radius: 50px; cursor: none; transition: background 0.3s, color 0.3s, transform 0.3s; }
-        .btn-show-more:hover { background: var(--orange); color: #fff; transform: scale(1.04); }
+        .btn-show-more { font-family: 'Norwester', sans-serif; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); background: transparent; border: 2px solid var(--orange); padding: 14px 42px; border-radius: 8px; cursor: none; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); font-weight: 700; }
+        .btn-show-more:hover { background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); color: #fff; border-color: transparent; transform: scale(1.05); box-shadow: 0 8px 24px rgba(232,98,42,0.4); }
 
         /* FOOTER */
         footer { background: var(--footer-bg); padding: clamp(48px, 6vw, 60px) 8% 36px; transition: background 0.6s ease; }
@@ -593,352 +637,433 @@
             .about-hero-stmt::before { display: none; }
             .story-photos { grid-template-rows: 180px 180px; }
             .eco-clock { display: none; }
+            .tab-btn { padding: 9px 18px; font-size: 0.72rem; }
+            .add-btn { width: 36px; height: 36px; font-size: 1rem; }
+            .menu-card-tag { padding: 5px 10px; font-size: 0.48rem; }
         }
         @media (max-width: 420px) {
             .menu-grid { grid-template-columns: 1fr; }
             .hero h2 { font-size: 2.2rem; }
+            .dynamic-motto { font-size: 1rem; }
+            .rolling-words { min-width: 180px; }
+        }
+
+        /* ── CART FAB ── */
+        .cart-fab {
+            position: fixed;
+            bottom: 32px; right: 32px;
+            width: 62px; height: 62px;
+            background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%);
+            border: none; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9990;
+            cursor: none;
+            box-shadow: 0 10px 40px var(--orange-glow), 0 4px 12px rgba(0,0,0,0.25);
+            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            animation: fabPop 0.6s 1.5s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        @keyframes fabPop { from { transform: scale(0) translateY(40px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        .cart-fab:hover { transform: scale(1.12); box-shadow: 0 16px 48px var(--orange-glow); }
+        .cart-fab svg { width: 26px; height: 26px; color: #fff; flex-shrink: 0; }
+        .cart-badge {
+            position: absolute;
+            top: -4px; right: -4px;
+            min-width: 22px; height: 22px;
+            background: #fff; color: var(--orange);
+            border-radius: 50%;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 4px;
+            opacity: 0; transform: scale(0);
+            transition: opacity 0.3s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            border: 2px solid var(--orange);
+            pointer-events: none;
+        }
+        .cart-badge.show { opacity: 1; transform: scale(1); }
+        .cart-badge.pop { animation: badgePop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+        @keyframes badgePop { 0%{transform:scale(1)} 50%{transform:scale(1.45)} 100%{transform:scale(1)} }
+
+        /* ── PLATFORM FLOATING BUTTONS ── */
+        .platform-btns {
+            position: fixed;
+            bottom: 108px; right: 32px;
+            display: flex; flex-direction: column; gap: 10px;
+            z-index: 9989;
+            animation: fabPop 0.6s 1.8s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        .platform-btn {
+            display: flex; align-items: center; gap: 0;
+            width: 48px; height: 48px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.72rem; font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: none;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: width 0.35s cubic-bezier(0.34,1.2,0.64,1),
+                        border-radius 0.35s ease,
+                        box-shadow 0.3s,
+                        transform 0.3s;
+            position: relative;
+        }
+        .platform-btn:hover {
+            width: 164px;
+            border-radius: 50px;
+            transform: translateX(-4px);
+        }
+        .platform-btn-icon-wrap {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .platform-btn-icon-wrap img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            flex-shrink: 0;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+        .platform-btn-label {
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: opacity 0.2s 0.08s, transform 0.25s 0.08s;
+            pointer-events: none;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding-right: 16px;
+        }
+        .platform-btn:hover .platform-btn-label {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .platform-btn-grab {
+            background: linear-gradient(135deg, #00b14f, #007f3a);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(0,177,79,0.45);
+        }
+        .platform-btn-grab:hover { box-shadow: 0 10px 32px rgba(0,177,79,0.6); }
+        .platform-btn-shopee {
+            background: linear-gradient(135deg, #EE4D2D, #C73E23);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(238,77,45,0.45);
+        }
+        .platform-btn-shopee:hover { box-shadow: 0 10px 32px rgba(238,77,45,0.6); }
+        .platform-btn-tooltip {
+            position: absolute;
+            right: calc(100% + 10px);
+            top: 50%; transform: translateY(-50%);
+            background: var(--espresso);
+            color: rgba(244,239,230,0.75);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.5rem; letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 10px; border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s;
+            border: 1px solid rgba(244,239,230,0.08);
+        }
+        .platform-btn:not(:hover) .platform-btn-tooltip { opacity: 1; }
+        .platform-btn:hover .platform-btn-tooltip { opacity: 0; }
+
+        /* ── CART OVERLAY ── */
+        .cart-overlay {
+            position: fixed; inset: 0;
+            background: rgba(10,5,2,0.6);
+            z-index: 9991;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            cursor: none;
+        }
+        .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+        /* ── CART DRAWER ── */
+        .cart-drawer {
+            position: fixed;
+            top: 0; right: 0;
+            width: min(420px, 96vw);
+            height: 100dvh;
+            background: var(--espresso);
+            z-index: 9992;
+            display: flex; flex-direction: column;
+            transform: translateX(110%);
+            transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
+            box-shadow: -12px 0 48px rgba(0,0,0,0.35);
+            overflow: hidden;
+        }
+        body.dark .cart-drawer { background: #0D0A07; }
+        .cart-drawer.open { transform: translateX(0); }
+        .cart-drawer-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid rgba(244,239,230,0.08);
+            flex-shrink: 0;
+        }
+        .cart-drawer-title {
+            font-family: 'Norwester', sans-serif;
+            font-size: 1.2rem; letter-spacing: 1px;
+            color: var(--cream); text-transform: uppercase;
+        }
+        .cart-drawer-title span { color: var(--orange); }
+        .cart-close-btn {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(244,239,230,0.06);
+            border: 1px solid rgba(244,239,230,0.12);
+            color: rgba(244,239,230,0.55);
+            font-size: 1.1rem; cursor: none;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s, color 0.3s, transform 0.3s;
+        }
+        .cart-close-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: rotate(90deg); }
+        .cart-empty {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 16px;
+            padding: 32px;
+        }
+        .cart-empty-icon { opacity: 0.2; }
+        .cart-empty-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem; letter-spacing: 3px;
+            color: rgba(244,239,230,0.35); text-transform: uppercase;
+            text-align: center; line-height: 1.8;
+        }
+        .cart-items-list {
+            flex: 1; overflow-y: auto;
+            padding: 12px 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--orange) transparent;
+        }
+        .cart-items-list::-webkit-scrollbar { width: 3px; }
+        .cart-items-list::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+        .cart-item-row {
+            display: grid;
+            grid-template-columns: 56px 1fr auto;
+            gap: 14px;
+            align-items: center;
+            padding: 14px 28px;
+            border-bottom: 1px solid rgba(244,239,230,0.05);
+            transition: background 0.25s, transform 0.4s;
+        }
+        .cart-item-row.bounce {
+            animation: cartBounce 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes cartBounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); background: rgba(232,98,42,0.08); }
+            100% { transform: scale(1); }
+        }
+        .cart-item-row:hover { background: rgba(244,239,230,0.03); }
+        .cart-item-img {
+            width: 56px; height: 56px; border-radius: 8px;
+            object-fit: cover; display: block; background: linear-gradient(135deg, rgba(232,98,42,0.08) 0%, rgba(232,98,42,0.04) 100%);
+            flex-shrink: 0; border: 1px solid rgba(232,98,42,0.2);
+        }
+        .cart-item-info { min-width: 0; }
+        .cart-item-name {
+            font-family: 'Norwester', sans-serif;
+            font-size: 0.88rem; color: var(--cream);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .cart-item-price {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem; color: var(--orange);
+            margin-top: 3px;
+        }
+        .cart-item-subtotal {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem; color: rgba(244,239,230,0.3);
+            margin-top: 2px;
+        }
+        .cart-qty-wrap {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 8px; flex-shrink: 0;
+        }
+        .qty-controls {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(244,239,230,0.06);
+            border: 1px solid rgba(244,239,230,0.1);
+            border-radius: 50px; padding: 4px 8px;
+        }
+        .qty-btn {
+            width: 22px; height: 22px; border-radius: 50%;
+            border: none; background: transparent;
+            color: rgba(244,239,230,0.55); font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: none; transition: background 0.2s, color 0.2s, transform 0.2s;
+            line-height: 1; padding: 0; flex-shrink: 0;
+        }
+        .qty-btn:hover { background: var(--orange); color: #fff; transform: scale(1.1); }
+        .qty-btn.minus:hover { background: rgba(220,50,50,0.7); }
+        .qty-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem; font-weight: 700;
+            color: var(--cream); min-width: 18px; text-align: center;
+        }
+        .cart-delete-btn {
+            width: 20px; height: 20px;
+            background: none; border: none;
+            color: rgba(244,239,230,0.2); font-size: 0.75rem;
+            cursor: none; transition: color 0.25s, transform 0.25s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .cart-delete-btn:hover { color: rgba(220,50,50,0.7); transform: scale(1.15); }
+        .cart-drawer-footer {
+            padding: 20px 28px 28px;
+            border-top: 1px solid rgba(244,239,230,0.08);
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.2);
+        }
+        .cart-total-row {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 8px;
+        }
+        .cart-total-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem; letter-spacing: 3px;
+            color: rgba(244,239,230,0.4); text-transform: uppercase;
+        }
+        .cart-total-amount {
+            font-family: 'Norwester', sans-serif;
+            font-size: 1.6rem; color: var(--cream);
+            letter-spacing: 1px;
+        }
+        .cart-total-amount span { color: var(--orange); }
+        .cart-item-count-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.55rem; letter-spacing: 2px;
+            color: rgba(244,239,230,0.25); text-transform: uppercase;
+            margin-bottom: 20px; display: block;
+        }
+        .cart-platform-info {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 12px 14px;
+            background: rgba(244,239,230,0.04);
+            border: 1px solid rgba(244,239,230,0.07);
+            border-radius: 8px;
+            margin-bottom: 14px;
+        }
+        .cart-platform-info svg { flex-shrink: 0; margin-top: 1px; }
+        .cart-platform-info-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.52rem; letter-spacing: 1.5px;
+            color: rgba(244,239,230,0.3); text-transform: uppercase;
+            line-height: 1.7;
+        }
+        .cart-platform-info-text strong {
+            display: block; color: rgba(244,239,230,0.5);
+            font-size: 0.56rem; margin-bottom: 2px;
+        }
+        .order-divider {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.52rem; letter-spacing: 3px;
+            color: rgba(244,239,230,0.2); text-transform: uppercase;
+            text-align: center; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .order-divider::before, .order-divider::after {
+            content: ''; flex: 1; height: 1px;
+            background: rgba(244,239,230,0.08);
+        }
+        .order-btns { display: flex; flex-direction: column; gap: 10px; }
+        .order-btn {
+            width: 100%; padding: 16px 20px;
+            border-radius: 10px; border: none;
+            font-size: 0.82rem; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: none; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            font-family: 'DM Sans', sans-serif;
+            position: relative; overflow: hidden;
+        }
+        .order-btn::before {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(255,255,255,0); transition: background 0.35s;
+        }
+        .order-btn:hover::before { background: rgba(255,255,255,0.12); }
+        .order-btn:hover { transform: translateY(-3px); }
+        .order-btn:active { transform: scale(0.96); }
+        .order-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+        .order-btn-wa {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(37,211,102,0.4);
+        }
+        .order-btn-wa:hover { box-shadow: 0 10px 36px rgba(37,211,102,0.55); }
+        .order-btn-icon { width: 20px; height: 20px; flex-shrink: 0; }
+        .cart-note-wrap { margin-top: 4px; margin-bottom: 14px; }
+        .cart-note-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.52rem; letter-spacing: 2.5px;
+            color: rgba(244,239,230,0.3); text-transform: uppercase;
+            margin-bottom: 6px; display: block;
+        }
+        .cart-note-input {
+            width: 100%; background: rgba(244,239,230,0.05);
+            border: 1px solid rgba(244,239,230,0.1); border-radius: 8px;
+            color: rgba(244,239,230,0.7); font-family: 'DM Sans', sans-serif;
+            font-size: 0.84rem; padding: 10px 14px;
+            resize: none; outline: none;
+            transition: border-color 0.3s; line-height: 1.5;
+        }
+        .cart-note-input:focus { border-color: rgba(232,98,42,0.5); }
+        .cart-note-input::placeholder { color: rgba(244,239,230,0.2); }
+        .cart-toast {
+            position: fixed;
+            bottom: 108px; right: 32px;
+            background: var(--espresso);
+            border: 1px solid rgba(232,98,42,0.4);
+            border-left: 3px solid var(--orange);
+            border-radius: 10px;
+            padding: 12px 18px;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 9993;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0; pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1), opacity 0.35s;
+            max-width: 280px;
+        }
+        body.dark .cart-toast { background: #0D0A07; }
+        .cart-toast.show { transform: translateY(0) scale(1); opacity: 1; }
+        .cart-toast-icon { font-size: 1rem; flex-shrink: 0; }
+        .cart-toast-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem; letter-spacing: 1.5px;
+            color: rgba(244,239,230,0.65); text-transform: uppercase;
+            line-height: 1.5;
+        }
+        .cart-toast-name {
+            display: block; color: var(--cream);
+            font-size: 0.65rem; letter-spacing: 1px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        @media (max-width: 640px) {
+            .cart-fab, .cart-close-btn, .qty-btn, .cart-delete-btn, .order-btn, .platform-btn { cursor: pointer; }
+            .cart-fab { bottom: 24px; right: 20px; width: 56px; height: 56px; }
+            .cart-drawer { width: 100vw; }
+            .cart-item-row { padding: 14px 20px; }
+            .cart-drawer-header { padding: 20px 20px 16px; }
+            .cart-drawer-footer { padding: 16px 20px 24px; }
+            .platform-btns { bottom: 90px; right: 20px; }
+            .platform-btn { width: 48px; height: 48px; border-radius: 50%; }
+            .platform-btn:hover { width: 48px; border-radius: 50%; transform: none; }
+            .platform-btn-label { display: none; }
+            .platform-btn-tooltip { display: none; }
         }
     </style>
-
-<!-- ══════════════════════════════════════════════
-     1. CSS — CART FEATURE
-     ══════════════════════════════════════════════ -->
-<style id="CART_CSS_PASTE_BEFORE_STYLE_CLOSING">
-
-/* ── CART FAB (floating button kanan bawah) ── */
-.cart-fab {
-    position: fixed;
-    bottom: 32px; right: 32px;
-    width: 62px; height: 62px;
-    background: var(--orange);
-    border: none; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9990;
-    cursor: none;
-    box-shadow: 0 8px 32px var(--orange-glow), 0 2px 8px rgba(0,0,0,0.18);
-    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
-    animation: fabPop 0.6s 1.5s cubic-bezier(0.34,1.56,0.64,1) both;
-}
-@keyframes fabPop { from { transform: scale(0) translateY(40px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
-.cart-fab:hover { transform: scale(1.1); box-shadow: 0 14px 40px var(--orange-glow); }
-.cart-fab svg { width: 26px; height: 26px; color: #fff; flex-shrink: 0; }
-.cart-badge {
-    position: absolute;
-    top: -4px; right: -4px;
-    min-width: 22px; height: 22px;
-    background: #fff; color: var(--orange);
-    border-radius: 50%;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    padding: 0 4px;
-    opacity: 0; transform: scale(0);
-    transition: opacity 0.3s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    border: 2px solid var(--orange);
-    pointer-events: none;
-}
-.cart-badge.show { opacity: 1; transform: scale(1); }
-.cart-badge.pop { animation: badgePop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
-@keyframes badgePop { 0%{transform:scale(1)} 50%{transform:scale(1.45)} 100%{transform:scale(1)} }
-
-/* ── CART OVERLAY ── */
-.cart-overlay {
-    position: fixed; inset: 0;
-    background: rgba(10,5,2,0.6);
-    z-index: 9991;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.4s ease;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    cursor: none;
-}
-.cart-overlay.open { opacity: 1; pointer-events: all; }
-
-/* ── CART DRAWER ── */
-.cart-drawer {
-    position: fixed;
-    top: 0; right: 0;
-    width: min(420px, 96vw);
-    height: 100dvh;
-    background: var(--espresso);
-    z-index: 9992;
-    display: flex; flex-direction: column;
-    transform: translateX(110%);
-    transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
-    box-shadow: -12px 0 48px rgba(0,0,0,0.35);
-    overflow: hidden;
-}
-body.dark .cart-drawer { background: #0D0A07; }
-.cart-drawer.open { transform: translateX(0); }
-
-/* header drawer */
-.cart-drawer-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 24px 28px 20px;
-    border-bottom: 1px solid rgba(244,239,230,0.08);
-    flex-shrink: 0;
-}
-.cart-drawer-title {
-    font-family: 'Norwester', sans-serif;
-    font-size: 1.2rem; letter-spacing: 1px;
-    color: var(--cream); text-transform: uppercase;
-}
-.cart-drawer-title span { color: var(--orange); }
-.cart-close-btn {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: rgba(244,239,230,0.06);
-    border: 1px solid rgba(244,239,230,0.12);
-    color: rgba(244,239,230,0.55);
-    font-size: 1.1rem; cursor: none;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.3s, color 0.3s, transform 0.3s;
-}
-.cart-close-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: rotate(90deg); }
-
-/* empty state */
-.cart-empty {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 16px;
-    padding: 32px;
-}
-.cart-empty-icon { opacity: 0.2; }
-.cart-empty-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem; letter-spacing: 3px;
-    color: rgba(244,239,230,0.35); text-transform: uppercase;
-    text-align: center; line-height: 1.8;
-}
-
-/* items list */
-.cart-items-list {
-    flex: 1; overflow-y: auto;
-    padding: 12px 0;
-    scrollbar-width: thin;
-    scrollbar-color: var(--orange) transparent;
-}
-.cart-items-list::-webkit-scrollbar { width: 3px; }
-.cart-items-list::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
-
-.cart-item-row {
-    display: grid;
-    grid-template-columns: 56px 1fr auto;
-    gap: 14px;
-    align-items: center;
-    padding: 14px 28px;
-    border-bottom: 1px solid rgba(244,239,230,0.05);
-    transition: background 0.25s;
-    animation: itemIn 0.35s cubic-bezier(0.34,1.2,0.64,1) both;
-}
-@keyframes itemIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
-.cart-item-row:hover { background: rgba(244,239,230,0.03); }
-.cart-item-img {
-    width: 56px; height: 56px; border-radius: 8px;
-    object-fit: cover; display: block; background: rgba(244,239,230,0.06);
-    flex-shrink: 0;
-}
-.cart-item-info { min-width: 0; }
-.cart-item-name {
-    font-family: 'Norwester', sans-serif;
-    font-size: 0.88rem; color: var(--cream);
-    text-transform: uppercase; letter-spacing: 0.5px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.cart-item-price {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem; color: var(--orange);
-    margin-top: 3px;
-}
-.cart-item-subtotal {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem; color: rgba(244,239,230,0.3);
-    margin-top: 2px;
-}
-
-/* qty control */
-.cart-qty-wrap {
-    display: flex; flex-direction: column;
-    align-items: center; gap: 8px; flex-shrink: 0;
-}
-.qty-controls {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(244,239,230,0.06);
-    border: 1px solid rgba(244,239,230,0.1);
-    border-radius: 50px; padding: 4px 8px;
-}
-.qty-btn {
-    width: 22px; height: 22px; border-radius: 50%;
-    border: none; background: transparent;
-    color: rgba(244,239,230,0.55); font-size: 1rem;
-    display: flex; align-items: center; justify-content: center;
-    cursor: none; transition: background 0.2s, color 0.2s, transform 0.2s;
-    line-height: 1; padding: 0; flex-shrink: 0;
-}
-.qty-btn:hover { background: var(--orange); color: #fff; transform: scale(1.1); }
-.qty-btn.minus:hover { background: rgba(220,50,50,0.7); }
-.qty-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem; font-weight: 700;
-    color: var(--cream); min-width: 18px; text-align: center;
-}
-.cart-delete-btn {
-    width: 20px; height: 20px;
-    background: none; border: none;
-    color: rgba(244,239,230,0.2); font-size: 0.75rem;
-    cursor: none; transition: color 0.25s, transform 0.25s;
-    display: flex; align-items: center; justify-content: center;
-}
-.cart-delete-btn:hover { color: rgba(220,50,50,0.7); transform: scale(1.15); }
-
-/* footer drawer */
-.cart-drawer-footer {
-    padding: 20px 28px 28px;
-    border-top: 1px solid rgba(244,239,230,0.08);
-    flex-shrink: 0;
-    background: rgba(0,0,0,0.2);
-}
-.cart-total-row {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 8px;
-}
-.cart-total-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem; letter-spacing: 3px;
-    color: rgba(244,239,230,0.4); text-transform: uppercase;
-}
-.cart-total-amount {
-    font-family: 'Norwester', sans-serif;
-    font-size: 1.6rem; color: var(--cream);
-    letter-spacing: 1px;
-}
-.cart-total-amount span { color: var(--orange); }
-.cart-item-count-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.55rem; letter-spacing: 2px;
-    color: rgba(244,239,230,0.25); text-transform: uppercase;
-    margin-bottom: 20px; display: block;
-}
-
-/* order divider */
-.order-divider {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.52rem; letter-spacing: 3px;
-    color: rgba(244,239,230,0.2); text-transform: uppercase;
-    text-align: center; margin-bottom: 14px;
-    display: flex; align-items: center; gap: 10px;
-}
-.order-divider::before, .order-divider::after {
-    content: ''; flex: 1; height: 1px;
-    background: rgba(244,239,230,0.08);
-}
-
-/* order buttons */
-.order-btns { display: flex; flex-direction: column; gap: 10px; }
-.order-btn {
-    width: 100%; padding: 14px 20px;
-    border-radius: 10px; border: none;
-    font-size: 0.8rem; font-weight: 700;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    cursor: none; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s, opacity 0.3s;
-    font-family: 'DM Sans', sans-serif;
-    position: relative; overflow: hidden;
-}
-.order-btn::before {
-    content: ''; position: absolute; inset: 0;
-    background: rgba(255,255,255,0); transition: background 0.3s;
-}
-.order-btn:hover::before { background: rgba(255,255,255,0.08); }
-.order-btn:hover { transform: translateY(-2px); }
-.order-btn:active { transform: scale(0.97); }
-.order-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
-
-.order-btn-wa {
-    background: linear-gradient(135deg, #25D366, #128C7E);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(37,211,102,0.3);
-}
-.order-btn-wa:hover { box-shadow: 0 8px 28px rgba(37,211,102,0.45); }
-
-.order-btn-grab {
-    background: linear-gradient(135deg, #00b14f, #007f3a);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(0,177,79,0.25);
-}
-.order-btn-grab:hover { box-shadow: 0 8px 28px rgba(0,177,79,0.4); }
-
-.order-btn-shopee {
-    background: linear-gradient(135deg, #EE4D2D, #C73E23);
-    color: #fff;
-    box-shadow: 0 4px 20px rgba(238,77,45,0.25);
-}
-.order-btn-shopee:hover { box-shadow: 0 8px 28px rgba(238,77,45,0.4); }
-
-.order-btn-icon { width: 20px; height: 20px; flex-shrink: 0; }
-
-/* toast notif */
-.cart-toast {
-    position: fixed;
-    bottom: 108px; right: 32px;
-    background: var(--espresso);
-    border: 1px solid rgba(232,98,42,0.4);
-    border-left: 3px solid var(--orange);
-    border-radius: 10px;
-    padding: 12px 18px;
-    display: flex; align-items: center; gap: 10px;
-    z-index: 9993;
-    transform: translateY(20px) scale(0.95);
-    opacity: 0; pointer-events: none;
-    transition: transform 0.4s cubic-bezier(0.34,1.2,0.64,1), opacity 0.35s;
-    max-width: 280px;
-}
-body.dark .cart-toast { background: #0D0A07; }
-.cart-toast.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: none; }
-.cart-toast-icon { font-size: 1rem; flex-shrink: 0; }
-.cart-toast-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem; letter-spacing: 1.5px;
-    color: rgba(244,239,230,0.65); text-transform: uppercase;
-    line-height: 1.5;
-}
-.cart-toast-name {
-    display: block; color: var(--cream);
-    font-size: 0.65rem; letter-spacing: 1px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    max-width: 200px;
-}
-
-/* note input */
-.cart-note-wrap {
-    margin-top: 4px; margin-bottom: 14px;
-}
-.cart-note-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.52rem; letter-spacing: 2.5px;
-    color: rgba(244,239,230,0.3); text-transform: uppercase;
-    margin-bottom: 6px; display: block;
-}
-.cart-note-input {
-    width: 100%; background: rgba(244,239,230,0.05);
-    border: 1px solid rgba(244,239,230,0.1); border-radius: 8px;
-    color: rgba(244,239,230,0.7); font-family: 'DM Sans', sans-serif;
-    font-size: 0.84rem; padding: 10px 14px;
-    resize: none; outline: none;
-    transition: border-color 0.3s;
-    line-height: 1.5;
-}
-.cart-note-input:focus { border-color: rgba(232,98,42,0.5); }
-.cart-note-input::placeholder { color: rgba(244,239,230,0.2); }
-
-/* mobile cursor fix */
-@media (max-width: 640px) {
-    .cart-fab, .cart-close-btn, .qty-btn, .cart-delete-btn, .order-btn { cursor: pointer; }
-    .cart-fab { bottom: 24px; right: 24px; width: 56px; height: 56px; }
-    .cart-drawer { width: 100vw; }
-    .cart-item-row { padding: 14px 20px; }
-    .cart-drawer-header { padding: 20px 20px 16px; }
-    .cart-drawer-footer { padding: 16px 20px 24px; }
-}
-</style>
 </head>
 <body>
 
@@ -1074,7 +1199,6 @@ body.dark .cart-toast { background: #0D0A07; }
 
     <!-- ABOUT -->
     <section id="about">
-        <!-- Part 1 -->
         <div class="about-hero-stmt">
             <div class="about-stmt-left reveal">
                 <div class="about-stmt-label t-about-eyebrow">Cerita Kami</div>
@@ -1092,7 +1216,6 @@ body.dark .cart-toast { background: #0D0A07; }
             </div>
         </div>
 
-        <!-- Part 2 -->
         <div class="about-photo-row">
             <div class="about-photo-main reveal">
                 <img src="footage-tentang-1.webp" alt="Warkop Mawar Interior">
@@ -1105,7 +1228,6 @@ body.dark .cart-toast { background: #0D0A07; }
             </div>
         </div>
 
-        <!-- Part 3: Values -->
         <div class="about-values">
             <div class="about-values-header reveal">
                 <div class="section-eyebrow t-values-eyebrow">Kenapa Kami</div>
@@ -1135,7 +1257,6 @@ body.dark .cart-toast { background: #0D0A07; }
             </div>
         </div>
 
-        <!-- Part 4: Story Strip (foto clickable lightbox) -->
         <div class="about-story-strip">
             <div class="story-text">
                 <div class="story-label t-story-label">Lebih Dari Sekadar Kopi</div>
@@ -1143,25 +1264,18 @@ body.dark .cart-toast { background: #0D0A07; }
                 <p class="story-body t-story-body">Dari satu cangkir kopi susu pagi hari, hingga obrolan seru tengah malam — Warkop Mawar hadir untuk semua momen. Cek juga <strong>mawar cantik di area kasir</strong>, sentuhan kecil yang jadi kebanggaan kami.</p>
                 <p class="story-body t-story-body2" style="margin-top:-4px;">Kami juga melayani <strong>coffee booth untuk acara pernikahan & event</strong>. Bawa suasana kopi terbaik ke momen spesialmu.</p>
             </div>
-            <!-- Foto klik = lightbox -->
             <div class="story-photos reveal" style="transition-delay:0.1s">
                 <div class="sp-img" onclick="openLightbox('footage-tentang-2.webp','Good Story · Warkop Mawar')">
                     <img src="footage-tentang-2.webp" alt="Suasana Warkop Mawar">
-                    <div class="lb-zoom-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                    </div>
+                    <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
                 <div class="sp-img" onclick="openLightbox('visi-misi-tentang.webp','Visi & Misi · Warkop Mawar')">
                     <img src="visi-misi-tentang.webp" alt="Visi Misi">
-                    <div class="lb-zoom-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                    </div>
+                    <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
                 <div class="sp-img" onclick="openLightbox('tanget-pasar-tentang.webp','Target Pasar · Warkop Mawar')">
                     <img src="tanget-pasar-tentang.webp" alt="Target Pasar">
-                    <div class="lb-zoom-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-                    </div>
+                    <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
             </div>
         </div>
@@ -1195,7 +1309,7 @@ body.dark .cart-toast { background: #0D0A07; }
             <div class="gallery-item"><img src="minuman-13.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-14.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-15.webp" alt=""></div>
-            <!-- duplicate for seamless loop -->
+            <!-- duplicate -->
             <div class="gallery-item"><img src="minuman-1.webp" alt=""></div>
             <div class="gallery-item"><img src="makanan-1.webp" alt=""></div>
             <div class="gallery-item"><img src="minuman-7.webp" alt=""></div>
@@ -1224,7 +1338,7 @@ body.dark .cart-toast { background: #0D0A07; }
         </div>
     </div>
 
-    <!-- GALERI MASONRY (wedding-coffe-booth-1 & harga-menu dihapus, diganti visi-misi & target-pasar) -->
+    <!-- GALERI MASONRY -->
     <section id="galeri">
         <div class="galeri-header reveal">
             <div>
@@ -1236,88 +1350,35 @@ body.dark .cart-toast { background: #0D0A07; }
                 <p class="galeri-desc t-galeri-desc">Intip suasana Warkop Mawar — dari sudut favorit sampai momen seru pelanggan.</p>
             </div>
         </div>
-
         <div class="galeri-masonry">
-            <div class="gm-item reveal">
-                <img src="footage-galeri-1.webp" alt="Interior Warkop Mawar">
-                <div class="gm-caption"><span class="gm-caption-text">Interior · Mawar</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.1s">
-                <img src="footage-tentang-2.webp" alt="Suasana">
-                <div class="gm-caption"><span class="gm-caption-text">Suasana Cozy</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.15s">
-                <img src="footage-galeri-2.webp" alt="Kopi">
-                <div class="gm-caption"><span class="gm-caption-text">Kopi Mawar</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.2s">
-                <img src="footage-galeri-3.webp" alt="Nongkrong">
-                <div class="gm-caption"><span class="gm-caption-text">Nongkrong</span></div>
-            </div>
-            <!-- Item 5: ganti wedding-coffe-booth-1 → visi-misi-tentang -->
-            <div class="gm-item reveal" style="transition-delay:0.1s">
-                <img src="visi-misi-tentang.webp" alt="Visi & Misi">
-                <div class="gm-caption"><span class="gm-caption-text">Visi & Misi</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.2s">
-                <img src="wedding-coffe-booth-2.webp" alt="Event">
-                <div class="gm-caption"><span class="gm-caption-text">Coffee Booth</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.15s">
-                <img src="poster-mading-1.webp" alt="Poster">
-                <div class="gm-caption"><span class="gm-caption-text">Poster Mawar</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.25s">
-                <img src="poster-mading-2.webp" alt="Mading">
-                <div class="gm-caption"><span class="gm-caption-text">Mading</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.1s">
-                <img src="poster-mading-3.webp" alt="Info">
-                <div class="gm-caption"><span class="gm-caption-text">Info Warkop</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.2s">
-                <img src="poster-mading-4.webp" alt="Event">
-                <div class="gm-caption"><span class="gm-caption-text">Event Poster</span></div>
-            </div>
-            <div class="gm-item reveal" style="transition-delay:0.15s">
-                <img src="minuman-1bg.webp" alt="Minuman">
-                <div class="gm-caption"><span class="gm-caption-text">Signature Drink</span></div>
-            </div>
-            <!-- Item 12: ganti harga-menu → tanget-pasar-tentang -->
-            <div class="gm-item reveal" style="transition-delay:0.3s">
-                <img src="tanget-pasar-tentang.webp" alt="Target Pasar">
-                <div class="gm-caption"><span class="gm-caption-text">Target Pasar</span></div>
-            </div>
+            <div class="gm-item reveal"><img src="footage-galeri-1.webp" alt="Interior Warkop Mawar"><div class="gm-caption"><span class="gm-caption-text">Interior · Mawar</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.1s"><img src="footage-tentang-2.webp" alt="Suasana"><div class="gm-caption"><span class="gm-caption-text">Suasana Cozy</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.15s"><img src="footage-galeri-2.webp" alt="Kopi"><div class="gm-caption"><span class="gm-caption-text">Kopi Mawar</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.2s"><img src="footage-galeri-3.webp" alt="Nongkrong"><div class="gm-caption"><span class="gm-caption-text">Nongkrong</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.1s"><img src="visi-misi-tentang.webp" alt="Visi & Misi"><div class="gm-caption"><span class="gm-caption-text">Visi & Misi</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.2s"><img src="wedding-coffe-booth-2.webp" alt="Event"><div class="gm-caption"><span class="gm-caption-text">Coffee Booth</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.15s"><img src="poster-mading-1.webp" alt="Poster"><div class="gm-caption"><span class="gm-caption-text">Poster Mawar</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.25s"><img src="poster-mading-2.webp" alt="Mading"><div class="gm-caption"><span class="gm-caption-text">Mading</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.1s"><img src="poster-mading-3.webp" alt="Info"><div class="gm-caption"><span class="gm-caption-text">Info Warkop</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.2s"><img src="poster-mading-4.webp" alt="Event"><div class="gm-caption"><span class="gm-caption-text">Event Poster</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.15s"><img src="minuman-1bg.webp" alt="Minuman"><div class="gm-caption"><span class="gm-caption-text">Signature Drink</span></div></div>
+            <div class="gm-item reveal" style="transition-delay:0.3s"><img src="tanget-pasar-tentang.webp" alt="Target Pasar"><div class="gm-caption"><span class="gm-caption-text">Target Pasar</span></div></div>
         </div>
     </section>
 
-    <!-- MARQUEE -->
-    <div class="marquee-wrap">
-        <div class="marquee-track" id="marqueeTrack">
-            <span class="marquee-item">Kopi Segar<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Harga Teman<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Industrial Cozy<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Warkop Mawar<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Open Late<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Kopi Segar<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Harga Teman<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Industrial Cozy<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Warkop Mawar<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Open Late<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Kopi Segar<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Harga Teman<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Industrial Cozy<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Bondowoso<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Seduhan Jujur<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Nongkrong Asik<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Warkop Mawar<span class="marquee-dot"></span></span>
-            <span class="marquee-item">Open Late<span class="marquee-dot"></span></span>
+    <!-- DYNAMIC MOTTO -->
+    <div class="dynamic-motto-wrap">
+        <div class="dynamic-motto">
+            <span class="static-text">Warkop Mawar —</span>
+            <div class="rolling-words">
+                <div class="rolling-words-inner">
+                    <span>Kopi Segar</span>
+                    <span>Harga Teman</span>
+                    <span>Seduhan Jujur</span>
+                    <span>Nongkrong Asik</span>
+                    <span>Kopi Segar</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1334,63 +1395,33 @@ body.dark .cart-toast { background: #0D0A07; }
             <button class="tab-btn t-tab-makanan" data-tab="makanan">🍛 Makanan</button>
         </div>
 
-        <!-- ── MINUMAN ──
-             Struktur baru: grid → menu-extra → btn-show-more
-             (button selalu di bawah, termasuk saat extra items muncul) -->
+        <!-- MINUMAN -->
         <div class="tab-content active" id="tab-minuman">
             <div class="menu-grid" id="grid-minuman">
                 <div class="menu-card reveal">
-                    <div class="menu-img-wrap">
-                        <span class="menu-card-tag t-tag-bestseller">Best Seller</span>
-                        <img src="minuman-4.webp" class="menu-img" alt="">
-                    </div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-1">Es Kopi Susu Aren</div>
-                        <div class="menu-card-desc t-desc-1">Perpaduan espresso, susu segar, dan manisnya gula aren.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-img-wrap"><span class="menu-card-tag t-tag-bestseller">Best Seller</span><img src="minuman-4.webp" class="menu-img" alt=""></div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-1">Es Kopi Susu Aren</div><div class="menu-card-desc t-desc-1">Perpaduan espresso, susu segar, dan manisnya gula aren.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.1s">
                     <div class="menu-img-wrap"><img src="minuman-5.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-2">Americano Orange</div>
-                        <div class="menu-card-desc t-desc-2">Racikan murni, aroma khas, nendang buat melek semalaman.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 11.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-2">Americano Orange</div><div class="menu-card-desc t-desc-2">Racikan murni, aroma khas, nendang buat melek semalaman.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 11.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.2s">
                     <div class="menu-img-wrap"><img src="minuman-2.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-7">Es Kopi Latte</div>
-                        <div class="menu-card-desc t-desc-7">Espresso lembut berpadu susu dingin yang creamy.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-7">Es Kopi Latte</div><div class="menu-card-desc t-desc-7">Espresso lembut berpadu susu dingin yang creamy.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal">
                     <div class="menu-img-wrap"><img src="minuman-3.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-8">Es Kopi Susu</div>
-                        <div class="menu-card-desc t-desc-8">Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-8">Es Kopi Susu</div><div class="menu-card-desc t-desc-8">Klasik dan selalu pas. Kopi susu dingin tanpa basa-basi.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.1s">
                     <div class="menu-img-wrap"><img src="minuman-6.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-9">Kopi Susu Dingin</div>
-                        <div class="menu-card-desc t-desc-9">Segar, manis, dan dingin — teman terbaik sore hari.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-9">Kopi Susu Dingin</div><div class="menu-card-desc t-desc-9">Segar, manis, dan dingin — teman terbaik sore hari.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.2s">
                     <div class="menu-img-wrap"><img src="minuman-1.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-10">Americano</div>
-                        <div class="menu-card-desc t-desc-10">Espresso dilute air dingin, bold dan clean.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-10">Americano</div><div class="menu-card-desc t-desc-10">Espresso dilute air dingin, bold dan clean.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
                 </div>
-                <!-- Extra items — tampil di dalam grid (display:contents) -->
                 <div class="menu-extra" id="extra-minuman">
                     <div class="menu-card reveal"><div class="menu-img-wrap"><img src="minuman-7.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-13">Matcha Latte</div><div class="menu-card-desc t-desc-13">Matcha premium dengan susu creamy, manis pas bikin seger.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
                     <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="minuman-8.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-14">Es Coklat</div><div class="menu-card-desc t-desc-14">Coklat dingin creamy, cocok buat yang ga suka kopi.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
@@ -1402,72 +1433,45 @@ body.dark .cart-toast { background: #0D0A07; }
                     <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="minuman-14.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-20">Cappuccino</div><div class="menu-card-desc t-desc-20">Espresso dengan foam susu lembut, warm dan comforting.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
                     <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="minuman-15.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-21">Milo Dinosaur</div><div class="menu-card-desc t-desc-21">Milo dingin + taburan milo bubuk, nostalgia masa kecil.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
                 </div>
-                <!-- Button di DALAM grid, setelah extra → selalu di bawah -->
                 <div class="btn-show-more-wrap">
                     <button class="btn-show-more t-btn-more-minuman" onclick="toggleMore('minuman')">Lihat Menu Lainnya ▼</button>
                 </div>
             </div>
         </div>
 
-        <!-- ── MAKANAN ── (sekarang punya show-more juga!) -->
+        <!-- MAKANAN -->
         <div class="tab-content" id="tab-makanan">
             <div class="menu-grid" id="grid-makanan">
                 <div class="menu-card reveal">
                     <div class="menu-img-wrap"><span class="menu-card-tag t-tag-bestseller">Best Seller</span><img src="makanan-5.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-3">Nasi Ayam Saus Mawar</div>
-                        <div class="menu-card-desc t-desc-3">Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-3">Nasi Ayam Saus Mawar</div><div class="menu-card-desc t-desc-3">Nasi hangat dengan ayam krispi berbalur saus rahasia warkop.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.1s">
                     <div class="menu-img-wrap"><img src="makanan-3.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-4">Mie Rebus Spesial</div>
-                        <div class="menu-card-desc t-desc-4">Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-4">Mie Rebus Spesial</div><div class="menu-card-desc t-desc-4">Kasta tertinggi mie instan. Kuah medok plus sayur dan topping.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.2s">
                     <div class="menu-img-wrap"><img src="makanan-4.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-5">Tempe Mendoan + Sambal</div>
-                        <div class="menu-card-desc t-desc-5">Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-5">Tempe Mendoan + Sambal</div><div class="menu-card-desc t-desc-5">Digoreng dadakan, anget-anget dicocol sambal kecap pedas manis.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 8.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal">
                     <div class="menu-img-wrap"><img src="makanan-2.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-6">Pisang Goreng Lumer</div>
-                        <div class="menu-card-desc t-desc-6">Manisnya pas, legit di dalem krispi di luar, taburan melimpah.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-6">Pisang Goreng Lumer</div><div class="menu-card-desc t-desc-6">Manisnya pas, legit di dalem krispi di luar, taburan melimpah.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.1s">
                     <div class="menu-img-wrap"><img src="makanan-1.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-11">Nasi Ayam Hitam</div>
-                        <div class="menu-card-desc t-desc-11">Ayam dengan saus gelap gurih yang bikin nambah terus.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-11">Nasi Ayam Hitam</div><div class="menu-card-desc t-desc-11">Ayam dengan saus gelap gurih yang bikin nambah terus.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 15.000</span><button class="add-btn">+</button></div></div>
                 </div>
                 <div class="menu-card reveal" style="transition-delay:0.2s">
                     <div class="menu-img-wrap"><img src="makanan-6.webp" class="menu-img" alt=""></div>
-                    <div class="menu-card-body">
-                        <div class="menu-card-name t-menu-12">Nasi Ayam Geprek</div>
-                        <div class="menu-card-desc t-desc-12">Geprek pedas menggoda, cocok banget sambil teguk kopi.</div>
-                        <div class="menu-card-footer"><span class="menu-card-price">Rp 13.000</span><button class="add-btn">+</button></div>
-                    </div>
+                    <div class="menu-card-body"><div class="menu-card-name t-menu-12">Nasi Ayam Geprek</div><div class="menu-card-desc t-desc-12">Geprek pedas menggoda, cocok banget sambil teguk kopi.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 13.000</span><button class="add-btn">+</button></div></div>
                 </div>
-                <!-- Extra makanan (footage baru makanan-7 s/d makanan-10) -->
                 <div class="menu-extra" id="extra-makanan">
                     <div class="menu-card reveal"><div class="menu-img-wrap"><img src="makanan-7.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-22">Mie Goreng Spesial</div><div class="menu-card-desc t-desc-22">Mie goreng dengan bumbu racikan, telur mata sapi, dan sayur segar.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 10.000</span><button class="add-btn">+</button></div></div></div>
                     <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="makanan-8.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-23">Soto Ayam Mawar</div><div class="menu-card-desc t-desc-23">Kuah bening kaya rempah dengan ayam suwir, tauge, dan perasan jeruk.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
                     <div class="menu-card reveal" style="transition-delay:0.2s"><div class="menu-img-wrap"><img src="makanan-9.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-24">Nasi Goreng Mawar</div><div class="menu-card-desc t-desc-24">Nasi goreng bumbu rahasia khas warkop, harum dan bikin nagih.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
                     <div class="menu-card reveal" style="transition-delay:0.1s"><div class="menu-img-wrap"><img src="makanan-10.webp" class="menu-img" alt=""></div><div class="menu-card-body"><div class="menu-card-name t-menu-25">Bakso Kuah</div><div class="menu-card-desc t-desc-25">Bakso segar dengan kuah kaldu gurih, cocok banget buat malam-malam.</div><div class="menu-card-footer"><span class="menu-card-price">Rp 12.000</span><button class="add-btn">+</button></div></div></div>
                 </div>
-                <!-- Button di DALAM grid, setelah extra -->
                 <div class="btn-show-more-wrap">
                     <button class="btn-show-more t-btn-more-makanan" onclick="toggleMore('makanan')">Lihat Menu Lainnya ▼</button>
                 </div>
@@ -1478,8 +1482,8 @@ body.dark .cart-toast { background: #0D0A07; }
     <!-- LOKASI -->
     <section id="lokasi">
         <div class="lokasi-inner">
-            <div class="lokasi-map-wrap reveal">
-                <iframe src="https://maps.google.com/maps?q=Warkop+Mawar+Bondowoso&t=&z=15&ie=UTF8&iwloc=&output=embed" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div class="lokasi-map-wrap reveal" style="position: relative; z-index: 1;">
+                <iframe class="google-map-embed" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3950.6!2d113.8143!3d-7.9272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd6d1ef8d98a60b%3A0xcf8b1460cc42ed6b!2sWarkop%20Mawar!5e0!3m2!1sid!2sid!4v1697000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
             <div class="lokasi-info">
                 <div class="reveal">
@@ -1529,8 +1533,26 @@ body.dark .cart-toast { background: #0D0A07; }
     </footer>
 
 <!-- ══════════════════════════════════════════════════════════
-     2. HTML — CART FEATURE
+     PLATFORM FLOATING BUTTONS — FIXED: logo HD, object-fit:contain
      ══════════════════════════════════════════════════════════ -->
+<div class="platform-btns" id="platformBtns">
+    <!-- GrabFood -->
+    <button class="platform-btn platform-btn-grab" id="btnGrab" aria-label="Pesan via GrabFood">
+        <div class="platform-btn-icon-wrap">
+            <img src="logo-grabfood.svg" alt="GrabFood">
+        </div>
+        <span class="platform-btn-label">GrabFood</span>
+        <span class="platform-btn-tooltip">Pesan via GrabFood</span>
+    </button>
+    <!-- ShopeeFood -->
+    <button class="platform-btn platform-btn-shopee" id="btnShopee" aria-label="Pesan via ShopeeFood">
+        <div class="platform-btn-icon-wrap">
+            <img src="logo-shopeefood.svg" alt="ShopeeFood">
+        </div>
+        <span class="platform-btn-label">ShopeeFood</span>
+        <span class="platform-btn-tooltip">Pesan via ShopeeFood</span>
+    </button>
+</div>
 
 <!-- CART FAB -->
 <button class="cart-fab" id="cartFab" aria-label="Keranjang">
@@ -1547,13 +1569,10 @@ body.dark .cart-toast { background: #0D0A07; }
 
 <!-- CART DRAWER -->
 <div class="cart-drawer" id="cartDrawer">
-    <!-- Header -->
     <div class="cart-drawer-header">
         <div class="cart-drawer-title">Keranjang <span>Pesanan</span></div>
         <button class="cart-close-btn" id="cartCloseBtn" aria-label="Tutup">✕</button>
     </div>
-
-    <!-- Empty State -->
     <div class="cart-empty" id="cartEmpty">
         <svg class="cart-empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="rgba(244,239,230,0.3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
@@ -1562,53 +1581,40 @@ body.dark .cart-toast { background: #0D0A07; }
         </svg>
         <div class="cart-empty-text">Belum ada pesanan<br>Yuk pilih menu dulu!</div>
     </div>
-
-    <!-- Items List -->
     <div class="cart-items-list" id="cartItemsList" style="display:none"></div>
-
-    <!-- Footer -->
     <div class="cart-drawer-footer" id="cartFooter" style="display:none">
         <div class="cart-total-row">
             <span class="cart-total-label">Total Pesanan</span>
             <div class="cart-total-amount">Rp <span id="cartTotalNum">0</span></div>
         </div>
         <span class="cart-item-count-label" id="cartItemCountLabel">0 item</span>
-
-        <!-- Note -->
         <div class="cart-note-wrap">
             <label class="cart-note-label" for="cartNote">Catatan (opsional)</label>
             <textarea class="cart-note-input" id="cartNote" rows="2" placeholder="Contoh: tanpa es, extra pedas..."></textarea>
         </div>
-
-        <div class="order-divider">Pesan Via</div>
+        <div class="cart-platform-info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(244,239,230,0.3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-top:1px;flex-shrink:0">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div class="cart-platform-info-text">
+                <strong>Mau pesan via GrabFood / ShopeeFood?</strong>
+                Klik tombol <span style="color:rgba(232,98,42,0.7)">hijau</span> atau <span style="color:rgba(232,98,42,0.7)">merah</span> yang ada di sudut kanan bawah layar.
+            </div>
+        </div>
+        <div class="order-divider">Pesan via WhatsApp</div>
         <div class="order-btns">
-            <!-- WhatsApp -->
             <button class="order-btn order-btn-wa" id="btnOrderWa">
                 <svg class="order-btn-icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                     <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.122 1.529 5.855L.057 23.428a.5.5 0 0 0 .611.611l5.577-1.466A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.5-5.187-1.374l-.371-.219-3.843 1.011 1.027-3.744-.238-.389A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
                 </svg>
-                WhatsApp
-            </button>
-            <!-- GrabFood -->
-            <button class="order-btn order-btn-grab" id="btnOrderGrab">
-                <svg class="order-btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                </svg>
-                GrabFood
-            </button>
-            <!-- ShopeeFood -->
-            <button class="order-btn order-btn-shopee" id="btnOrderShopee">
-                <svg class="order-btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-2-9h4v2h-4zm0-3h4v2h-4zm0 6h4v2h-4z"/>
-                </svg>
-                ShopeeFood
+                Pesan Sekarang via WhatsApp
             </button>
         </div>
     </div>
 </div>
 
-<!-- Toast Notification -->
+<!-- Toast -->
 <div class="cart-toast" id="cartToast">
     <span class="cart-toast-icon">🛒</span>
     <div class="cart-toast-text">
@@ -1727,7 +1733,7 @@ body.dark .cart-toast { background: #0D0A07; }
         });
     });
 
-    // ── SHOW MORE (button selalu di bawah karena ada di dalam grid setelah menu-extra) ──
+    // ── SHOW MORE ──
     function toggleMore(tab) {
         const extra = document.getElementById('extra-' + tab);
         const btn = document.querySelector('.t-btn-more-' + tab);
@@ -1786,6 +1792,15 @@ body.dark .cart-toast { background: #0D0A07; }
             't-menu-10': 'Americano', 't-desc-10': 'Espresso dilute air dingin, bold dan clean.',
             't-menu-11': 'Nasi Ayam Hitam', 't-desc-11': 'Ayam dengan saus gelap gurih yang bikin nambah terus.',
             't-menu-12': 'Nasi Ayam Geprek', 't-desc-12': 'Geprek pedas menggoda, cocok banget sambil teguk kopi.',
+            't-menu-13': 'Matcha Latte', 't-desc-13': 'Matcha premium dengan susu creamy, manis pas bikin seger.',
+            't-menu-14': 'Es Coklat', 't-desc-14': 'Coklat dingin creamy, cocok buat yang ga suka kopi.',
+            't-menu-15': 'Thai Tea', 't-desc-15': 'Teh Thailand manis creamy, rasa otentik bikin nagih.',
+            't-menu-16': 'Kopi Susu Gula Aren', 't-desc-16': 'Varian klasik susu + gula aren yang legit dan nendang.',
+            't-menu-17': 'Es Teh Mawar', 't-desc-17': 'Teh segar dengan sentuhan bunga mawar, adem di tenggorokan.',
+            't-menu-18': 'Es Jeruk Seger', 't-desc-18': 'Jeruk peras segar, asem manis natural tanpa pengawet.',
+            't-menu-19': 'Vietnam Drip', 't-desc-19': 'Kopi drip ala Vietnam, strong dan bold buat pencinta pahit.',
+            't-menu-20': 'Cappuccino', 't-desc-20': 'Espresso dengan foam susu lembut, warm dan comforting.',
+            't-menu-21': 'Milo Dinosaur', 't-desc-21': 'Milo dingin + taburan milo bubuk, nostalgia masa kecil.',
             't-menu-22': 'Mie Goreng Spesial', 't-desc-22': 'Mie goreng dengan bumbu racikan, telur mata sapi, dan sayur segar.',
             't-menu-23': 'Soto Ayam Mawar', 't-desc-23': 'Kuah bening kaya rempah dengan ayam suwir, tauge, dan perasan jeruk.',
             't-menu-24': 'Nasi Goreng Mawar', 't-desc-24': 'Nasi goreng bumbu rahasia khas warkop, harum dan bikin nagih.',
@@ -1826,7 +1841,7 @@ body.dark .cart-toast { background: #0D0A07; }
             't-val-4-title': 'Open Late', 't-val-4-desc': 'Open until midnight, Warkop Mawar faithfully accompanies your long nights every day.',
             't-story-label': 'More Than Just Coffee',
             't-story-title': 'We\'re Here for<br>Your Best <em>Moments</em>',
-            't-story-body': 'From a cup of morning coffee latte to late-night conversations \u2014 Warkop Mawar is here for all moments. Check out our <strong>beautiful roses at the cashier</strong>, a small touch we\'re proud of.',
+            't-story-body': 'From a cup of morning coffee latte to late-night conversations \u2014 Warkop Mawar is here for all moments.',
             't-story-body2': 'We also offer <strong>coffee booths for weddings & events</strong>. Bring the best coffee atmosphere to your special moments.',
             't-galeri-eyebrow': 'Our Vibes', 't-galeri-title': 'Mawar <em>Gallery</em>',
             't-galeri-desc': 'Peek into the Warkop Mawar atmosphere \u2014 from favorite corners to fun customer moments.',
@@ -1845,6 +1860,15 @@ body.dark .cart-toast { background: #0D0A07; }
             't-menu-10': 'Americano', 't-desc-10': 'Espresso diluted with cold water, bold and clean.',
             't-menu-11': 'Black Sauce Chicken Rice', 't-desc-11': 'Chicken in rich dark savory sauce that keeps you coming back.',
             't-menu-12': 'Smashed Chicken Rice', 't-desc-12': 'Spicy smashed chicken \u2014 perfect alongside your coffee.',
+            't-menu-13': 'Matcha Latte', 't-desc-13': 'Premium matcha with creamy milk, sweet and refreshing.',
+            't-menu-14': 'Iced Chocolate', 't-desc-14': 'Cold creamy chocolate drink, great for non-coffee lovers.',
+            't-menu-15': 'Thai Tea', 't-desc-15': 'Sweet creamy Thai tea, authentic taste and totally addictive.',
+            't-menu-16': 'Palm Sugar Milk Coffee', 't-desc-16': 'Classic milk coffee with rich palm sugar sweetness.',
+            't-menu-17': 'Rose Iced Tea', 't-desc-17': 'Fresh tea with a hint of rose, cool and soothing.',
+            't-menu-18': 'Fresh Orange Juice', 't-desc-18': 'Hand-pressed orange, naturally tangy and sweet, no preservatives.',
+            't-menu-19': 'Vietnam Drip Coffee', 't-desc-19': 'Vietnamese-style drip coffee, strong and bold for bitter lovers.',
+            't-menu-20': 'Cappuccino', 't-desc-20': 'Espresso with soft milk foam, warm and comforting.',
+            't-menu-21': 'Milo Dinosaur', 't-desc-21': 'Iced Milo topped with Milo powder, a nostalgic childhood treat.',
             't-menu-22': 'Special Fried Noodles', 't-desc-22': 'Fried noodles with house seasoning, sunny-side egg, and fresh greens.',
             't-menu-23': 'Mawar Chicken Soto', 't-desc-23': 'Clear broth rich in spices with shredded chicken, bean sprouts, and citrus.',
             't-menu-24': 'Mawar Fried Rice', 't-desc-24': 'Signature fried rice with the warkop\'s secret blend, aromatic and addictive.',
@@ -1892,235 +1916,153 @@ body.dark .cart-toast { background: #0D0A07; }
         const header = document.querySelector('header');
         header.style.boxShadow = window.scrollY > 60 ? '0 2px 24px rgba(26,15,8,0.08)' : 'none';
     });
-    </script>
 
-<!-- ══════════════════════════════════════════════════════════
-     3. JS — CART FEATURE
-     ══════════════════════════════════════════════════════════ -->
-<script id="CART_JS_PASTE_BEFORE_SCRIPT_CLOSING">
+    // ── CART ──
+    let cart = [];
+    let cartOpen = false;
+    let toastTimer = null;
+    const WA_NUMBER = '62822440195960';
 
-// ── CART STATE ──
-let cart = []; // [{name, price, qty, img}]
-let cartOpen = false;
-let toastTimer = null;
-
-const WA_NUMBER = '62822440195960'; // 082244019596 → format internasional tanpa +
-
-// ── CART TOGGLE ──
-function toggleCart() {
-    cartOpen = !cartOpen;
-    document.getElementById('cartDrawer').classList.toggle('open', cartOpen);
-    document.getElementById('cartOverlay').classList.toggle('open', cartOpen);
-    document.body.style.overflow = cartOpen ? 'hidden' : '';
-}
-document.getElementById('cartFab').addEventListener('click', toggleCart);
-document.getElementById('cartCloseBtn').addEventListener('click', toggleCart);
-document.getElementById('cartOverlay').addEventListener('click', toggleCart);
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && cartOpen) toggleCart(); });
-
-// ── ADD TO CART ──
-function addToCart(name, price, img) {
-    const existing = cart.find(i => i.name === name);
-    if (existing) {
-        existing.qty++;
-    } else {
-        cart.push({ name, price, qty: 1, img });
+    function toggleCart() {
+        cartOpen = !cartOpen;
+        document.getElementById('cartDrawer').classList.toggle('open', cartOpen);
+        document.getElementById('cartOverlay').classList.toggle('open', cartOpen);
+        document.body.style.overflow = cartOpen ? 'hidden' : '';
     }
-    renderCart();
-    showToast(name);
-    animateFab();
-}
+    document.getElementById('cartFab').addEventListener('click', toggleCart);
+    document.getElementById('cartCloseBtn').addEventListener('click', toggleCart);
+    document.getElementById('cartOverlay').addEventListener('click', toggleCart);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && cartOpen) toggleCart(); });
 
-// ── UPDATE QTY ──
-function updateQty(name, delta) {
-    const idx = cart.findIndex(i => i.name === name);
-    if (idx === -1) return;
-    cart[idx].qty += delta;
-    if (cart[idx].qty <= 0) cart.splice(idx, 1);
-    renderCart();
-}
+    function addToCart(name, price, img) {
+        const existing = cart.find(i => i.name === name);
+        if (existing) { existing.qty++; } else { cart.push({ name, price, qty: 1, img }); }
+        renderCart();
+        showToast(name);
+        animateFab();
+        if (!cartOpen) document.getElementById('cartFab').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 
-// ── REMOVE ITEM ──
-function removeCartItem(name) {
-    cart = cart.filter(i => i.name !== name);
-    renderCart();
-}
+    function updateQty(name, delta) {
+        const idx = cart.findIndex(i => i.name === name);
+        if (idx === -1) return;
+        cart[idx].qty += delta;
+        if (cart[idx].qty <= 0) cart.splice(idx, 1);
+        renderCart();
+    }
 
-// ── RENDER CART ──
-function renderCart() {
-    const totalItems = cart.reduce((s, i) => s + i.qty, 0);
-    const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    function removeCartItem(name) {
+        cart = cart.filter(i => i.name !== name);
+        renderCart();
+    }
 
-    // Badge
-    const badge = document.getElementById('cartBadge');
-    badge.textContent = totalItems;
-    badge.classList.toggle('show', totalItems > 0);
+    function renderCart() {
+        const totalItems = cart.reduce((s,i) => s + i.qty, 0);
+        const totalPrice = cart.reduce((s,i) => s + i.price * i.qty, 0);
+        document.getElementById('cartBadge').textContent = totalItems;
+        document.getElementById('cartBadge').classList.toggle('show', totalItems > 0);
+        const isEmpty = cart.length === 0;
+        document.getElementById('cartEmpty').style.display = isEmpty ? 'flex' : 'none';
+        document.getElementById('cartItemsList').style.display = isEmpty ? 'none' : 'block';
+        document.getElementById('cartFooter').style.display = isEmpty ? 'none' : 'block';
 
-    // Empty vs filled
-    const isEmpty = cart.length === 0;
-    document.getElementById('cartEmpty').style.display = isEmpty ? 'flex' : 'none';
-    document.getElementById('cartItemsList').style.display = isEmpty ? 'none' : 'block';
-    document.getElementById('cartFooter').style.display = isEmpty ? 'none' : 'block';
-
-    if (!isEmpty) {
-        // Render items
-        const listEl = document.getElementById('cartItemsList');
-        listEl.innerHTML = cart.map(item => `
-            <div class="cart-item-row">
-                <img class="cart-item-img"
-                     src="${item.img}"
-                     alt="${item.name}"
-                     onerror="this.style.background='rgba(232,98,42,0.1)';this.src=''">
-                <div class="cart-item-info">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-price">${formatRp(item.price)}</div>
-                    <div class="cart-item-subtotal">Subtotal: ${formatRp(item.price * item.qty)}</div>
-                </div>
-                <div class="cart-qty-wrap">
-                    <div class="qty-controls">
-                        <button class="qty-btn minus" onclick="updateQty('${escapeAttr(item.name)}', -1)">−</button>
-                        <span class="qty-num">${item.qty}</span>
-                        <button class="qty-btn" onclick="updateQty('${escapeAttr(item.name)}', 1)">+</button>
+        if (!isEmpty) {
+            const listEl = document.getElementById('cartItemsList');
+            listEl.innerHTML = cart.map((item, idx) => `
+                <div class="cart-item-row" data-index="${idx}">
+                    <img class="cart-item-img" src="${item.img}" alt="${item.name}" onerror="this.style.background='rgba(232,98,42,0.1)';this.src=''">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">${formatRp(item.price)}</div>
+                        <div class="cart-item-subtotal">Subtotal: ${formatRp(item.price * item.qty)}</div>
                     </div>
-                    <button class="cart-delete-btn" onclick="removeCartItem('${escapeAttr(item.name)}')" title="Hapus">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-                    </button>
+                    <div class="cart-qty-wrap">
+                        <div class="qty-controls">
+                            <button class="qty-btn minus" data-action="dec">−</button>
+                            <span class="qty-num">${item.qty}</span>
+                            <button class="qty-btn" data-action="inc">+</button>
+                        </div>
+                        <button class="cart-delete-btn" data-action="del" title="Hapus">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        `).join('');
-
-        // Total
-        document.getElementById('cartTotalNum').textContent = totalPrice.toLocaleString('id-ID');
-        document.getElementById('cartItemCountLabel').textContent =
-            `${totalItems} item · ${cart.length} jenis`;
-
-        // Disable order buttons if empty (safety)
-        const disabled = totalItems === 0;
-        ['btnOrderWa','btnOrderGrab','btnOrderShopee'].forEach(id => {
-            document.getElementById(id).disabled = disabled;
-        });
+            `).join('');
+            document.getElementById('cartTotalNum').textContent = totalPrice.toLocaleString('id-ID');
+            document.getElementById('cartItemCountLabel').textContent = `${totalItems} item · ${cart.length} jenis`;
+            document.getElementById('btnOrderWa').disabled = (totalItems === 0);
+        }
     }
-}
 
-// ── FORMAT HELPERS ──
-function formatRp(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
-function escapeAttr(s) { return s.replace(/'/g, "\\'"); }
-
-// ── TOAST ──
-function showToast(name) {
-    const t = document.getElementById('cartToast');
-    document.getElementById('cartToastName').textContent = name;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ── FAB ANIMATE ──
-function animateFab() {
-    const b = document.getElementById('cartBadge');
-    b.classList.remove('pop');
-    void b.offsetWidth;
-    b.classList.add('pop');
-}
-
-// ── ORDER VIA WHATSAPP ──
-document.getElementById('btnOrderWa').addEventListener('click', function() {
-    if (cart.length === 0) return;
-    const note = document.getElementById('cartNote').value.trim();
-    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const itemLines = cart.map(i =>
-        `• ${i.name} x${i.qty} = ${formatRp(i.price * i.qty)}`
-    ).join('\n');
-    const msg = [
-        '🌹 *Halo Warkop Mawar!*',
-        '',
-        'Saya mau pesan:',
-        itemLines,
-        '',
-        `*Total: ${formatRp(total)}*`,
-        note ? `\nCatatan: ${note}` : '',
-        '',
-        '_(Pesanan via Website Warkop Mawar)_'
-    ].join('\n');
-    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
-});
-
-// ── ORDER VIA GRABFOOD ──
-document.getElementById('btnOrderGrab').addEventListener('click', function() {
-    // Ganti URL ini dengan link toko GrabFood Warkop Mawar
-    window.open('https://food.grab.com/id/en/', '_blank');
-    // Tampilkan info jika belum ada toko
-    showExternalOrderInfo('GrabFood');
-});
-
-// ── ORDER VIA SHOPEEFOOD ──
-document.getElementById('btnOrderShopee').addEventListener('click', function() {
-    // Ganti URL ini dengan link toko ShopeeFood Warkop Mawar
-    window.open('https://shopee.co.id/food', '_blank');
-    showExternalOrderInfo('ShopeeFood');
-});
-
-function showExternalOrderInfo(platform) {
-    const t = document.getElementById('cartToast');
-    document.getElementById('cartToastName').textContent = `Membuka ${platform}...`;
-    const icon = document.querySelector('.cart-toast-icon');
-    if (icon) icon.textContent = platform === 'GrabFood' ? '🟢' : '🟠';
-    const textEl = document.querySelector('.cart-toast-text');
-    if (textEl) {
-        const firstNode = textEl.firstChild;
-        if (firstNode && firstNode.nodeType === 3) firstNode.nodeValue = 'Diarahkan ke ';
-    }
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => {
-        t.classList.remove('show');
-        // Reset toast icon
-        setTimeout(() => {
-            if (icon) icon.textContent = '🛒';
-            if (textEl && textEl.firstChild && textEl.firstChild.nodeType === 3)
-                textEl.firstChild.nodeValue = 'Ditambahkan ke keranjang';
-        }, 400);
-    }, 2800);
-}
-
-// ── HOOK ADD BUTTONS (event delegation on menu grids) ──
-// Fungsi ini menghubungkan tombol + di setiap menu card ke keranjang
-function initCartButtons() {
-    document.querySelectorAll('.add-btn').forEach(btn => {
-        // Hapus listener lama (kalau ada)
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        newBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const card = this.closest('.menu-card');
-            if (!card) return;
-            const name  = card.querySelector('.menu-card-name')?.textContent?.trim() || 'Menu';
-            const priceText = card.querySelector('.menu-card-price')?.textContent || '0';
-            const price = parseInt(priceText.replace(/[^0-9]/g, '')) || 0;
-            // Ambil src gambar dari img.menu-img
-            const imgEl = card.querySelector('.menu-img');
-            const img   = imgEl ? imgEl.src : '';
-            addToCart(name, price, img);
-        });
+    document.getElementById('cartItemsList').addEventListener('click', function(e) {
+        const btn = e.target.closest('button');
+        if (!btn || !btn.dataset.action) return;
+        const row = btn.closest('.cart-item-row');
+        if (!row) return;
+        const idx = parseInt(row.dataset.index, 10);
+        if (isNaN(idx) || idx < 0 || idx >= cart.length) return;
+        const itemName = cart[idx].name;
+        switch (btn.dataset.action) {
+            case 'inc': updateQty(itemName, 1); break;
+            case 'dec': updateQty(itemName, -1); break;
+            case 'del': removeCartItem(itemName); break;
+        }
     });
-}
 
-// Init saat halaman load
-initCartButtons();
+    function formatRp(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
+    function showToast(name) {
+        const t = document.getElementById('cartToast');
+        document.getElementById('cartToastName').textContent = name;
+        t.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+    }
+    function animateFab() {
+        const b = document.getElementById('cartBadge');
+        b.classList.remove('pop');
+        void b.offsetWidth;
+        b.classList.add('pop');
+    }
 
-// Re-init saat tab menu diganti (karena menu-extra bisa baru muncul)
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => setTimeout(initCartButtons, 100));
-});
+    document.getElementById('btnOrderWa').addEventListener('click', function() {
+        if (cart.length === 0) return;
+        const note = document.getElementById('cartNote').value.trim();
+        const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+        const itemLines = cart.map(i => `• ${i.name} x${i.qty} = ${formatRp(i.price * i.qty)}`).join('\n');
+        const msg = [
+            '🌹 *Halo Warkop Mawar!*', '', 'Saya mau pesan:', itemLines,
+            `*Total: ${formatRp(total)}*`, note ? `\nCatatan: ${note}` : '',
+            '', '_(Pesanan via Website Warkop Mawar)_'
+        ].join('\n');
+        window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+    });
 
-// Re-init saat show more diklik
-const origToggleMore = window.toggleMore;
-window.toggleMore = function(tab) {
-    origToggleMore(tab);
-    setTimeout(initCartButtons, 100);
-};
+    document.getElementById('btnGrab').addEventListener('click', () => window.open('https://food.grab.com/id/en/', '_blank'));
+    document.getElementById('btnShopee').addEventListener('click', () => window.open('https://shopee.co.id/food', '_blank'));
 
-</script>
+    function initCartButtons() {
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            if (btn.dataset.cartInit) return;
+            btn.dataset.cartInit = '1';
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const card = this.closest('.menu-card');
+                if (!card) return;
+                const name = card.querySelector('.menu-card-name')?.textContent?.trim() || 'Menu';
+                const priceText = card.querySelector('.menu-card-price')?.textContent || '0';
+                const price = parseInt(priceText.replace(/[^0-9]/g, '')) || 0;
+                const imgEl = card.querySelector('.menu-img');
+                const img = imgEl ? imgEl.src : '';
+                addToCart(name, price, img);
+            });
+        });
+    }
+
+    initCartButtons();
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => setTimeout(initCartButtons, 50)));
+    const origToggleMore = window.toggleMore;
+    window.toggleMore = function(tab) { origToggleMore(tab); setTimeout(initCartButtons, 50); };
+
+    </script>
 </body>
 </html>
