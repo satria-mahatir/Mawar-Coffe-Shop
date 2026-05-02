@@ -72,6 +72,8 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
   <!-- DataTables CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap4.min.css">
+  <!-- DataTables Responsive CSS (Tambahin ini bro!) -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap4.min.css">
   <style>
     /* Styling Tombol Export DataTables */
     .dt-buttons .btn {
@@ -127,7 +129,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
         <div class="card">
           <div class="card-header"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTambah"><i class="fas fa-plus"></i> Tambah Menu</button></div>
           <div class="card-body p-3">
-            <table id="tabelMenu" class="table table-striped table-bordered text-center">
+            <table id="tabelMenu" class="table table-striped table-bordered text-center dt-responsive nowrap" style="width:100%">
               <thead style="background-color: #1A0F08; color: #F5EFE4;">
                 <tr>
                   <th style="width: 5%">No</th>
@@ -270,6 +272,9 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
 <!-- DataTables Buttons JS -->
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap4.min.js"></script>
+<!-- DataTables Responsive JS (Tambahin ini bro!) -->
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
