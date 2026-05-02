@@ -26,25 +26,24 @@
         .btn-mawar { background-color: #E8622A; color: white; border: none; }
         .btn-mawar:hover { background-color: #C04E1A; color: white; }
 
-        /* --- Sidebar Branding Custom --- */
-        .sidebar-brand {
-            border-bottom: 1px solid #E8622A;
-            padding: 15px 10px;
-            text-align: center;
+        /* --- Sidebar Branding Refined --- */
+        .sidebar-brand { transition: all 0.3s; }
+        .sidebar-brand-text { transition: opacity 0.3s; white-space: nowrap; }
+        
+        /* Pas sidebar diringkas (AdminLTE pake sidebar-collapse) */
+        .sidebar-collapse .sidebar-brand-text {
+            display: none;
+        }
+
+        .sidebar-brand-icon img {
             transition: all 0.3s;
         }
-        .brand-full img { max-width: 150px; height: auto; }
-        .brand-icon img { width: 32px; height: 32px; }
 
-        /* Kondisi Sidebar Normal */
-        .brand-full { display: block; }
-        .brand-icon { display: none; }
-
-        /* Kondisi Sidebar Collapsed (AdminLTE pake sidebar-collapse di body) */
-        .sidebar-collapse .brand-full { display: none !important; }
-        .sidebar-collapse .brand-icon { display: block !important; }
+        .sidebar-collapse .sidebar-brand-icon img {
+            width: 35px !important; /* Dikecilkan dikit pas tertutup */
+        }
         
         .sidebar-collapse .sidebar-brand {
-            padding: 15px 0;
+            padding: 15px 0 !important;
         }
     </style>

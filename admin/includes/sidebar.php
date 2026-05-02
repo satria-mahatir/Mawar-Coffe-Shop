@@ -1,13 +1,18 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4" style="background-color: #1A0F08;">
-    <!-- Logo Brand Section -->
-    <div class="sidebar-brand">
-        <a href="index.php" class="brand-full">
-            <img src="../images/logo-mawar.png" alt="Warkop Mawar Logo">
-        </a>
-        <a href="index.php" class="brand-icon">
-            <img src="../images/favicon-32x32.png" alt="Mawar Icon">
+    <!-- Bagian Header Sidebar -->
+    <div class="sidebar-brand d-flex align-items-center justify-content-center py-3">
+        <a href="index.php" class="text-decoration-none d-flex align-items-center">
+            <!-- Logo Utama (Muncul pas sidebar kebuka) -->
+            <div class="sidebar-brand-icon">
+                <img src="../images/logo-mawar.svg" alt="Logo Warkop Mawar" style="width: 45px; height: auto;">
+            </div>
+            <!-- Teks Nama (Opsional, ilang pas sidebar tertutup) -->
+            <div class="sidebar-brand-text mx-2" style="color: #E8622A; font-weight: bold; font-size: 14px;">
+                WARKOP MAWAR
+            </div>
         </a>
     </div>
+    <hr class="sidebar-divider" style="border-top: 1px solid #E8622A; opacity: 0.3; margin: 0 10px;">
 
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex" style="border-bottom: 1px solid #E8622A;">

@@ -2007,7 +2007,7 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
     });
 
     document.getElementById('btnGrab').addEventListener('click', () => window.location.href = 'https://food.grab.com/id/id/restaurant/warkop-mawar-badean-delivery/6-C3CYEXEEBA5XR6');
-    document.getElementById('btnShopee').addEventListener('click', () => window.open('https://shopee.co.id/food', '_blank'));
+    document.getElementById('btnShopee').addEventListener('click', () => window.open('https://shopee.co.id/universal-link/now-food/shop/22679728?deep_and_deferred=1&shareChannel=whatsapp', '_blank'));
 
     function initCartButtons() {
         document.querySelectorAll('.add-btn').forEach(btn => {
