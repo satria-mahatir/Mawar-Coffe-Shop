@@ -462,8 +462,8 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
         /* LOCATION */
         #lokasi { background: var(--bg); }
         .lokasi-inner { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 80px); align-items: center; }
-        .lokasi-map-wrap { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 14px; overflow: hidden; border: 2px solid var(--orange); background: var(--card-bg); z-index: 1; box-shadow: 0 16px 48px rgba(232,98,42,0.15); }
-        .google-map-embed { width: 100%; height: 100%; border: none; display: block; }
+        .lokasi-map-wrap { position: relative; width: 100%; aspect-ratio: 4/3; min-height: 480px; border-radius: 14px; overflow: hidden; border: 2px solid var(--orange); background: var(--card-bg); z-index: 1; box-shadow: 0 16px 48px rgba(232,98,42,0.15); }
+        .google-map-embed { width: 100%; height: 100%; min-height: 480px; border: none; display: block; }
         .lokasi-info { display: flex; flex-direction: column; gap: 24px; }
         .lokasi-address { font-size: clamp(0.92rem, 2vw, 1.02rem); line-height: 1.9; color: var(--muted); font-weight: 300; }
         .lokasi-address strong { color: var(--text); font-weight: 600; }
@@ -597,6 +597,8 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
             section { padding: 72px 6%; }
             header { padding: 0 6%; }
             .lokasi-inner { grid-template-columns: 1fr; }
+            .lokasi-map-wrap { min-height: 380px; }
+            .google-map-embed { min-height: 380px; }
             .galeri-masonry { grid-template-columns: repeat(6, 1fr); }
             .gm-item:nth-child(1) { grid-column: span 4; grid-row: span 6; }
             .gm-item:nth-child(2) { grid-column: span 2; grid-row: span 3; }
@@ -625,6 +627,8 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
             .about-values-grid { grid-template-columns: 1fr; }
             #cursor, #cursor-ring { display: none; }
             body { cursor: auto; }
+            .lokasi-map-wrap { min-height: 320px; }
+            .google-map-embed { min-height: 320px; }
             .galeri-masonry { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 50px; }
             .gm-item:nth-child(1) { grid-column: span 4; grid-row: span 5; }
             .gm-item:nth-child(2) { grid-column: span 2; grid-row: span 4; }
