@@ -39,7 +39,7 @@ if(mysqli_num_rows($q_web2) > 0) {
   <title>Pengaturan Web | Admin Mawar</title>
   <?php include 'includes/header.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
   <?php include 'includes/navbar.php'; ?>
   <?php include 'includes/sidebar.php'; ?>

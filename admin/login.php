@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 include '../koneksi.php';
 
@@ -19,8 +22,10 @@ if (isset($_POST['submit'])) {
     // 1. Cari user berdasarkan username aja
     $query  = "SELECT * FROM admin WHERE username='$username'";
     $result = mysqli_query($koneksi, $query);
-
-    if (mysqli_num_rows($result) > 0) {
+    
+    if (!$result) {
+        $error = 'Error: ' . mysqli_error($koneksi);
+    } else if (mysqli_num_rows($result) > 0) {
         $data = mysqli_fetch_assoc($result);
         
         // 2. Verifikasi password BCRYPT yang diinput vs yang di database

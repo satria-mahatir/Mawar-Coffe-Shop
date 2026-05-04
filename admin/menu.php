@@ -108,7 +108,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
     }
   </style>
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
   <!-- Navbar -->
   <?php include 'includes/navbar.php'; ?>
@@ -128,7 +128,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
         <?php endif; ?>
         <div class="card">
           <div class="card-header"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTambah"><i class="fas fa-plus"></i> Tambah Menu</button></div>
-          <div class="card-body p-3">
+          <div class="card-body p-3 mawar-scroll">
             <table id="tabelMenu" class="table table-striped table-bordered text-center dt-responsive nowrap" style="width:100%">
               <thead style="background-color: #1A0F08; color: #F5EFE4;">
                 <tr>

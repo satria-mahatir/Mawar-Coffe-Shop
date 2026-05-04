@@ -79,7 +79,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
   <title>Kelola Galeri | Admin Mawar</title>
   <?php include 'includes/header.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
   <!-- Navbar -->
@@ -111,10 +111,10 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
                 <i class="fas fa-plus"></i> Tambah Foto Baru
             </button>
           </div>
-          <div class="card-body">
+          <div class="card-body mawar-scroll">
             <div class="row">
               <?php while($row = mysqli_fetch_assoc($result)) { ?>
-                <div class="col-md-3 mb-4">
+                <div class="col-md-3 col-6 mb-4">
                   <div class="card h-100 shadow-sm">
                     <img src="../images/<?= $row['gambar']; ?>" class="card-img-top" style="height: 180px; object-fit: cover;">
                     <div class="card-body p-2 text-center">

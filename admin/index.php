@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 include '../koneksi.php';
 
@@ -15,7 +18,15 @@ if (!isset($_SESSION['admin_logged_in'])) {
 
 // Ambil data buat statistik singkat di dashboard
 $total_menu   = mysqli_num_rows(mysqli_query($koneksi, "SELECT id_menu FROM menu"));
+if ($total_menu === false) {
+    echo "Error query menu: " . mysqli_error($koneksi);
+    $total_menu = 0;
+}
 $total_galeri = mysqli_num_rows(mysqli_query($koneksi, "SELECT id_galeri FROM galeri"));
+if ($total_galeri === false) {
+    echo "Error query galeri: " . mysqli_error($koneksi);
+    $total_galeri = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -23,7 +34,7 @@ $total_galeri = mysqli_num_rows(mysqli_query($koneksi, "SELECT id_galeri FROM ga
   <title>Dashboard Admin | Warkop Mawar</title>
   <?php include 'includes/header.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
   <!-- Navbar -->

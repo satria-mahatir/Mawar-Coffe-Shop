@@ -1,10 +1,16 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 include '../koneksi.php';
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
 // Fetch reservations
 $query = mysqli_query($koneksi, "SELECT * FROM reservasi ORDER BY waktu_order DESC");
+if (!$query) {
+    die("Error query reservasi: " . mysqli_error($koneksi) . ". Pastikan tabel 'reservasi' sudah dibuat lewat phpMyAdmin.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +24,7 @@ $query = mysqli_query($koneksi, "SELECT * FROM reservasi ORDER BY waktu_order DE
     .badge-selesai { background-color: #28a745; color: #fff; }
   </style>
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
   <?php include 'includes/navbar.php'; ?>
   <?php include 'includes/sidebar.php'; ?>
@@ -36,8 +42,8 @@ $query = mysqli_query($koneksi, "SELECT * FROM reservasi ORDER BY waktu_order DE
           <div class="card-header">
             <h3 class="card-title">Daftar Reservasi</h3>
           </div>
-          <div class="card-body p-0 table-responsive">
-            <table class="table table-striped table-hover">
+          <div class="card-body p-0 table-responsive mawar-scroll">
+            <table class="table table-striped table-hover text-nowrap">
               <thead>
                 <tr>
                   <th>No</th>

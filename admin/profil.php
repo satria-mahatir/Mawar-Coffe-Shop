@@ -39,7 +39,7 @@ $res = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM admin WHERE id_a
   <title>Pengaturan Profil | Admin Mawar</title>
   <?php include 'includes/header.php'; ?>
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
   <!-- Navbar -->

@@ -46,4 +46,38 @@
         .sidebar-collapse .sidebar-brand {
             padding: 15px 0 !important;
         }
+
+        /* --- Global Scroll System for Admin Content --- */
+        .mawar-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto; /* Agar tabel lebar bisa geser kiri-kanan di HP */
+            scrollbar-width: thin;
+            scrollbar-color: #E8622A transparent;
+            padding-right: 5px;
+        }
+        .mawar-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .mawar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .mawar-scroll::-webkit-scrollbar-thumb {
+            background: #E8622A;
+            border-radius: 10px;
+        }
+
+        /* Responsivitas Card Body di Mobile */
+        @media (max-width: 768px) {
+            .card-body.p-0 {
+                overflow-x: auto;
+            }
+            .mawar-scroll {
+                max-height: 400px;
+            }
+            .content-header h1 {
+                font-size: 1.5rem;
+            }
+        }
     </style>

@@ -8,7 +8,7 @@ if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit;
 
 // Tentukan link website lu (sesuaikan kalau nanti sudah online/hosting)
 // Karena lu pake Laragon, biasanya linknya namafolder.test atau localhost/folder
-$link_website = "http://tugas-akhir-mawar.test"; 
+$link_website = "http://warkop-mawar-trial.ct.ws"; 
 
 // API QR Code (Ukuran 300x300)
 $api_qr = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" . $link_website;

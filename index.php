@@ -1,18 +1,39 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include 'koneksi.php';
 
 $q_minuman = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='minuman' ORDER BY id_menu DESC");
+if (!$q_minuman) { die("Error query minuman: " . mysqli_error($koneksi)); }
+$minuman_all = [];
+while($row = mysqli_fetch_assoc($q_minuman)) { $minuman_all[] = $row; }
 
 $q_makanan = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='makanan' ORDER BY id_menu DESC");
+if (!$q_makanan) { die("Error query makanan: " . mysqli_error($koneksi)); }
+$makanan_all = [];
+while($row = mysqli_fetch_assoc($q_makanan)) { $makanan_all[] = $row; }
 
-$q_galeri = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC LIMIT 9");
+$q_galeri = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC LIMIT 12");
+if (!$q_galeri) {
+    die("Error query galeri: " . mysqli_error($koneksi));
+}
 
 $tentang = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE id=1"));
+if ($tentang === false) {
+    die("Error query tentang atau tabel tidak ada: " . mysqli_error($koneksi));
+}
 
 $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE id=1"));
+if ($pengaturan === false) {
+    die("Error query pengaturan atau tabel tidak ada: " . mysqli_error($koneksi));
+}
 
 // Ambil data pengaturan web, jika belum ada buat default array kosong
 $q_web = mysqli_query($koneksi, "SELECT * FROM pengaturan_web WHERE id_pengaturan=1");
+if (!$q_web) {
+    die("Error query pengaturan_web: " . mysqli_error($koneksi));
+}
 if(mysqli_num_rows($q_web) > 0) {
     $pengaturan_web = mysqli_fetch_assoc($q_web);
 } else {
@@ -580,6 +601,44 @@ if(mysqli_num_rows($q_web) > 0) {
         .footer-links a { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(244,239,230,0.38); transition: color 0.3s; font-family: 'Space Mono', monospace; }
         .footer-links a:hover { color: var(--orange); }
         .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        
+        /* ── SHOW MORE SYSTEM ── */
+        .menu-extra {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            margin-top: 25px;
+        }
+        .menu-extra.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .show-more-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .btn-more {
+            background: rgba(232,98,42,0.1);
+            border: 1px solid rgba(232,98,42,0.3);
+            color: var(--orange);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: none;
+            transition: all 0.3s ease;
+        }
+        .btn-more:hover {
+            background: var(--orange);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(232,98,42,0.2);
+        }
         .footer-copy { font-size: 0.72rem; color: rgba(244,239,230,0.22); font-family: 'Space Mono', monospace; }
         .footer-copy span { color: var(--orange); }
 
@@ -1451,8 +1510,9 @@ if(mysqli_num_rows($q_web) > 0) {
         <div class="galeri-masonry">
             <?php 
             // Kita reset cursor databasenya biar loopingnya aman
-            mysqli_data_seek($q_galeri, 0); 
-            while($g = mysqli_fetch_assoc($q_galeri)) { 
+            if(mysqli_num_rows($q_galeri) > 0) {
+                mysqli_data_seek($q_galeri, 0); 
+                while($g = mysqli_fetch_assoc($q_galeri)) { 
             ?>
                 <!-- Tambahin onclick biar fotonya bisa di-klik & muncul gede (Lightbox) -->
                 <div class="gm-item reveal" onclick="openLightbox('images/<?= $g['gambar']; ?>','<?= $g['judul']; ?>')">
@@ -1461,7 +1521,10 @@ if(mysqli_num_rows($q_web) > 0) {
                         <span class="gm-caption-text"><?= $g['judul']; ?></span>
                     </div>
                 </div>
-            <?php } ?>
+            <?php 
+                } 
+            }
+            ?>
         </div>
     </section>
 
@@ -1498,7 +1561,12 @@ if(mysqli_num_rows($q_web) > 0) {
         <!-- MINUMAN -->
         <div class="tab-content active" id="tab-minuman">
             <div class="menu-grid" id="grid-minuman">
-                <?php while($row = mysqli_fetch_assoc($q_minuman)) { ?>
+                <?php 
+                $count = 0;
+                foreach($minuman_all as $row) { 
+                    $count++;
+                    if($count > 6) break;
+                ?>
                     <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
                         <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
@@ -1521,12 +1589,52 @@ if(mysqli_num_rows($q_web) > 0) {
                     </div>
                 <?php } ?>
             </div>
+
+            <?php if(count($minuman_all) > 6): ?>
+            <div class="menu-extra" id="extra-minuman">
+                <div class="menu-grid">
+                    <?php 
+                    for($i = 6; $i < count($minuman_all); $i++) { 
+                        $row = $minuman_all[$i];
+                    ?>
+                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                            <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
+                                <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
+                                    <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
+                                <?php endif; ?>
+                                <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
+                            </div>
+                            <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
+                                <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
+                                <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                                <div class="menu-card-footer">
+                                    <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
+                                    <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
+                                        <button class="add-btn">+</button>
+                                    <?php else: ?>
+                                        <button class="add-btn" disabled style="background: #ccc; cursor: not-allowed;">×</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="show-more-wrap">
+                <button class="btn-more t-btn-more-minuman" onclick="toggleMore('minuman')">Lihat Menu Lainnya ▼</button>
+            </div>
+            <?php endif; ?>
         </div> <!-- PENUTUP tab-minuman (Tadinya lu lupa naruh ini brok!) -->
 
         <!-- MAKANAN -->
         <div class="tab-content" id="tab-makanan">
             <div class="menu-grid" id="grid-makanan">
-                <?php while($row = mysqli_fetch_assoc($q_makanan)) { ?>
+                <?php 
+                $count = 0;
+                foreach($makanan_all as $row) { 
+                    $count++;
+                    if($count > 6) break;
+                ?>
                     <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
                         <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
@@ -1549,6 +1657,41 @@ if(mysqli_num_rows($q_web) > 0) {
                     </div>
                 <?php } ?>
             </div>
+
+            <?php if(count($makanan_all) > 6): ?>
+            <div class="menu-extra" id="extra-makanan">
+                <div class="menu-grid">
+                    <?php 
+                    for($i = 6; $i < count($makanan_all); $i++) { 
+                        $row = $makanan_all[$i];
+                    ?>
+                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                            <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
+                                <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
+                                    <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
+                                <?php endif; ?>
+                                <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
+                            </div>
+                            <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
+                                <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
+                                <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                                <div class="menu-card-footer">
+                                    <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
+                                    <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
+                                        <button class="add-btn">+</button>
+                                    <?php else: ?>
+                                        <button class="add-btn" disabled style="background: #ccc; cursor: not-allowed;">×</button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="show-more-wrap">
+                <button class="btn-more t-btn-more-makanan" onclick="toggleMore('makanan')">Lihat Menu Lainnya ▼</button>
+            </div>
+            <?php endif; ?>
         </div> <!-- PENUTUP tab-makanan -->
     </section>
 
