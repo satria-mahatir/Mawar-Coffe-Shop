@@ -5,15 +5,32 @@ if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit;
 
 if (isset($_POST['update_web'])) {
     $wa = $_POST['wa_number'];
-    $ig = $_POST['instagram_url'];
-    $tt = $_POST['tiktok_url'];
-    $al = mysqli_real_escape_string($koneksi, $_POST['alamat_singkat']);
+    $ig = $_POST['link_ig'];
+    $tt = $_POST['link_tiktok'];
+    $maps = mysqli_real_escape_string($koneksi, $_POST['link_maps']);
     
-    mysqli_query($koneksi, "UPDATE pengaturan SET wa_number='$wa', instagram_url='$ig', tiktok_url='$tt', alamat_singkat='$al' WHERE id=1");
+    // Update wa_number in pengaturan
+    mysqli_query($koneksi, "UPDATE pengaturan SET wa_number='$wa' WHERE id=1");
+    
+    // Check if pengaturan_web row exists
+    $cek = mysqli_query($koneksi, "SELECT * FROM pengaturan_web WHERE id_pengaturan=1");
+    if(mysqli_num_rows($cek) > 0) {
+        mysqli_query($koneksi, "UPDATE pengaturan_web SET link_ig='$ig', link_tiktok='$tt', link_maps='$maps' WHERE id_pengaturan=1");
+    } else {
+        mysqli_query($koneksi, "INSERT INTO pengaturan_web (id_pengaturan, link_ig, link_tiktok, link_maps) VALUES (1, '$ig', '$tt', '$maps')");
+    }
+    
     header("Location: pengaturan.php?status=sukses");
     exit;
 }
 $web = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE id=1"));
+
+$q_web2 = mysqli_query($koneksi, "SELECT * FROM pengaturan_web WHERE id_pengaturan=1");
+if(mysqli_num_rows($q_web2) > 0) {
+    $web2 = mysqli_fetch_assoc($q_web2);
+} else {
+    $web2 = ['link_ig' => '', 'link_tiktok' => '', 'link_maps' => ''];
+}
 ?>
 
 <!DOCTYPE html>
@@ -39,15 +56,15 @@ $web = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE
             </div>
             <div class="form-group">
               <label>Link Instagram</label>
-              <input type="url" name="instagram_url" class="form-control" value="<?= $web['instagram_url']; ?>">
+              <input type="url" name="link_ig" class="form-control" value="<?= htmlspecialchars($web2['link_ig']); ?>">
             </div>
             <div class="form-group">
               <label>Link TikTok</label>
-              <input type="url" name="tiktok_url" class="form-control" value="<?= $web['tiktok_url']; ?>">
+              <input type="url" name="link_tiktok" class="form-control" value="<?= htmlspecialchars($web2['link_tiktok']); ?>">
             </div>
             <div class="form-group">
-              <label>Alamat / Teks Footer</label>
-              <textarea name="alamat_singkat" class="form-control" rows="2"><?= $web['alamat_singkat']; ?></textarea>
+              <label>Link Google Maps</label>
+              <textarea name="link_maps" class="form-control" rows="2" placeholder="Contoh: https://maps.app.goo.gl/..."><?= htmlspecialchars($web2['link_maps']); ?></textarea>
             </div>
           </div>
           <div class="card-footer">

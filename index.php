@@ -10,6 +10,14 @@ $q_galeri = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC
 $tentang = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE id=1"));
 
 $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE id=1"));
+
+// Ambil data pengaturan web, jika belum ada buat default array kosong
+$q_web = mysqli_query($koneksi, "SELECT * FROM pengaturan_web WHERE id_pengaturan=1");
+if(mysqli_num_rows($q_web) > 0) {
+    $pengaturan_web = mysqli_fetch_assoc($q_web);
+} else {
+    $pengaturan_web = ['link_ig' => '#', 'link_tiktok' => '#', 'link_maps' => '#'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +25,10 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warkop Mawar — Seduhan Jujur, Harga Saudara</title>
+    <title>Warkop Mawar - Tempat Nongkrong & Ngopi Asik di Bondowoso</title>
+    <meta name="description" content="Kunjungi Warkop Mawar! Nikmati berbagai pilihan kopi, minuman, dan makanan lezat dengan harga bersahabat. Tempat nongkrong paling asik dengan tema oren abu-abu.">
+    <meta name="keywords" content="warkop mawar, warkop bondowoso, tempat ngopi asik, kopi murah, nongkrong, cafe oren abu abu">
+    <meta name="author" content="Satria Nanda Tama">
 
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
@@ -337,9 +348,11 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
         .vdot.active { background: var(--orange); transform: scale(1.4); }
         .hero-content { position: relative; z-index: 2; padding: 0 8% 10%; padding-top: 20px; max-width: 820px; }
         .hero-eyebrow { font-family: 'Space Mono', monospace; font-size: clamp(0.55rem, 1.5vw, 0.65rem); letter-spacing: 4px; color: var(--orange); text-transform: uppercase; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.2s forwards; }
+        /* Kalau backgroundnya terang, kasih outline/shadow gelap biar teks oren/putihnya kebaca */
+        .teks-judul-beranda { color: #E8622A; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); font-weight: bold; }
         .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 1.5px; background: var(--orange); }
-        .hero h2 { font-family: 'Norwester', sans-serif; font-size: clamp(2.6rem, 6.5vw, 5.5rem); line-height: 1.12; color: #fff; text-transform: uppercase; font-weight: 400; letter-spacing: 2px; margin-bottom: 22px; opacity: 0; transform: translateY(30px); animation: fadeUp 0.9s 1.4s forwards; }
-        .hero h2 em { color: var(--orange); font-style: normal; }
+        .hero h1 { font-family: 'Norwester', sans-serif; font-size: clamp(2.6rem, 6.5vw, 5.5rem); line-height: 1.12; color: #fff; text-transform: uppercase; font-weight: 400; letter-spacing: 2px; margin-bottom: 22px; opacity: 0; transform: translateY(30px); animation: fadeUp 0.9s 1.4s forwards; }
+        .hero h1 em { color: var(--orange); font-style: normal; }
         .hero-desc { font-size: clamp(0.88rem, 2vw, 1rem); color: rgba(244,239,230,0.62); max-width: 480px; line-height: 1.8; font-weight: 300; margin-bottom: 38px; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.6s forwards; }
         .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; opacity: 0; transform: translateY(20px); animation: fadeUp 0.8s 1.8s forwards; }
         .btn-primary { background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); color: #fff; padding: 14px 36px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 8px 28px var(--orange-glow); cursor: none; border: 1px solid transparent; }
@@ -642,7 +655,7 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
             .top-bar { height: 32px; }
             .top-bar a { font-size: 0.5rem; letter-spacing: 1.5px; }
             a, button { cursor: pointer; }
-            .hero h2 { letter-spacing: -1px; }
+            .hero h1 { letter-spacing: -1px; }
             .hero-content { padding: 0 6% 72px; }
             .hero-video-dots { left: 6%; bottom: 32px; }
             .about-hero-stmt { padding: 72px 6%; }
@@ -655,7 +668,7 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
         }
         @media (max-width: 420px) {
             .menu-grid { grid-template-columns: 1fr; }
-            .hero h2 { font-size: 2.2rem; }
+            .hero h1 { font-size: 2.2rem; }
             .dynamic-motto { font-size: 1rem; }
             .rolling-words { min-width: 180px; }
         }
@@ -1183,7 +1196,7 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
 
     <!-- TOP BAR -->
     <div class="top-bar">
-        <a href="https://maps.app.goo.gl/vrM4oaTqZerqoKH29" target="_blank" rel="noopener" class="t-topbar">
+        <a href="<?= htmlspecialchars($pengaturan_web['link_maps']); ?>" target="_blank" rel="noopener" class="t-topbar">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Bondowoso, Jawa Timur — Buka di Maps
         </a>
@@ -1246,8 +1259,8 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
             <button class="vdot" data-idx="5"></button>
         </div>
         <div class="hero-content">
-            <div class="hero-eyebrow t-hero-eyebrow">Warkop Mawar — Bondowoso</div>
-            <h2 class="t-hero-title text-fade">Seduhan Jujur,<br>Harga <em>Saudara</em>.</h2>
+            <div class="hero-eyebrow t-hero-eyebrow teks-judul-beranda">Warkop Mawar — Bondowoso</div>
+            <h1 class="t-hero-title text-fade">Selamat Datang di<br>Warkop <em>Mawar</em></h1>
             <p class="hero-desc t-hero-desc text-fade">Nongkrong industrial-cozy di Bondowoso. Kopi mantap, suasana adem oren-abu, bikin betah dari senja sampe malam.</p>
             <div class="hero-actions">
                 <a href="#menu" class="btn-primary t-hero-btn text-fade">
@@ -1491,7 +1504,7 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                 <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                             <?php endif; ?>
-                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="<?= $row['nama_menu']; ?>">
+                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
                         </div>
                         <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
                             <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
@@ -1519,7 +1532,7 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                 <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                             <?php endif; ?>
-                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="<?= $row['nama_menu']; ?>">
+                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
                         </div>
                         <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
                             <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
@@ -1562,7 +1575,7 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
                     <div class="lokasi-hours-title t-lokasi-hours-title">Jam Buka</div>
                     <div class="lokasi-hours-row"><span class="t-lokasi-day1">Everyday</span><span>09:00 – 00:00</span></div>
                 </div>
-                <a href="https://maps.app.goo.gl/9RTebsetSZj2gxDX6" target="_blank" rel="noopener" class="btn-maps reveal t-lokasi-btn" style="transition-delay:0.3s">
+                <a href="<?= htmlspecialchars($pengaturan_web['link_maps']); ?>" target="_blank" rel="noopener" class="btn-maps reveal t-lokasi-btn" style="transition-delay:0.3s">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     Buka Google Maps
                 </a>
@@ -1577,10 +1590,10 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
                 <div class="logo-main t-logo-footer">Warkop <span>Mawar</span></div>
                 <p class="footer-tagline t-footer-tagline">Seduhan jujur untuk semua. Tempat santai terbaik di Bondowoso.</p>
                 <div class="footer-socials">
-                    <a href="<?= $pengaturan['tiktok_url']; ?>" target="_blank" rel="noopener" class="social-link" aria-label="TikTok">
+                    <a href="<?= htmlspecialchars($pengaturan_web['link_tiktok']); ?>" target="_blank" rel="noopener" class="social-link" aria-label="TikTok">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.52a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.7a8.16 8.16 0 0 0 4.76 1.52v-3.4a4.85 4.85 0 0 1-1-.13z"/></svg>
                     </a>
-                    <a href="<?= $pengaturan['instagram_url']; ?>" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+                    <a href="<?= htmlspecialchars($pengaturan_web['link_ig']); ?>" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                     </a>
                 </div>
@@ -1655,6 +1668,14 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
             <div class="cart-total-amount">Rp <span id="cartTotalNum">0</span></div>
         </div>
         <span class="cart-item-count-label" id="cartItemCountLabel">0 item</span>
+        <div class="cart-note-wrap" style="margin-top: 12px;">
+            <label class="cart-note-label" for="reservasiNama">Nama Pemesan <span style="color:red">*</span></label>
+            <input type="text" class="cart-note-input" id="reservasiNama" placeholder="Masukkan nama..." required style="width:100%; box-sizing:border-box;">
+        </div>
+        <div class="cart-note-wrap">
+            <label class="cart-note-label" for="reservasiWaktu">Waktu Kedatangan <span style="color:red">*</span></label>
+            <input type="datetime-local" class="cart-note-input" id="reservasiWaktu" required style="width:100%; box-sizing:border-box;">
+        </div>
         <div class="cart-note-wrap">
             <label class="cart-note-label" for="cartNote">Catatan (opsional)</label>
             <textarea class="cart-note-input" id="cartNote" rows="2" placeholder="Contoh: tanpa es, extra pedas..."></textarea>
@@ -1999,15 +2020,56 @@ $pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengatura
 
     document.getElementById('btnOrderWa').addEventListener('click', function() {
         if (cart.length === 0) return;
+        
+        const nama = document.getElementById('reservasiNama').value.trim();
+        const waktu = document.getElementById('reservasiWaktu').value;
+        if (!nama || !waktu) {
+            alert('Silakan isi Nama dan Waktu Kedatangan terlebih dahulu!');
+            return;
+        }
+
         const note = document.getElementById('cartNote').value.trim();
-        const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
-        const itemLines = cart.map(i => `• ${i.name} x${i.qty} = ${formatRp(i.price * i.qty)}`).join('\n');
-        const msg = [
-            '🌹 *Halo Warkop Mawar!*', '', 'Saya mau pesan:', itemLines,
-            `*Total: ${formatRp(total)}*`, note ? `\nCatatan: ${note}` : '',
-            '', '_(Pesanan via Website Warkop Mawar)_'
-        ].join('\n');
-        window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+        const itemLines = cart.map(i => `• ${i.name} x${i.qty}`).join('\n');
+        const daftarMenu = cart.map(i => `${i.name} (x${i.qty})`).join(', ');
+        
+        // Simpan ke database via AJAX
+        fetch('proses_reservasi.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                nama_pelanggan: nama,
+                waktu_reservasi: waktu,
+                detail_pesanan: daftarMenu + (note ? ' - Catatan: ' + note : '')
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                const waktuFormat = waktu.replace('T', ' ');
+                const msg = [
+                    '🌹 *Halo Warkop Mawar!*', '', 
+                    `Saya *${nama}*, mau reservasi tempat untuk tanggal *${waktuFormat}*.`, '',
+                    'Pesanan saya:', itemLines, note ? `\nCatatan: ${note}` : '',
+                    '', '_(Reservasi via Website Warkop Mawar)_'
+                ].join('\n');
+                
+                window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+                
+                // Opsional: kosongkan keranjang setelah sukses
+                cart = [];
+                renderCart();
+                document.getElementById('reservasiNama').value = '';
+                document.getElementById('reservasiWaktu').value = '';
+                document.getElementById('cartNote').value = '';
+                toggleCart();
+            } else {
+                alert('Gagal membuat reservasi. Silakan coba lagi.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Terjadi kesalahan jaringan.');
+        });
     });
 
     document.getElementById('btnGrab').addEventListener('click', () => window.location.href = 'https://food.grab.com/id/id/restaurant/warkop-mawar-badean-delivery/6-C3CYEXEEBA5XR6');

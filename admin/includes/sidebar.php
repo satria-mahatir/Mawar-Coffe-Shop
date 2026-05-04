@@ -49,6 +49,16 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="reservasi.php" class="nav-link <?= (basename($_SERVER['PHP_SELF']) == 'reservasi.php') ? 'active' : ''; ?>" <?= (basename($_SERVER['PHP_SELF']) == 'reservasi.php') ? 'style="background-color: #E8622A;"' : ''; ?>>
+                        <i class="nav-icon fas fa-calendar-check"></i><p>Kelola Reservasi</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pengaturan.php" class="nav-link <?= (basename($_SERVER['PHP_SELF']) == 'pengaturan.php') ? 'active' : ''; ?>" <?= (basename($_SERVER['PHP_SELF']) == 'pengaturan.php') ? 'style="background-color: #E8622A;"' : ''; ?>>
+                        <i class="nav-icon fas fa-globe"></i><p>Pengaturan Web</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="profil.php" class="nav-link <?= (basename($_SERVER['PHP_SELF']) == 'profil.php') ? 'active' : ''; ?>" <?= (basename($_SERVER['PHP_SELF']) == 'profil.php') ? 'style="background-color: #E8622A;"' : ''; ?>>
                         <i class="nav-icon fas fa-user-cog"></i><p>Pengaturan Akun</p>
                     </a>
