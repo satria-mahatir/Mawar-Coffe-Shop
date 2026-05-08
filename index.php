@@ -128,12 +128,7 @@ include 'includes/logic.php';
         <div class="eco-clock" id="ecoClockDisplay">00:00</div>
     </div>
 
-    <!-- PRELOADER -->
-    <div id="preloader">
-        <div class="loader-ring"></div>
-        <div class="pl-wordmark t-preloader text-fade">Warkop Mawar</div>
-        <div class="pl-sub">Menyeduh Kopi...</div>
-    </div>
+
 
     <!-- TOP BAR -->
     <div class="top-bar">
@@ -744,22 +739,35 @@ include 'includes/logic.php';
 
     const msgs = ['Menyeduh kopi...','Memanaskan mesin...','Menyiapkan menu...','Selamat datang! ☕'];
     let p = 0, mi = 0;
+    let pageLoaded = false;
+
+    window.addEventListener('load', () => { pageLoaded = true; });
 
     const iv = setInterval(()=>{
-      p = Math.min(p + Math.random()*4 + 1, 100);
+      // Jika halaman sudah load, percepat progress ke 100
+      if(pageLoaded) {
+          p = Math.min(p + 5, 100);
+      } else {
+          // Progress melambat di 90% kalau halaman belum load
+          if (p < 90) {
+              p = Math.min(p + Math.random()*3 + 0.5, 90);
+          }
+      }
+
       fill.style.width = p + '%';
       const idx = Math.floor(p / 34);
       if(idx !== mi && idx < msgs.length){ mi = idx; pct.textContent = msgs[mi]; }
-      if(p >= 100){
+
+      if(p >= 100 && pageLoaded){
         clearInterval(iv);
         pct.textContent = msgs[3];
         setTimeout(()=>{
-          loader.classList.add('hide');
+          if (loader) loader.classList.add('hide');
           document.body.classList.remove('no-scroll');
           if (mainContent) mainContent.style.opacity = '1';
         }, 600);
       }
-    },60);
+    }, 50);
     </script>
 </div> <!-- End of main-content -->
 </body>

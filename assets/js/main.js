@@ -15,11 +15,7 @@
         el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='36px'; ring.style.height='36px'; ring.style.opacity='0.6'; });
     });
 
-    // ── PRELOADER ──
-    window.addEventListener('load', () => {
-        const pl = document.getElementById('preloader');
-        setTimeout(() => { pl.style.opacity = '0'; setTimeout(() => { pl.style.visibility = 'hidden'; }, 900); }, 700);
-    });
+
 
     // ── LIGHTBOX ──
     function openLightbox(src, caption) {
