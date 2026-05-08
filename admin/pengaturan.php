@@ -4,6 +4,9 @@ include '../includes/koneksi.php';
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
 if (isset($_POST['update_web'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $wa = $_POST['wa_number'];
     $ig = $_POST['link_ig'];
     $tt = $_POST['link_tiktok'];
@@ -49,6 +52,7 @@ if(mysqli_num_rows($q_web2) > 0) {
     <section class="content">
       <div class="container-fluid">
         <form action="" method="POST" class="card card-outline card-orange" id="form">
+          <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
           <div class="card-body">
             <div class="form-group">
               <label>Nomor WhatsApp (Gunakan format 62...)</label>

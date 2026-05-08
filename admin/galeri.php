@@ -15,6 +15,9 @@ if (!isset($_SESSION['admin_logged_in'])) {
 
 // --- LOGIKA TAMBAH FOTO ---
 if (isset($_POST['tambah_foto'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
     $nama_file = $_FILES['gambar']['name'];
     $tmp_file  = $_FILES['gambar']['tmp_name'];
@@ -30,6 +33,9 @@ if (isset($_POST['tambah_foto'])) {
 
 // --- LOGIKA EDIT FOTO ---
 if (isset($_POST['edit_foto'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $id    = $_POST['id_galeri'];
     $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
     
@@ -57,6 +63,9 @@ if (isset($_POST['edit_foto'])) {
 
 // --- LOGIKA HAPUS FOTO ---
 if (isset($_GET['hapus'])) {
+    if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $id = $_GET['hapus'];
     $q = mysqli_query($koneksi, "SELECT gambar FROM galeri WHERE id_galeri='$id'");
     $d = mysqli_fetch_assoc($q);
@@ -114,7 +123,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
                       <p class="mb-2 text-bold text-uppercase" style="font-size: 0.8rem;"><?= $row['judul']; ?></p>
                       <div class="btn-group">
                         <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#modalEdit<?= $row['id_galeri']; ?>"><i class="fas fa-edit"></i> Edit</button>
-                        <a href="galeri.php?hapus=<?= $row['id_galeri']; ?>" class="btn btn-xs btn-danger" onclick="return confirm('Hapus foto ini kak?')"><i class="fas fa-trash"></i> Hapus</a>
+                        <a href="galeri.php?hapus=<?= $row['id_galeri']; ?>&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-xs btn-danger" onclick="return confirm('Hapus foto ini kak?')"><i class="fas fa-trash"></i> Hapus</a>
                       </div>
                     </div>
                   </div>
@@ -129,6 +138,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
                         <button type="button" class="close" data-dismiss="modal" style="color: white;"><span>&times;</span></button>
                       </div>
                       <div class="modal-body">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                         <input type="hidden" name="id_galeri" value="<?= $row['id_galeri']; ?>">
                         <div class="form-group">
                           <label>Judul/Caption</label>
@@ -172,6 +182,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
         <button type="button" class="close" data-dismiss="modal" style="color: white;"><span>&times;</span></button>
       </div>
       <div class="modal-body">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
         <div class="form-group"><label>Judul/Caption</label><input type="text" name="judul" class="form-control" required placeholder="Contoh: Suasana Malam"></div>
         <div class="form-group"><label>File Foto</label><input type="file" name="gambar" class="form-control-file" required></div>
       </div>

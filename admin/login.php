@@ -16,6 +16,9 @@ if (isset($_SESSION['admin_logged_in'])) {
 $error = '';
 
 if (isset($_POST['submit'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $username = mysqli_real_escape_string($koneksi, $_POST['username']);
     $password = $_POST['password']; // Jangan di-MD5 dulu di sini!
 
@@ -88,6 +91,7 @@ if (isset($_POST['submit'])) {
       <?php endif; ?>
 
       <form action="" method="post">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
         <div class="input-group mb-3">
           <input type="text" class="form-control" name="username" placeholder="Username" required>
           <div class="input-group-append">

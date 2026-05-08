@@ -15,6 +15,9 @@ if (!isset($_SESSION['admin_logged_in'])) {
 
 // --- LOGIKA UPDATE TENTANG ---
 if (isset($_POST['update_tentang'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $quote = mysqli_real_escape_string($koneksi, $_POST['quote_text']);
     
     // 1. Update teks quote
@@ -86,6 +89,7 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
       <div class="container-fluid">
         
         <form action="" method="POST" enctype="multipart/form-data" id="content">
+          <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
           <div class="card card-outline card-orange">
             <div class="card-header"><h3 class="card-title">Teks & Quote</h3></div>
             <div class="card-body">
