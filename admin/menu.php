@@ -16,7 +16,7 @@ if (isset($_GET['status_id'])) {
     $new_status = ($st == 'tersedia') ? 'habis' : 'tersedia';
     
     mysqli_query($koneksi, "UPDATE menu SET status='$new_status' WHERE id_menu='$id'");
-    header("Location: menu.php");
+    header("Location: menu.php#item_$id");
     exit;
 }
 
@@ -27,41 +27,55 @@ if (isset($_GET['hapus'])) {
     $d = mysqli_fetch_assoc($q);
     if (file_exists("../images/".$d['gambar'])) unlink("../images/".$d['gambar']);
     mysqli_query($koneksi, "DELETE FROM menu WHERE id_menu='$id'");
-    header("Location: menu.php"); exit;
+    header("Location: menu.php#list"); exit;
 }
 
 // --- LOGIKA TAMBAH ---
 if (isset($_POST['tambah_menu'])) {
-    $nama = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
-    $kat  = $_POST['kategori'];
-    $hrg  = $_POST['harga'];
-    $desk = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
-    $gambar = time().'_'.$_FILES['gambar']['name'];
+    $nama     = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
+    $kat      = $_POST['kategori'];
+    $hrg      = $_POST['harga'];
+    $hrg_ice  = !empty($_POST['harga_ice']) ? (int)$_POST['harga_ice'] : 'NULL';
+    $desk     = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
+    $gambar   = time().'_'.$_FILES['gambar']['name'];
     if (move_uploaded_file($_FILES['gambar']['tmp_name'], "../images/".$gambar)) {
-        mysqli_query($koneksi, "INSERT INTO menu VALUES ('', '$nama', '$kat', '$desk', '$hrg', '$gambar')");
+        $hrg_ice_val = ($hrg_ice === 'NULL') ? 'NULL' : "'$hrg_ice'";
+        mysqli_query($koneksi, "INSERT INTO menu (nama_menu, kategori, deskripsi, harga, harga_ice, gambar) VALUES ('$nama', '$kat', '$desk', '$hrg', $hrg_ice_val, '$gambar')");
     }
-    header("Location: menu.php"); exit;
+    header("Location: menu.php#list"); exit;
 }
 
 // --- LOGIKA EDIT ---
 if (isset($_POST['edit_menu'])) {
-    $id   = $_POST['id_menu'];
-    $nama = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
-    $kat  = $_POST['kategori'];
-    $hrg  = $_POST['harga'];
-    $desk = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
+    $id       = $_POST['id_menu'];
+    $nama     = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
+    $kat      = $_POST['kategori'];
+    $hrg      = $_POST['harga'];
+    $hrg_ice  = !empty($_POST['harga_ice']) ? (int)$_POST['harga_ice'] : null;
+    $desk     = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
+    $hrg_ice_val = ($hrg_ice === null) ? 'NULL' : "'$hrg_ice'";
     
     if ($_FILES['gambar']['name'] != "") {
         $gambar = time().'_'.$_FILES['gambar']['name'];
         move_uploaded_file($_FILES['gambar']['tmp_name'], "../images/".$gambar);
-        mysqli_query($koneksi, "UPDATE menu SET nama_menu='$nama', kategori='$kat', harga='$hrg', deskripsi='$desk', gambar='$gambar' WHERE id_menu='$id'");
+        mysqli_query($koneksi, "UPDATE menu SET nama_menu='$nama', kategori='$kat', harga='$hrg', harga_ice=$hrg_ice_val, deskripsi='$desk', gambar='$gambar' WHERE id_menu='$id'");
     } else {
-        mysqli_query($koneksi, "UPDATE menu SET nama_menu='$nama', kategori='$kat', harga='$hrg', deskripsi='$desk' WHERE id_menu='$id'");
+        mysqli_query($koneksi, "UPDATE menu SET nama_menu='$nama', kategori='$kat', harga='$hrg', harga_ice=$hrg_ice_val, deskripsi='$desk' WHERE id_menu='$id'");
     }
-    header("Location: menu.php"); exit;
+    header("Location: menu.php#item_$id"); exit;
 }
 
-$result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
+// Sort by kategori, then by nama_menu ASC (alphabetical in each category)
+// This avoids new items randomly showing up at the top
+$result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY CASE 
+    WHEN kategori='minuman' THEN 1 
+    WHEN kategori='makanan' THEN 2 
+    ELSE 3 
+END ASC, nama_menu ASC");
+
+if (!$result) {
+    die("Error query: " . mysqli_error($koneksi));
+}
 ?>
 
 <!DOCTYPE html>
@@ -136,7 +150,8 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
                   <th style="width: 15%">Gambar</th>
                   <th>Nama Menu</th>
                   <th>Kategori</th>
-                  <th>Harga</th>
+                  <th>Harga Hot</th>
+                  <th>Harga Ice</th>
                   <th style="width: 20%">Aksi</th>
                 </tr>
               </thead>
@@ -145,7 +160,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
                 $no = 1;
                 while($row = mysqli_fetch_assoc($result)) { 
                 ?>
-                <tr>
+                <tr id="item_<?= $row['id_menu']; ?>">
                   <td class="align-middle"><?= $no++; ?></td>
                   <td class="align-middle">
                     <img src="../images/<?= $row['gambar']; ?>" alt="<?= $row['nama_menu']; ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
@@ -156,6 +171,13 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
                   </td>
                   <td class="align-middle"><?= ucfirst($row['kategori']); ?></td>
                   <td class="align-middle font-weight-bold" style="color: #E8622A;">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></td>
+                  <td class="align-middle">
+                    <?php if(!empty($row['harga_ice'])): ?>
+                      <span class="badge badge-info" style="background:#0ea5e9;font-size:0.85rem;">Rp <?= number_format($row['harga_ice'], 0, ',', '.'); ?></span>
+                    <?php else: ?>
+                      <span class="text-muted">—</span>
+                    <?php endif; ?>
+                  </td>
                   <td class="align-middle">
                     <!-- Tombol Status -->
                     <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
@@ -206,8 +228,16 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
                           </div>
                           
                           <div class="form-group">
-                            <label>Harga (Rp)</label>
+                            <label>Harga Hot / Normal (Rp) <span class="text-danger">*</span></label>
                             <input type="number" name="harga" class="form-control" value="<?= $row['harga']; ?>" required>
+                          </div>
+                          
+                          <div class="form-group">
+                            <label>Harga Ice (Rp) <small class="text-muted">— Kosongkan jika tidak ada pilihan ice</small></label>
+                            <div class="input-group">
+                              <div class="input-group-prepend"><span class="input-group-text">🧊</span></div>
+                              <input type="number" name="harga_ice" class="form-control" value="<?= !empty($row['harga_ice']) ? $row['harga_ice'] : ''; ?>" placeholder="Contoh: 8000">
+                            </div>
                           </div>
                           
                           <div class="form-group">
@@ -252,7 +282,14 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY id_menu DESC");
       <div class="modal-body">
         <div class="form-group"><label>Nama Menu</label><input type="text" name="nama_menu" class="form-control" required></div>
         <div class="form-group"><label>Kategori</label><select name="kategori" class="form-control"><option value="minuman">Minuman</option><option value="makanan">Makanan</option></select></div>
-        <div class="form-group"><label>Harga</label><input type="number" name="harga" class="form-control" required></div>
+        <div class="form-group"><label>Harga Hot / Normal (Rp) <span class="text-danger">*</span></label><input type="number" name="harga" class="form-control" required></div>
+        <div class="form-group">
+          <label>Harga Ice (Rp) <small class="text-muted">— Kosongkan jika tidak ada pilihan ice</small></label>
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text">🧊</span></div>
+            <input type="number" name="harga_ice" class="form-control" placeholder="Contoh: 8000">
+          </div>
+        </div>
         <div class="form-group"><label>Deskripsi</label><textarea name="deskripsi" class="form-control" required></textarea></div>
         <div class="form-group"><label>Foto</label><input type="file" name="gambar" class="form-control-file" required></div>
       </div>
@@ -341,6 +378,25 @@ function konfirmasiHapus(id) {
         }
     })
 }
+
+// Auto-scroll ke anchor jika ada
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        const element = document.getElementById(hash);
+        if (element) {
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight baris yang di-scroll untuk visual feedback
+                element.style.backgroundColor = '#fffbea';
+                setTimeout(() => {
+                    element.style.backgroundColor = '';
+                    element.style.transition = 'background-color 0.5s ease';
+                }, 1500);
+            }, 200);
+        }
+    }
+});
 </script>
 </body>
 </html>

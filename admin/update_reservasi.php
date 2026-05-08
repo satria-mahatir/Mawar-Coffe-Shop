@@ -14,6 +14,6 @@ if (isset($_GET['id']) && isset($_GET['status'])) {
         mysqli_query($koneksi, $query);
     }
 }
-header("Location: reservasi.php");
+header("Location: reservasi.php#list");
 exit;
 ?>

@@ -14,6 +14,36 @@ if (!$q_makanan) { die("Error query makanan: " . mysqli_error($koneksi)); }
 $makanan_all = [];
 while($row = mysqli_fetch_assoc($q_makanan)) { $makanan_all[] = $row; }
 
+// ── CAROUSEL ITEMS DINAMIS (UNTUK GALLERY STRIP) ──
+// Gabungkan minuman dan makanan untuk carousel
+$carousel_items = array_merge($minuman_all, $makanan_all);
+
+// Urutkan berdasarkan id_menu DESC agar menu yang baru ditambahkan selalu di awal
+usort($carousel_items, function($a, $b) {
+    return $b['id_menu'] <=> $a['id_menu'];
+});
+
+// Batasi carousel items untuk performa (max 20 items)
+if(count($carousel_items) > 20) { 
+    $carousel_items = array_slice($carousel_items, 0, 20); 
+}
+
+// ── QUERY DINAMIS UNTUK STATS BERANDA ──
+// Hitung total semua item menu di database
+$q_total_menu = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM menu");
+$total_menu = mysqli_fetch_assoc($q_total_menu)['total'];
+
+// Ambil harga termurah dari semua menu
+$q_min_harga = mysqli_query($koneksi, "SELECT MIN(harga) as harga_min FROM menu");
+$harga_min = mysqli_fetch_assoc($q_min_harga)['harga_min'];
+
+// Format harga termurah jadi "Rp5K", "Rp10K", dll
+if ($harga_min >= 1000) {
+    $harga_display = 'Rp' . round($harga_min / 1000) . 'K';
+} else {
+    $harga_display = 'Rp' . number_format($harga_min, 0, ',', '.');
+}
+
 $q_galeri = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC LIMIT 12");
 if (!$q_galeri) {
     die("Error query galeri: " . mysqli_error($koneksi));
@@ -39,6 +69,26 @@ if(mysqli_num_rows($q_web) > 0) {
 } else {
     $pengaturan_web = ['link_ig' => '#', 'link_tiktok' => '#', 'link_maps' => '#'];
 }
+
+// Helper function untuk convert Google Maps short link ke embed format
+function get_maps_embed_url($maps_link) {
+    // Default embed URL untuk Warkop Mawar Bondowoso yang presisi
+    $default_embed = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3950.569165313166!2d113.82025177409207!3d-7.943085592080348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd6dd629b51be97%3A0x97c4bae4a58b755d!2sWARKOP%20MAWAR!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid";
+    
+    if(empty($maps_link) || $maps_link == '#') {
+        return $default_embed;
+    }
+    
+    // Jika sudah embed URL, return langsung
+    if(strpos($maps_link, 'google.com/maps/embed') !== false) {
+        return $maps_link;
+    }
+    
+    return $default_embed;
+}
+
+$maps_embed_url = get_maps_embed_url($pengaturan_web['link_maps']);
+
 ?>
 
 <!DOCTYPE html>
@@ -243,22 +293,28 @@ if(mysqli_num_rows($q_web) > 0) {
         /* ECO SCREENSAVER */
         #eco-screen {
             position: fixed; inset: 0;
-            background: #0D0804;
+            background: #0A0705;
             z-index: 999999;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             opacity: 0; pointer-events: none;
-            transition: opacity 1.2s ease;
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
-            cursor: none;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
-        #eco-screen.visible { opacity: 1; pointer-events: all; }
+        #eco-screen.visible { 
+            opacity: 1; pointer-events: all; 
+            transition: opacity 0.8s ease;
+        }
         .eco-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.18;
+            filter: blur(40px);
+            opacity: 0.12;
             animation: orbFloat linear infinite;
+            will-change: transform;
         }
         .eco-orb:nth-child(1) { width: 400px; height: 400px; background: var(--orange); top: -100px; left: -80px; animation-duration: 18s; }
         .eco-orb:nth-child(2) { width: 300px; height: 300px; background: #8B3A10; bottom: -60px; right: 10%; animation-duration: 24s; animation-delay: -6s; }
@@ -273,7 +329,7 @@ if(mysqli_num_rows($q_web) > 0) {
             content: '';
             position: absolute; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-            opacity: 0.05; pointer-events: none; z-index: 1; mix-blend-mode: overlay;
+            opacity: 0.01; pointer-events: none; z-index: 1; mix-blend-mode: overlay;
         }
         .eco-content {
             position: relative; z-index: 2;
@@ -281,25 +337,31 @@ if(mysqli_num_rows($q_web) > 0) {
             align-items: center; gap: 32px;
             max-width: 560px; padding: 0 32px;
             text-align: center;
+            animation: ecoFadeIn 1.5s ease 0.3s both;
+        }
+        @keyframes ecoFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .eco-icon {
             width: 64px; height: 64px;
-            border: 1.5px solid rgba(232,98,42,0.4);
+            border: 1.5px solid rgba(232,98,42,0.3);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            animation: ecoIconPulse 3s ease-in-out infinite;
+            animation: ecoIconPulse 4s ease-in-out infinite;
+            will-change: transform;
         }
         @keyframes ecoIconPulse {
-            0%,100% { box-shadow: 0 0 0 0 rgba(232,98,42,0.0), 0 0 0 0 rgba(232,98,42,0.0); }
-            50%      { box-shadow: 0 0 0 12px rgba(232,98,42,0.08), 0 0 0 24px rgba(232,98,42,0.04); }
+            0%,100% { transform: scale(1); }
+            50%      { transform: scale(1.1); }
         }
         .eco-brand { font-family: 'Norwester', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem); color: var(--cream); letter-spacing: 3px; text-transform: uppercase; line-height: 1; }
         .eco-brand span { color: var(--orange); }
         .eco-divider { width: 40px; height: 1px; background: rgba(232,98,42,0.5); }
         .eco-headline { font-family: 'Space Mono', monospace; font-size: clamp(0.6rem, 1.5vw, 0.72rem); letter-spacing: 3px; color: var(--orange); text-transform: uppercase; }
         .eco-body { font-size: clamp(0.9rem, 2vw, 1.05rem); color: rgba(244,239,230,0.55); line-height: 1.85; font-weight: 300; max-width: 420px; }
-        .eco-cta { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 3px; color: rgba(244,239,230,0.3); text-transform: uppercase; animation: ctaBlink 2.5s ease-in-out infinite; }
-        @keyframes ctaBlink { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+        .eco-cta { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 3px; color: rgba(244,239,230,0.3); text-transform: uppercase; animation: ctaBlink 3.5s ease-in-out infinite; }
+        @keyframes ctaBlink { 0%,100%{opacity:0.2} 50%{opacity:0.5} }
         .eco-clock { position: absolute; bottom: 48px; right: 5%; font-family: 'Norwester', sans-serif; font-size: clamp(3rem, 8vw, 5rem); color: rgba(244,239,230,0.06); letter-spacing: -2px; z-index: 2; user-select: none; }
 
         /* NAVBAR */
@@ -519,11 +581,13 @@ if(mysqli_num_rows($q_web) > 0) {
         .tab-content { display: none; flex-direction: column; gap: 0; }
         .tab-content.active { display: flex; }
         .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.5vw, 28px); }
-        .menu-card { background: var(--card-bg); border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border); transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94); position: relative; cursor: none; }
-        .menu-card:hover { transform: translateY(-12px); box-shadow: 0 28px 56px rgba(26,15,8,0.16), 0 0 0 2px var(--orange); border-color: var(--orange); }
-        .menu-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg2) 100%); box-shadow: inset 0 0 0 1px rgba(232,98,42,0.1); }
-        .menu-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); display: block; background: var(--card-bg); }
-        .menu-card:hover .menu-img { transform: scale(1.08); }
+        .menu-card { background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94); position: relative; cursor: none; box-shadow: 0 4px 16px rgba(26,15,8,0.04); }
+        .menu-card:hover { transform: translateY(-10px); box-shadow: 0 24px 48px rgba(26,15,8,0.12), 0 0 0 2px var(--orange); border-color: transparent; }
+        .menu-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; position: relative; background: var(--bg2); }
+        .menu-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.4s ease; display: block; will-change: transform; }
+        .menu-card:hover .menu-img { transform: scale(1.08); opacity: 1; }
+        .menu-img:hover { transform: scale(1.08); }
+        .placeholder-menu { width: 100%; height: 100%; background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg2) 100%); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.8rem; font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 1px; position: absolute; top: 0; left: 0; }
         .menu-card-tag { position: absolute; top: 12px; left: 12px; background: linear-gradient(135deg, var(--orange) 0%, var(--dark-orange) 100%); color: #fff; font-family: 'Space Mono', monospace; font-size: 0.52rem; letter-spacing: 2px; padding: 6px 12px; border-radius: 6px; text-transform: uppercase; z-index: 2; box-shadow: 0 4px 12px rgba(232,98,42,0.4); font-weight: 700; }
         .menu-card-body { padding: 20px 20px 22px; }
         .menu-card-name { font-family: 'Norwester', sans-serif; font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 400; color: var(--text); margin-bottom: 7px; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -806,14 +870,11 @@ if(mysqli_num_rows($q_web) > 0) {
             align-items: center;
             justify-content: center;
         }
-        .platform-btn-icon-wrap img {
-            width: 38px;
-            height: 38px;
-            object-fit: contain;
+        .platform-btn-icon-wrap svg {
+            width: 32px;
+            height: 32px;
             flex-shrink: 0;
             display: block;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
         }
         .platform-btn-label {
             opacity: 0;
@@ -1209,6 +1270,46 @@ if(mysqli_num_rows($q_web) > 0) {
             visibility: hidden;
             pointer-events: none;
         }
+
+        /* ── HOT/ICE TOGGLE ── */
+        .temp-toggle {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .temp-btn {
+            flex: 1;
+            padding: 6px 0;
+            border-radius: 6px;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            letter-spacing: 1px;
+            cursor: none;
+            transition: all 0.25s ease;
+            font-weight: 600;
+        }
+        .temp-btn-hot.active {
+            background: linear-gradient(135deg, #ff6b35, #e8622a);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(232,98,42,0.4);
+        }
+        .temp-btn-ice.active {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(14,165,233,0.4);
+        }
+        .temp-btn:not(.active):hover {
+            border-color: var(--orange);
+            color: var(--orange);
+        }
+        @media (max-width: 640px) {
+            .temp-btn { cursor: pointer; }
+        }
     </style>
 </head>
 <body>
@@ -1301,12 +1402,12 @@ if(mysqli_num_rows($q_web) > 0) {
     <!-- HERO -->
     <section id="home" class="hero">
         <div class="hero-video-container">
-            <video autoplay loop muted playsinline class="hero-video active" id="hv0"><source src="images/vidio-2.webm" type="video/webm"></video>
-            <video loop muted playsinline class="hero-video" id="hv1"><source src="images/vidio-1.webm" type="video/webm"></video>
-            <video loop muted playsinline class="hero-video" id="hv2"><source src="images/vidio-3.webm" type="video/webm"></video>
-            <video loop muted playsinline class="hero-video" id="hv3"><source src="images/vidio-4.webm" type="video/webm"></video>
-            <video loop muted playsinline class="hero-video" id="hv4"><source src="images/vidio-5.webm" type="video/webm"></video>
-            <video loop muted playsinline class="hero-video" id="hv5"><source src="images/vidio-6.webm" type="video/webm"></video>
+            <video autoplay loop muted playsinline class="hero-video active" id="hv0"><source src="images/<?= !empty($tentang['video_1']) ? htmlspecialchars($tentang['video_1']) : 'vidio-2.webm'; ?>" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv1"><source src="images/<?= !empty($tentang['video_2']) ? htmlspecialchars($tentang['video_2']) : 'vidio-1.webm'; ?>" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv2"><source src="images/<?= !empty($tentang['video_3']) ? htmlspecialchars($tentang['video_3']) : 'vidio-3.webm'; ?>" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv3"><source src="images/<?= !empty($tentang['video_4']) ? htmlspecialchars($tentang['video_4']) : 'vidio-4.webm'; ?>" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv4"><source src="images/<?= !empty($tentang['video_5']) ? htmlspecialchars($tentang['video_5']) : 'vidio-5.webm'; ?>" type="video/webm"></video>
+            <video loop muted playsinline class="hero-video" id="hv5"><source src="images/<?= !empty($tentang['video_6']) ? htmlspecialchars($tentang['video_6']) : 'vidio-6.webm'; ?>" type="video/webm"></video>
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-video-dots" id="videoDots">
@@ -1336,9 +1437,10 @@ if(mysqli_num_rows($q_web) > 0) {
     </section>
 
     <!-- STATS -->
+    <!-- STATS BAND - Data dinamis dari database -->
     <div class="stats-band">
-        <div class="stat-item reveal"><span class="stat-num">50+</span><span class="stat-label t-stat-1">Item Menu</span></div>
-        <div class="stat-item reveal" style="transition-delay:0.1s"><span class="stat-num">Rp5K</span><span class="stat-label t-stat-2">Mulai Dari</span></div>
+        <div class="stat-item reveal"><span class="stat-num"><?= $total_menu; ?>+</span><span class="stat-label t-stat-1">Item Menu</span></div>
+        <div class="stat-item reveal" style="transition-delay:0.1s"><span class="stat-num"><?= $harga_display; ?></span><span class="stat-label t-stat-2">Mulai Dari</span></div>
         <div class="stat-item reveal" style="transition-delay:0.2s"><span class="stat-num">∞</span><span class="stat-label t-stat-3">Betah Nongkrong</span></div>
         <div class="stat-item reveal" style="transition-delay:0.3s"><span class="stat-num">1</span><span class="stat-label t-stat-4">Spot Terbaik</span></div>
     </div>
@@ -1391,7 +1493,7 @@ if(mysqli_num_rows($q_web) > 0) {
                 <div class="value-card reveal" style="transition-delay:0.1s">
                     <div class="value-num">02</div>
                     <div class="value-title t-val-2-title">Harga Ramah</div>
-                    <div class="value-desc t-val-2-desc">Mulai dari Rp5.000, semua kalangan bisa menikmati kopi enak tanpa was-was soal dompet.</div>
+                    <div class="value-desc t-val-2-desc">Mulai dari Rp<?= number_format($harga_min, 0, ',', '.'); ?>, semua kalangan bisa menikmati kopi enak tanpa was-was soal dompet.</div>
                 </div>
                 <div class="value-card reveal" style="transition-delay:0.2s">
                     <div class="value-num">03</div>
@@ -1434,60 +1536,25 @@ if(mysqli_num_rows($q_web) > 0) {
         </div>
     </section>
 
-    <!-- GALLERY STRIP -->
+    <!-- GALLERY STRIP - DINAMIS -->
     <div class="gallery-strip">
         <div class="gallery-track" id="galleryTrack">
-            <div class="gallery-item"><img src="images/minuman-1.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-1.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-7.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-7.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-2.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-2.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-8.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-8.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-3.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-3.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-9.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-9.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-4.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-4.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-10.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-10.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-5.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-5.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-11.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-6.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-6.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-12.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-13.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-14.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-15.webp" alt=""></div>
-            <!-- duplicate -->
-            <div class="gallery-item"><img src="images/minuman-1.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-1.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-7.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-7.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-2.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-2.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-8.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-8.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-3.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-3.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-9.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-9.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-4.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-4.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-10.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-10.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-5.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-5.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-11.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-6.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/makanan-6.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-12.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-13.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-14.webp" alt=""></div>
-            <div class="gallery-item"><img src="images/minuman-15.webp" alt=""></div>
+            <?php 
+            // Generate carousel items dynamically
+            foreach($carousel_items as $item) {
+                $image_file = $item['gambar'];
+                $alt_text = htmlspecialchars($item['nama_menu']);
+                echo '<div class="gallery-item"><img src="images/'.$image_file.'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
+            }
+            ?>
+            <!-- Duplication for infinite scroll effect -->
+            <?php 
+            foreach($carousel_items as $item) {
+                $image_file = $item['gambar'];
+                $alt_text = htmlspecialchars($item['nama_menu']);
+                echo '<div class="gallery-item"><img src="images/'.$image_file.'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
+            }
+            ?>
         </div>
     </div>
 
@@ -1566,17 +1633,27 @@ if(mysqli_num_rows($q_web) > 0) {
                 foreach($minuman_all as $row) { 
                     $count++;
                     if($count > 6) break;
+                    $has_ice = !empty($row['harga_ice']);
+                    $harga_hot = $row['harga'];
+                    $harga_ice = $has_ice ? $row['harga_ice'] : 0;
                 ?>
-                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" <?= $has_ice ? "data-harga-hot='$harga_hot' data-harga-ice='$harga_ice' data-has-ice='1'" : ''; ?>>
                         <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                 <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                             <?php endif; ?>
-                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
+                            <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="placeholder-menu" style="display: none;">Menu Image</div>
                         </div>
                         <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
                             <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
                             <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                            <?php if($has_ice): ?>
+                            <div class="temp-toggle">
+                                <button class="temp-btn temp-btn-hot active" data-temp="hot">🔥 Hot</button>
+                                <button class="temp-btn temp-btn-ice" data-temp="ice">🧊 Ice</button>
+                            </div>
+                            <?php endif; ?>
                             <div class="menu-card-footer">
                                 <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
                                 <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
@@ -1596,17 +1673,27 @@ if(mysqli_num_rows($q_web) > 0) {
                     <?php 
                     for($i = 6; $i < count($minuman_all); $i++) { 
                         $row = $minuman_all[$i];
+                        $has_ice = !empty($row['harga_ice']);
+                        $harga_hot = $row['harga'];
+                        $harga_ice = $has_ice ? $row['harga_ice'] : 0;
                     ?>
-                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" <?= $has_ice ? "data-harga-hot='$harga_hot' data-harga-ice='$harga_ice' data-has-ice='1'" : ''; ?>>
                             <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                                 <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                     <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                                 <?php endif; ?>
-                                <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
+                                <img src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="placeholder-menu" style="display: none;">Menu Image</div>
                             </div>
                             <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
                                 <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
                                 <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                                <?php if($has_ice): ?>
+                                <div class="temp-toggle">
+                                    <button class="temp-btn temp-btn-hot active" data-temp="hot">🔥 Hot</button>
+                                    <button class="temp-btn temp-btn-ice" data-temp="ice">🧊 Ice</button>
+                                </div>
+                                <?php endif; ?>
                                 <div class="menu-card-footer">
                                     <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
                                     <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
@@ -1699,10 +1786,10 @@ if(mysqli_num_rows($q_web) > 0) {
     <section id="lokasi">
         <div class="lokasi-inner">
             <div class="lokasi-map-wrap reveal" style="position: relative; z-index: 1;">
-                <!-- Metode Search Query - Lebih Akurat buat Nampilin Pin -->
+                <!-- Google Maps Embed - Dinamis dari pengaturan admin -->
                 <iframe 
                     class="google-map-embed" 
-                    src="https://www.google.com/maps?q=Warkop%20Mawar%20Bondowoso&output=embed" 
+                    src="<?= htmlspecialchars($maps_embed_url); ?>"
                     allowfullscreen="" 
                     loading="lazy" 
                     referrerpolicy="no-referrer-when-downgrade">
@@ -1739,6 +1826,12 @@ if(mysqli_num_rows($q_web) > 0) {
                     <a href="<?= htmlspecialchars($pengaturan_web['link_ig']); ?>" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                     </a>
+                    <a href="https://food.grab.com/id/id/restaurant/warkop-mawar-badean-delivery/6-C3CYEXEEBA5XR6" target="_blank" rel="noopener" class="social-link" aria-label="GrabFood" style="background: rgba(0,177,79,0.12); border-color: rgba(0,177,79,0.3);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color: #00b14f;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8h-2.4v1.6h2.4c-.32 2.72-2.72 4.8-5.44 4.8-3.04 0-5.52-2.4-5.6-5.36h3.12v-1.6H5.6C5.92 5.52 8.64 3.2 11.84 3.2c1.68 0 3.2.72 4.32 1.84l-1.12 1.12c-.8-.8-1.92-1.36-3.2-1.36-2.4 0-4.4 1.76-4.8 4.08h6.48v1.6H7.04c.4 2.32 2.4 4.08 4.8 4.08 2.24 0 4.08-1.52 4.64-3.52h-3.36v-1.6h4.72c0 .24.08.56.08.8-.08-.16-.16-.32-.28-.44z"/></svg>
+                    </a>
+                    <a href="https://shopee.co.id/universal-link/now-food/shop/22679728?deep_and_deferred=1&shareChannel=whatsapp" target="_blank" rel="noopener" class="social-link" aria-label="ShopeeFood" style="background: rgba(238,77,45,0.12); border-color: rgba(238,77,45,0.3);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color: #EE4D2D;"><path d="M12 2C8.69 2 6 4.69 6 8h2c0-2.21 1.79-4 4-4s4 1.79 4 4h2c0-3.31-2.69-6-6-6zm-7 8l-1 12h16l-1-12H5zm4.5 3.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1-5 0z"/></svg>
+                    </a>
                 </div>
             </div>
             <div class="footer-links">
@@ -1762,7 +1855,7 @@ if(mysqli_num_rows($q_web) > 0) {
     <!-- GrabFood -->
     <button class="platform-btn platform-btn-grab" id="btnGrab" aria-label="Pesan via GrabFood">
         <div class="platform-btn-icon-wrap">
-            <img src="images/logo-grabfood.webp" alt="GrabFood">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8h-2.4v1.6h2.4c-.32 2.72-2.72 4.8-5.44 4.8-3.04 0-5.52-2.4-5.6-5.36h3.12v-1.6H5.6C5.92 5.52 8.64 3.2 11.84 3.2c1.68 0 3.2.72 4.32 1.84l-1.12 1.12c-.8-.8-1.92-1.36-3.2-1.36-2.4 0-4.4 1.76-4.8 4.08h6.48v1.6H7.04c.4 2.32 2.4 4.08 4.8 4.08 2.24 0 4.08-1.52 4.64-3.52h-3.36v-1.6h4.72c0 .24.08.56.08.8-.08-.16-.16-.32-.28-.44z"/></svg>
         </div>
         <span class="platform-btn-label">GrabFood</span>
         <span class="platform-btn-tooltip">Pesan via GrabFood</span>
@@ -1770,7 +1863,7 @@ if(mysqli_num_rows($q_web) > 0) {
     <!-- ShopeeFood -->
     <button class="platform-btn platform-btn-shopee" id="btnShopee" aria-label="Pesan via ShopeeFood">
         <div class="platform-btn-icon-wrap">
-            <img src="images/logo-shopeefood.webp" alt="ShopeeFood">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.69 2 6 4.69 6 8h2c0-2.21 1.79-4 4-4s4 1.79 4 4h2c0-3.31-2.69-6-6-6zm-7 8l-1 12h16l-1-12H5zm4.5 3.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1-5 0z"/></svg>
         </div>
         <span class="platform-btn-label">ShopeeFood</span>
         <span class="platform-btn-tooltip">Pesan via ShopeeFood</span>
@@ -1900,22 +1993,66 @@ if(mysqli_num_rows($q_web) > 0) {
     const ecoScreen = document.getElementById('eco-screen');
     const ecoClockEl = document.getElementById('ecoClockDisplay');
     const IDLE_TIMEOUT = 3 * 60 * 1000;
-    let idleTimer = null, ecoVisible = false;
+    let idleTimer = null, ecoVisible = false, clockInterval = null;
+    
     function updateEcoClock() {
-        const now = new Date();
-        ecoClockEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        if (ecoVisible) {
+            const now = new Date();
+            ecoClockEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
     }
-    setInterval(updateEcoClock, 1000); updateEcoClock();
-    function showEcoScreen() { if (ecoVisible) return; ecoVisible = true; ecoScreen.classList.add('visible'); document.body.style.overflow = 'hidden'; }
-    function dismissEcoScreen() { if (!ecoVisible) return; ecoVisible = false; ecoScreen.classList.remove('visible'); document.body.style.overflow = ''; resetIdleTimer(); }
-    function resetIdleTimer() { clearTimeout(idleTimer); if (!ecoVisible) idleTimer = setTimeout(showEcoScreen, IDLE_TIMEOUT); }
+    
+    function startClockUpdates() {
+        if (clockInterval) return;
+        clockInterval = setInterval(updateEcoClock, 1000);
+        updateEcoClock();
+    }
+    
+    function stopClockUpdates() {
+        if (clockInterval) {
+            clearInterval(clockInterval);
+            clockInterval = null;
+        }
+    }
+    
+    function showEcoScreen() { 
+        if (ecoVisible) return; 
+        ecoVisible = true; 
+        ecoScreen.classList.add('visible'); 
+        document.body.style.overflow = 'hidden';
+        startClockUpdates();
+    }
+    
+    function dismissEcoScreen() { 
+        if (!ecoVisible) return; 
+        ecoVisible = false; 
+        ecoScreen.classList.remove('visible'); 
+        document.body.style.overflow = ''; 
+        stopClockUpdates();
+        resetIdleTimer(); 
+    }
+    
+    function resetIdleTimer() { 
+        clearTimeout(idleTimer); 
+        if (!ecoVisible) idleTimer = setTimeout(showEcoScreen, IDLE_TIMEOUT); 
+    }
+    
     ['mousemove','mousedown','keydown','scroll','touchstart','wheel','click'].forEach(evt => {
         document.addEventListener(evt, () => { if (!ecoVisible) resetIdleTimer(); }, { passive: true });
     });
+    
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden) { idleTimer = setTimeout(showEcoScreen, 30000); }
-        else { clearTimeout(idleTimer); if (ecoVisible) dismissEcoScreen(); else resetIdleTimer(); }
+        if (document.hidden) { 
+            stopClockUpdates();
+            idleTimer = setTimeout(showEcoScreen, 30000); 
+        }
+        else { 
+            clearTimeout(idleTimer); 
+            if (ecoVisible) dismissEcoScreen(); 
+            else resetIdleTimer(); 
+        }
     });
+    
     resetIdleTimer();
 
     // ── HERO VIDEO SWITCHER ──
@@ -2182,7 +2319,8 @@ if(mysqli_num_rows($q_web) > 0) {
             body: new URLSearchParams({
                 nama_pelanggan: nama,
                 waktu_reservasi: waktu,
-                detail_pesanan: daftarMenu + (note ? ' - Catatan: ' + note : '')
+                detail_pesanan: daftarMenu + (note ? ' - Catatan: ' + note : ''),
+                total_harga: cart.reduce((s,i) => s + i.price * i.qty, 0)
             })
         })
         .then(res => res.json())
@@ -2237,9 +2375,73 @@ if(mysqli_num_rows($q_web) > 0) {
     }
 
     initCartButtons();
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => setTimeout(initCartButtons, 50)));
+    initTempToggle();
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => { setTimeout(initCartButtons, 50); setTimeout(initTempToggle, 50); }));
     const origToggleMore = window.toggleMore;
-    window.toggleMore = function(tab) { origToggleMore(tab); setTimeout(initCartButtons, 50); };
+    window.toggleMore = function(tab) { origToggleMore(tab); setTimeout(initCartButtons, 50); setTimeout(initTempToggle, 50); };
+
+    // ── HOT/ICE TOGGLE LOGIC ──
+    function initTempToggle() {
+        document.querySelectorAll('.temp-toggle').forEach(toggle => {
+            if (toggle.dataset.toggleInit) return;
+            toggle.dataset.toggleInit = '1';
+            const card = toggle.closest('.menu-card');
+            const priceEl = card ? card.querySelector('.menu-card-price') : null;
+            const hargaHot = parseInt(card?.dataset?.hargaHot || 0);
+            const hargaIce = parseInt(card?.dataset?.hargaIce || 0);
+            const hasIce = card?.dataset?.hasIce === '1';
+
+            // Enable toggle jika ada harga ice yang valid
+            if (hasIce && hargaIce > 0) {
+                toggle.querySelectorAll('.temp-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        toggle.querySelectorAll('.temp-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        if (priceEl) {
+                            const isIce = this.dataset.temp === 'ice';
+                            const price = isIce ? hargaIce : hargaHot;
+                            priceEl.textContent = 'Rp ' + price.toLocaleString('id-ID');
+                        }
+                    });
+                });
+            } else {
+                // Jika tidak ada harga ice yang valid, sembunyikan toggle
+                toggle.style.display = 'none';
+            }
+        });
+    }
+    // ── MENU IMAGE LOADING FIX ──
+    function initMenuImages() {
+        document.querySelectorAll('.menu-img').forEach(img => {
+            if (img.dataset.imgInit) return;
+            img.dataset.imgInit = '1';
+
+            img.addEventListener('load', function() {
+                this.style.opacity = '1';
+            });
+
+            img.addEventListener('error', function() {
+                this.style.display = 'none';
+                const placeholder = this.nextElementSibling;
+                if (placeholder && placeholder.classList.contains('placeholder-menu')) {
+                    placeholder.style.display = 'flex';
+                }
+            });
+
+            // Force load check
+            if (img.complete) {
+                img.style.opacity = '1';
+            } else {
+                img.style.opacity = '0';
+            }
+        });
+    }
+
+    initMenuImages();
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => setTimeout(initMenuImages, 100)));
+    const __origTM = window.toggleMore;
+    window.toggleMore = function(tab) { __origTM(tab); setTimeout(initMenuImages, 100); };
 
     </script>
     <!-- Kontainer Tersembunyi di Luar Nav/notranslate -->

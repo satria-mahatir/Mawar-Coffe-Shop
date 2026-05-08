@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^php show_columns\\.php$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

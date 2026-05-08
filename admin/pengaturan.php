@@ -20,7 +20,7 @@ if (isset($_POST['update_web'])) {
         mysqli_query($koneksi, "INSERT INTO pengaturan_web (id_pengaturan, link_ig, link_tiktok, link_maps) VALUES (1, '$ig', '$tt', '$maps')");
     }
     
-    header("Location: pengaturan.php?status=sukses");
+    header("Location: pengaturan.php#form");
     exit;
 }
 $web = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE id=1"));
@@ -48,7 +48,7 @@ if(mysqli_num_rows($q_web2) > 0) {
     <section class="content-header"><h1>Pengaturan Website</h1></section>
     <section class="content">
       <div class="container-fluid">
-        <form action="" method="POST" class="card card-outline card-orange">
+        <form action="" method="POST" class="card card-outline card-orange" id="form">
           <div class="card-body">
             <div class="form-group">
               <label>Nomor WhatsApp (Gunakan format 62...)</label>
@@ -75,5 +75,20 @@ if(mysqli_num_rows($q_web2) > 0) {
     </section>
   </div>
 </div>
+
+<script>
+// Auto-scroll ke anchor jika ada
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        const element = document.getElementById(hash);
+        if (element) {
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+    }
+});
+</script>
 </body>
 </html>

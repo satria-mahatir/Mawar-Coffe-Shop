@@ -45,7 +45,15 @@ if (isset($_POST['update_tentang'])) {
     uploadKonten('foto_2', 'foto_2', $koneksi);
     uploadKonten('foto_3', 'foto_3', $koneksi);
 
-    header("Location: tentang.php?status=sukses");
+    // Eksekusi upload buat 6 video beranda
+    uploadKonten('video_1', 'video_1', $koneksi);
+    uploadKonten('video_2', 'video_2', $koneksi);
+    uploadKonten('video_3', 'video_3', $koneksi);
+    uploadKonten('video_4', 'video_4', $koneksi);
+    uploadKonten('video_5', 'video_5', $koneksi);
+    uploadKonten('video_6', 'video_6', $koneksi);
+
+    header("Location: tentang.php#content");
     exit;
 }
 
@@ -76,9 +84,8 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
 
     <section class="content">
       <div class="container-fluid">
-        <?php if(isset($_GET['status'])) { echo '<div class="alert alert-success">Konten berhasil diupdate bro!</div>'; } ?>
         
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="" method="POST" enctype="multipart/form-data" id="content">
           <div class="card card-outline card-orange">
             <div class="card-header"><h3 class="card-title">Teks & Quote</h3></div>
             <div class="card-body">
@@ -133,7 +140,26 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
             </div>
           </div>
 
-          <div class="card-footer bg-white">
+          <!-- Video Section -->
+          <div class="card card-outline card-orange mt-4">
+            <div class="card-header"><h3 class="card-title">Video Carousel Beranda (Otomatis Diputar)</h3></div>
+            <div class="card-body">
+              <p class="text-muted"><small>Unggah video (mp4/webm) untuk bagian banner beranda. Video lama akan ditimpa jika Anda mengunggah yang baru.</small></p>
+              <div class="row">
+                <?php for($i=1; $i<=6; $i++): ?>
+                <div class="col-md-4 mb-3">
+                  <div class="border rounded p-2 text-center bg-light">
+                    <small><b>VIDEO <?= $i ?></b></small>
+                    <video src="../images/<?= htmlspecialchars($data['video_'.$i] ?? ''); ?>" class="img-fluid mb-2 mt-1 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover; background:#000;" controls></video>
+                    <input type="file" name="video_<?= $i ?>" class="form-control-file" accept="video/*">
+                  </div>
+                </div>
+                <?php endfor; ?>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer bg-white mt-3">
             <button type="submit" name="update_tentang" class="btn btn-block btn-lg" style="background-color:#E8622A; color:white;"><b>SIMPAN PERUBAHAN</b></button>
           </div>
         </form>
@@ -145,5 +171,20 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+<script>
+// Auto-scroll ke anchor jika ada
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        const element = document.getElementById(hash);
+        if (element) {
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+        }
+    }
+});
+</script>
 </body>
 </html>

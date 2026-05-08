@@ -79,5 +79,27 @@
             .content-header h1 {
                 font-size: 1.5rem;
             }
+            
+            /* Improve mobile table display */
+            .table { font-size: 0.85rem; }
+            .table thead th { padding: 0.5rem 0.25rem; }
+            .table td { padding: 0.5rem 0.25rem; }
+            .btn-sm { padding: 0.25rem 0.4rem; font-size: 0.65rem; }
+            
+            /* Mobile friendly form layout */
+            .form-group { margin-bottom: 0.75rem; }
+            .form-control { font-size: 1rem; }
+            
+            /* Hide unnecessary columns on mobile */
+            .table .d-none-sm { display: none; }
+        }
+        
+        @media (max-width: 480px) {
+            .main-sidebar { width: 100%; }
+            .layout-fixed .main-sidebar { position: absolute; }
+            .content-wrapper { margin-left: 0; }
+            .table { font-size: 0.75rem; }
+            .btn { padding: 0.25rem 0.5rem; }
+            .btn-sm { padding: 0.15rem 0.3rem; font-size: 0.6rem; }
         }
     </style>

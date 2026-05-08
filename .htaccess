@@ -1,8 +1,8 @@
-RewriteEngine On
+# RewriteEngine On
+#
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteCond %{REQUEST_FILENAME}\.php -f
+# RewriteRule ^([^\.]+)$ $1.php [NC,L]
+# (directory browsing)
 
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}\.php -f
-RewriteRule ^([^\.]+)$ $1.php [NC,L]
- (directory browsing)
- 
 Options -Indexes

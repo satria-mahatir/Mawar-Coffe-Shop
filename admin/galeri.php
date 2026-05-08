@@ -23,7 +23,7 @@ if (isset($_POST['tambah_foto'])) {
 
     if (move_uploaded_file($tmp_file, $path)) {
         mysqli_query($koneksi, "INSERT INTO galeri (judul, gambar) VALUES ('$judul', '$gambar_baru')");
-        header("Location: galeri.php?status=tambah");
+        header("Location: galeri.php#list");
         exit;
     }
 }
@@ -51,7 +51,7 @@ if (isset($_POST['edit_foto'])) {
         // Jika hanya ganti judul saja
         mysqli_query($koneksi, "UPDATE galeri SET judul='$judul' WHERE id_galeri='$id'");
     }
-    header("Location: galeri.php?status=edit");
+    header("Location: galeri.php#item_$id");
     exit;
 }
 
@@ -66,7 +66,7 @@ if (isset($_GET['hapus'])) {
     }
     
     mysqli_query($koneksi, "DELETE FROM galeri WHERE id_galeri='$id'");
-    header("Location: galeri.php?status=hapus");
+    header("Location: galeri.php#list");
     exit;
 }
 
@@ -98,13 +98,6 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
     <section class="content">
       <div class="container-fluid">
         
-        <?php if(isset($_GET['status'])): ?>
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Data berhasil di-<b><?= $_GET['status']; ?></b>, bro!
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          </div>
-        <?php endif; ?>
-
         <div class="card card-outline card-orange">
           <div class="card-header">
             <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalFoto" style="background-color:#E8622A; border:none;">
@@ -112,9 +105,9 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
             </button>
           </div>
           <div class="card-body mawar-scroll">
-            <div class="row">
+            <div class="row" id="list">
               <?php while($row = mysqli_fetch_assoc($result)) { ?>
-                <div class="col-md-3 col-6 mb-4">
+                <div class="col-md-3 col-6 mb-4" id="item_<?= $row['id_galeri']; ?>">
                   <div class="card h-100 shadow-sm">
                     <img src="../images/<?= $row['gambar']; ?>" class="card-img-top" style="height: 180px; object-fit: cover;">
                     <div class="card-body p-2 text-center">
@@ -192,5 +185,28 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+<script>
+// Auto-scroll ke anchor jika ada
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        const element = document.getElementById(hash);
+        if (element) {
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight item yang di-scroll
+                if (hash.startsWith('item_')) {
+                    element.querySelector('.card').style.boxShadow = '0 0 20px rgba(232, 98, 42, 0.6)';
+                    setTimeout(() => {
+                        element.querySelector('.card').style.boxShadow = '';
+                        element.querySelector('.card').style.transition = 'box-shadow 0.5s ease';
+                    }, 1500);
+                }
+            }, 200);
+        }
+    }
+});
+</script>
 </body>
 </html>
