@@ -4,6 +4,9 @@ include '../koneksi.php';
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
 if (isset($_GET['id']) && isset($_GET['status'])) {
+    if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $id = (int)$_GET['id'];
     $status = $_GET['status'];
     

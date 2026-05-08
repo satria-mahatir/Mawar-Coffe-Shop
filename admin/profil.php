@@ -12,6 +12,9 @@ if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit;
 $admin_id = $_SESSION['user_id']; 
 
 if (isset($_POST['update_profil'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $user = mysqli_real_escape_string($koneksi, $_POST['username']);
     $pass = $_POST['password'];
     
@@ -58,6 +61,7 @@ $res = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM admin WHERE id_a
       <div class="container-fluid">
         <div class="card card-orange card-outline">
           <form action="" method="POST" class="card-body">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
             <div class="form-group">
               <label>Username Baru</label>
               <input type="text" name="username" class="form-control" value="<?= $res['username']; ?>" required>

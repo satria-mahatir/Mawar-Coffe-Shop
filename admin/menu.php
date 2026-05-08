@@ -11,6 +11,9 @@ if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit;
 
 // --- LOGIKA GANTI STATUS MENU ---
 if (isset($_GET['status_id'])) {
+    if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $id = $_GET['status_id'];
     $st = $_GET['st'];
     $new_status = ($st == 'tersedia') ? 'habis' : 'tersedia';
@@ -22,6 +25,9 @@ if (isset($_GET['status_id'])) {
 
 // --- LOGIKA HAPUS ---
 if (isset($_GET['hapus'])) {
+    if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $id = $_GET['hapus'];
     $q = mysqli_query($koneksi, "SELECT gambar FROM menu WHERE id_menu='$id'");
     $d = mysqli_fetch_assoc($q);
@@ -32,6 +38,9 @@ if (isset($_GET['hapus'])) {
 
 // --- LOGIKA TAMBAH ---
 if (isset($_POST['tambah_menu'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $nama     = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
     $kat      = $_POST['kategori'];
     $hrg      = $_POST['harga'];
@@ -47,6 +56,9 @@ if (isset($_POST['tambah_menu'])) {
 
 // --- LOGIKA EDIT ---
 if (isset($_POST['edit_menu'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF Token Invalid!");
+    }
     $id       = $_POST['id_menu'];
     $nama     = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
     $kat      = $_POST['kategori'];
@@ -163,11 +175,11 @@ if (!$result) {
                 <tr id="item_<?= $row['id_menu']; ?>">
                   <td class="align-middle"><?= $no++; ?></td>
                   <td class="align-middle">
-                    <img src="../images/<?= $row['gambar']; ?>" alt="<?= $row['nama_menu']; ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                    <img src="../images/<?= $row['gambar']; ?>" alt="<?= htmlspecialchars($row['nama_menu']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                   </td>
                   <td class="align-middle text-left">
-                    <strong><?= $row['nama_menu']; ?></strong><br>
-                    <small class="text-muted"><?= (strlen($row['deskripsi']) > 50) ? substr($row['deskripsi'], 0, 50)."..." : $row['deskripsi']; ?></small>
+                    <strong><?= htmlspecialchars($row['nama_menu']); ?></strong><br>
+                    <small class="text-muted"><?= (strlen($row['deskripsi']) > 50) ? htmlspecialchars(substr($row['deskripsi'], 0, 50))."..." : htmlspecialchars($row['deskripsi']); ?></small>
                   </td>
                   <td class="align-middle"><?= ucfirst($row['kategori']); ?></td>
                   <td class="align-middle font-weight-bold" style="color: #E8622A;">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></td>
@@ -181,11 +193,11 @@ if (!$result) {
                   <td class="align-middle">
                     <!-- Tombol Status -->
                     <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
-                        <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=tersedia" class="btn btn-xs btn-success" title="Klik untuk jadikan Habis">
+                        <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=tersedia&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-xs btn-success" title="Klik untuk jadikan Habis">
                             <i class="fas fa-check-circle"></i> Tersedia
                         </a>
                     <?php else: ?>
-                        <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=habis" class="btn btn-xs btn-secondary" title="Klik untuk jadikan Tersedia">
+                        <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=habis&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-xs btn-secondary" title="Klik untuk jadikan Tersedia">
                             <i class="fas fa-times-circle"></i> Habis
                         </a>
                     <?php endif; ?>
@@ -212,11 +224,12 @@ if (!$result) {
                       </div>
                       <form action="" method="POST" enctype="multipart/form-data">
                         <div class="modal-body text-left" style="background-color: #fff; color: #333;">
+                          <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                           <input type="hidden" name="id_menu" value="<?= $row['id_menu']; ?>">
                           
                           <div class="form-group">
                             <label>Nama Menu</label>
-                            <input type="text" name="nama_menu" class="form-control" value="<?= $row['nama_menu']; ?>" required>
+                            <input type="text" name="nama_menu" class="form-control" value="<?= htmlspecialchars($row['nama_menu']); ?>" required>
                           </div>
                           
                           <div class="form-group">
@@ -242,7 +255,7 @@ if (!$result) {
                           
                           <div class="form-group">
                             <label>Deskripsi</label>
-                            <textarea name="deskripsi" class="form-control" rows="3"><?= $row['deskripsi']; ?></textarea>
+                            <textarea name="deskripsi" class="form-control" rows="3"><?= htmlspecialchars($row['deskripsi']); ?></textarea>
                           </div>
                           
                           <div class="form-group">
@@ -280,6 +293,7 @@ if (!$result) {
     <form action="" method="POST" enctype="multipart/form-data" class="modal-content">
       <div class="modal-header"><h5>Tambah Menu</h5></div>
       <div class="modal-body">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
         <div class="form-group"><label>Nama Menu</label><input type="text" name="nama_menu" class="form-control" required></div>
         <div class="form-group"><label>Kategori</label><select name="kategori" class="form-control"><option value="minuman">Minuman</option><option value="makanan">Makanan</option></select></div>
         <div class="form-group"><label>Harga Hot / Normal (Rp) <span class="text-danger">*</span></label><input type="number" name="harga" class="form-control" required></div>
@@ -374,7 +388,7 @@ function konfirmasiHapus(id) {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            window.location.href = "menu.php?hapus=" + id;
+            window.location.href = "menu.php?hapus=" + id + "&csrf_token=<?= $_SESSION['csrf_token']; ?>";
         }
     })
 }

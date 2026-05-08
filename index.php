@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 include 'koneksi.php';
 
@@ -324,7 +324,7 @@ if(mysqli_num_rows($q_web) > 0) {
             <div class="about-pullquote">
                 <span class="pullquote-mark">"</span>
                 <!-- Teks ditarik dari database kolom quote_text -->
-                <p class="pullquote-text"><?= nl2br($tentang['quote_text']); ?></p>
+                <p class="pullquote-text"><?= nl2br(htmlspecialchars($tentang['quote_text'])); ?></p>
                 <div class="pullquote-attr">Warkop Mawar, Bondowoso</div>
             </div>
         </div>
@@ -368,18 +368,18 @@ if(mysqli_num_rows($q_web) > 0) {
             <!-- BAGIAN 3 FOTO MOMEN (DINAMIS) -->
             <div class="story-photos reveal" style="transition-delay:0.1s">
                 <!-- Foto 1 -->
-                <div class="sp-img" onclick="openLightbox('images/<?= $tentang['foto_1']; ?>','Momen 1 · Warkop Mawar')">
-                    <img loading="lazy" src="images/<?= $tentang['foto_1']; ?>" alt="Suasana Warkop Mawar">
+                <div class="sp-img" onclick="openLightbox('images/<?= htmlspecialchars($tentang['foto_1']); ?>','Momen 1 · Warkop Mawar')">
+                    <img loading="lazy" src="images/<?= htmlspecialchars($tentang['foto_1']); ?>" alt="Suasana Warkop Mawar">
                     <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
                 <!-- Foto 2 -->
-                <div class="sp-img" onclick="openLightbox('images/<?= $tentang['foto_2']; ?>','Momen 2 · Warkop Mawar')">
-                    <img loading="lazy" src="images/<?= $tentang['foto_2']; ?>" alt="Visi Misi">
+                <div class="sp-img" onclick="openLightbox('images/<?= htmlspecialchars($tentang['foto_2']); ?>','Momen 2 · Warkop Mawar')">
+                    <img loading="lazy" src="images/<?= htmlspecialchars($tentang['foto_2']); ?>" alt="Visi Misi">
                     <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
                 <!-- Foto 3 -->
-                <div class="sp-img" onclick="openLightbox('images/<?= $tentang['foto_3']; ?>','Momen 3 · Warkop Mawar')">
-                    <img loading="lazy" src="images/<?= $tentang['foto_3']; ?>" alt="Target Pasar">
+                <div class="sp-img" onclick="openLightbox('images/<?= htmlspecialchars($tentang['foto_3']); ?>','Momen 3 · Warkop Mawar')">
+                    <img loading="lazy" src="images/<?= htmlspecialchars($tentang['foto_3']); ?>" alt="Target Pasar">
                     <div class="lb-zoom-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
                 </div>
             </div>
@@ -432,10 +432,10 @@ if(mysqli_num_rows($q_web) > 0) {
                 while($g = mysqli_fetch_assoc($q_galeri)) { 
             ?>
                 <!-- Tambahin onclick biar fotonya bisa di-klik & muncul gede (Lightbox) -->
-                <div class="gm-item reveal" onclick="openLightbox('images/<?= $g['gambar']; ?>','<?= $g['judul']; ?>')">
-                    <img loading="lazy" src="images/<?= $g['gambar']; ?>" alt="<?= $g['judul']; ?>">
+                <div class="gm-item reveal" onclick="openLightbox('images/<?= htmlspecialchars($g['gambar']); ?>','<?= htmlspecialchars($g['judul']); ?>')">
+                    <img loading="lazy" src="images/<?= htmlspecialchars($g['gambar']); ?>" alt="<?= htmlspecialchars($g['judul']); ?>">
                     <div class="gm-caption">
-                        <span class="gm-caption-text"><?= $g['judul']; ?></span>
+                        <span class="gm-caption-text"><?= htmlspecialchars($g['judul']); ?></span>
                     </div>
                 </div>
             <?php 
@@ -492,12 +492,12 @@ if(mysqli_num_rows($q_web) > 0) {
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                 <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                             <?php endif; ?>
-                            <img loading="lazy" src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img loading="lazy" src="images/<?= htmlspecialchars($row['gambar']); ?>" class="menu-img" alt="Menu <?= htmlspecialchars($row['nama_menu']); ?> di Warkop Mawar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="placeholder-menu" style="display: none;">Menu Image</div>
                         </div>
                         <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
-                            <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
-                            <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                            <div class="menu-card-name"><?= htmlspecialchars($row['nama_menu']); ?></div>
+                            <div class="menu-card-desc"><?= htmlspecialchars($row['deskripsi']); ?></div>
                             <?php if($has_ice): ?>
                             <div class="temp-toggle">
                                 <button class="temp-btn temp-btn-hot active" data-temp="hot">🔥 Hot</button>
@@ -532,12 +532,12 @@ if(mysqli_num_rows($q_web) > 0) {
                                 <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                     <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                                 <?php endif; ?>
-                                <img loading="lazy" src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img loading="lazy" src="images/<?= htmlspecialchars($row['gambar']); ?>" class="menu-img" alt="Menu <?= htmlspecialchars($row['nama_menu']); ?> di Warkop Mawar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="placeholder-menu" style="display: none;">Menu Image</div>
                             </div>
                             <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
-                                <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
-                                <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                                <div class="menu-card-name"><?= htmlspecialchars($row['nama_menu']); ?></div>
+                                <div class="menu-card-desc"><?= htmlspecialchars($row['deskripsi']); ?></div>
                                 <?php if($has_ice): ?>
                                 <div class="temp-toggle">
                                     <button class="temp-btn temp-btn-hot active" data-temp="hot">🔥 Hot</button>
@@ -577,11 +577,11 @@ if(mysqli_num_rows($q_web) > 0) {
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                 <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                             <?php endif; ?>
-                            <img loading="lazy" src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
+                            <img loading="lazy" src="images/<?= htmlspecialchars($row['gambar']); ?>" class="menu-img" alt="Menu <?= htmlspecialchars($row['nama_menu']); ?> di Warkop Mawar">
                         </div>
                         <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
-                            <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
-                            <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                            <div class="menu-card-name"><?= htmlspecialchars($row['nama_menu']); ?></div>
+                            <div class="menu-card-desc"><?= htmlspecialchars($row['deskripsi']); ?></div>
                             <div class="menu-card-footer">
                                 <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
                                 <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
@@ -607,11 +607,11 @@ if(mysqli_num_rows($q_web) > 0) {
                                 <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                     <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
                                 <?php endif; ?>
-                                <img loading="lazy" src="images/<?= $row['gambar']; ?>" class="menu-img" alt="Menu <?= $row['nama_menu']; ?> di Warkop Mawar">
+                                <img loading="lazy" src="images/<?= htmlspecialchars($row['gambar']); ?>" class="menu-img" alt="Menu <?= htmlspecialchars($row['nama_menu']); ?> di Warkop Mawar">
                             </div>
                             <div class="menu-card-body" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'opacity: 0.6;' : ''; ?>">
-                                <div class="menu-card-name"><?= $row['nama_menu']; ?></div>
-                                <div class="menu-card-desc"><?= $row['deskripsi']; ?></div>
+                                <div class="menu-card-name"><?= htmlspecialchars($row['nama_menu']); ?></div>
+                                <div class="menu-card-desc"><?= htmlspecialchars($row['deskripsi']); ?></div>
                                 <div class="menu-card-footer">
                                     <span class="menu-card-price">Rp <?= number_format($row['harga'], 0, ',', '.'); ?></span>
                                     <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
@@ -792,7 +792,7 @@ if(mysqli_num_rows($q_web) > 0) {
 </div>
 
     <script>
-        const WA_NUMBER = '<?= $pengaturan['wa_number']; ?>';
+        const WA_NUMBER = '<?= htmlspecialchars($pengaturan['wa_number']); ?>';
     </script>
     <script src="assets/js/main.js"></script>
     

@@ -156,11 +156,11 @@ if (!$query) {
                   <td><span class="badge <?= $status_class; ?>"><?= $row['status_reservasi']; ?></span></td>
                   <td>
                     <?php if ($row['status_reservasi'] == 'Pending'): ?>
-                        <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Dikonfirmasi" class="btn btn-sm btn-info" title="Konfirmasi Reservasi">Konfirmasi</a>
+                        <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Dikonfirmasi&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-sm btn-info" title="Konfirmasi Reservasi">Konfirmasi</a>
                     <?php endif; ?>
                     
                     <?php if ($row['status_reservasi'] == 'Pending' || $row['status_reservasi'] == 'Dikonfirmasi'): ?>
-                        <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Selesai" class="btn btn-sm btn-success" title="Selesaikan">Selesai</a>
+                        <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Selesai&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-sm btn-success" title="Selesaikan">Selesai</a>
                     <?php endif; ?>
                   </td>
                 </tr>
