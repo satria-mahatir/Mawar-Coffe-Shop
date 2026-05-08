@@ -165,11 +165,6 @@ if (!$query) {
                   </td>
                 </tr>
                 <?php } ?>
-                <?php if(mysqli_num_rows($query) == 0): ?>
-                <tr>
-                    <td colspan="6" class="text-center">Belum ada reservasi.</td>
-                </tr>
-                <?php endif; ?>
               </tbody>
             </table>
           </div>
