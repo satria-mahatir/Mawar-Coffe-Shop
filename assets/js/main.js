@@ -1,4 +1,4 @@
-﻿    // ── CURSOR ──
+    // ── CURSOR ──
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursor-ring');
     let mx = -100, my = -100, rx = -100, ry = -100;
@@ -370,7 +370,8 @@
                 nama_pelanggan: nama,
                 waktu_reservasi: waktu,
                 detail_pesanan: daftarMenu + (note ? ' - Catatan: ' + note : ''),
-                total_harga: cart.reduce((s,i) => s + i.price * i.qty, 0)
+                total_harga: cart.reduce((s,i) => s + i.price * i.qty, 0),
+                csrf_token: CSRF_TOKEN
             })
         })
         .then(res => res.json())

@@ -1,7 +1,12 @@
 <?php
-include 'koneksi.php';
+session_start();
+include 'includes/koneksi.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['frontend_csrf_token']) {
+        echo json_encode(['status' => 'error', 'message' => 'CSRF Token Invalid']);
+        exit;
+    }
     $nama = mysqli_real_escape_string($koneksi, $_POST['nama_pelanggan']);
     $waktu = mysqli_real_escape_string($koneksi, $_POST['waktu_reservasi']);
     $pesanan = mysqli_real_escape_string($koneksi, $_POST['detail_pesanan']);

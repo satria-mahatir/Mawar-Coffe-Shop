@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
-include '../koneksi.php';
+include '../includes/koneksi.php';
 
 // Proteksi: Cegah maju-mundur browser setelah login
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");

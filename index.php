@@ -1,74 +1,5 @@
 <?php
-
-include 'koneksi.php';
-
-$q_minuman = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='minuman' ORDER BY id_menu DESC");
-if (!$q_minuman) { die("Error query minuman: " . mysqli_error($koneksi)); }
-$minuman_all = [];
-while($row = mysqli_fetch_assoc($q_minuman)) { $minuman_all[] = $row; }
-
-$q_makanan = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='makanan' ORDER BY id_menu DESC");
-if (!$q_makanan) { die("Error query makanan: " . mysqli_error($koneksi)); }
-$makanan_all = [];
-while($row = mysqli_fetch_assoc($q_makanan)) { $makanan_all[] = $row; }
-
-// ── CAROUSEL ITEMS DINAMIS (UNTUK GALLERY STRIP) ──
-// Gabungkan minuman dan makanan untuk carousel
-$carousel_items = array_merge($minuman_all, $makanan_all);
-
-// Urutkan berdasarkan id_menu DESC agar menu yang baru ditambahkan selalu di awal
-usort($carousel_items, function($a, $b) {
-    return $b['id_menu'] <=> $a['id_menu'];
-});
-
-// Batasi carousel items untuk performa (max 20 items)
-if(count($carousel_items) > 20) { 
-    $carousel_items = array_slice($carousel_items, 0, 20); 
-}
-
-// ── QUERY DINAMIS UNTUK STATS BERANDA ──
-// Hitung total semua item menu di database
-$q_total_menu = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM menu");
-$total_menu = mysqli_fetch_assoc($q_total_menu)['total'];
-
-// Ambil harga termurah dari semua menu
-$q_min_harga = mysqli_query($koneksi, "SELECT MIN(harga) as harga_min FROM menu");
-$harga_min = mysqli_fetch_assoc($q_min_harga)['harga_min'];
-
-// Format harga termurah jadi "Rp5K", "Rp10K", dll
-if ($harga_min >= 1000) {
-    $harga_display = 'Rp' . round($harga_min / 1000) . 'K';
-} else {
-    $harga_display = 'Rp' . number_format($harga_min, 0, ',', '.');
-}
-
-$q_galeri = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC LIMIT 12");
-if (!$q_galeri) {
-    die("Error query galeri: " . mysqli_error($koneksi));
-}
-
-$tentang = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE id=1"));
-if ($tentang === false) {
-    die("Error query tentang atau tabel tidak ada: " . mysqli_error($koneksi));
-}
-
-$pengaturan = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE id=1"));
-if ($pengaturan === false) {
-    die("Error query pengaturan atau tabel tidak ada: " . mysqli_error($koneksi));
-}
-
-// Ambil data pengaturan web, jika belum ada buat default array kosong
-$q_web = mysqli_query($koneksi, "SELECT * FROM pengaturan_web WHERE id_pengaturan=1");
-if (!$q_web) {
-    die("Error query pengaturan_web: " . mysqli_error($koneksi));
-}
-if(mysqli_num_rows($q_web) > 0) {
-    $pengaturan_web = mysqli_fetch_assoc($q_web);
-} else {
-    $pengaturan_web = ['link_ig' => '#', 'link_tiktok' => '#', 'link_maps' => '#'];
-}
-
-// Pengaturan web tidak lagi membutuhkan get_maps_embed_url karena menggunakan Leaflet.js
+include 'includes/logic.php';
 ?>
 
 <!DOCTYPE html>
@@ -793,6 +724,7 @@ if(mysqli_num_rows($q_web) > 0) {
 
     <script>
         const WA_NUMBER = '<?= htmlspecialchars($pengaturan['wa_number']); ?>';
+        const CSRF_TOKEN = '<?= $_SESSION['frontend_csrf_token']; ?>';
     </script>
     <script src="assets/js/main.js"></script>
     

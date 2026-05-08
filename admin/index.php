@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
-include '../koneksi.php';
+include '../includes/koneksi.php';
 
 // Prevent browser caching
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
