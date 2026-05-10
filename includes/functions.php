@@ -3,22 +3,35 @@
 // Berisi semua query pengambilan data untuk halaman utama (index.php)
 // Session, CSRF, dan koneksi DB sudah dihandle oleh config/database.php
 
-// ── QUERY MENU ──
-$q_minuman = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='minuman' ORDER BY id_menu DESC");
-if (!$q_minuman) {
-    error_log('DB Error: ' . mysqli_error($koneksi));
-    die("Terjadi kesalahan sistem.");
-}
-$minuman_all = [];
-while ($row = mysqli_fetch_assoc($q_minuman)) { $minuman_all[] = $row; }
+// ── QUERY MENU (DENGAN CACHE) ──
+$cache_file = sys_get_temp_dir() . '/warkop_menu_cache.json';
+$cache_ttl = 300; // 5 menit
 
-$q_makanan = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='makanan' ORDER BY id_menu DESC");
-if (!$q_makanan) {
-    error_log('DB Error: ' . mysqli_error($koneksi));
-    die("Terjadi kesalahan sistem.");
+if (file_exists($cache_file) && (time() - filemtime($cache_file)) < $cache_ttl) {
+    // Gunakan Cache
+    $menu_data = json_decode(file_get_contents($cache_file), true);
+    $minuman_all = $menu_data['minuman'] ?? [];
+    $makanan_all = $menu_data['makanan'] ?? [];
+} else {
+    // Ambil dari Database
+    $q_minuman = mysqli_query($koneksi, "SELECT id_menu, nama_menu, deskripsi, harga, harga_ice, gambar, kategori, status FROM menu WHERE kategori='minuman' ORDER BY id_menu DESC");
+    if (!$q_minuman) { error_log('DB Error: ' . mysqli_error($koneksi)); die("Terjadi kesalahan sistem."); }
+    $minuman_all = [];
+    while ($row = mysqli_fetch_assoc($q_minuman)) { $minuman_all[] = $row; }
+
+    $q_makanan = mysqli_query($koneksi, "SELECT id_menu, nama_menu, deskripsi, harga, harga_ice, gambar, kategori, status FROM menu WHERE kategori='makanan' ORDER BY id_menu DESC");
+    if (!$q_makanan) { error_log('DB Error: ' . mysqli_error($koneksi)); die("Terjadi kesalahan sistem."); }
+    $makanan_all = [];
+    while ($row = mysqli_fetch_assoc($q_makanan)) { $makanan_all[] = $row; }
+
+    // Simpan ke Cache
+    $menu_data = [
+        'minuman' => $minuman_all,
+        'makanan' => $makanan_all
+    ];
+    // Tulis ke file cache
+    file_put_contents($cache_file, json_encode($menu_data));
 }
-$makanan_all = [];
-while ($row = mysqli_fetch_assoc($q_makanan)) { $makanan_all[] = $row; }
 
 // ── CAROUSEL ITEMS DINAMIS (UNTUK GALLERY STRIP) ──
 $carousel_items = array_merge($minuman_all, $makanan_all);
@@ -30,11 +43,10 @@ if (count($carousel_items) > 20) {
 }
 
 // ── QUERY DINAMIS UNTUK STATS BERANDA ──
-$q_total_menu = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM menu");
-$total_menu = mysqli_fetch_assoc($q_total_menu)['total'];
-
-$q_min_harga = mysqli_query($koneksi, "SELECT MIN(harga) as harga_min FROM menu");
-$harga_min = mysqli_fetch_assoc($q_min_harga)['harga_min'];
+$q_stats = mysqli_query($koneksi, "SELECT COUNT(*) as total, MIN(harga) as harga_min FROM menu");
+$stats = mysqli_fetch_assoc($q_stats);
+$total_menu = $stats['total'];
+$harga_min = $stats['harga_min'];
 
 if ($harga_min >= 1000) {
     $harga_display = 'Rp' . round($harga_min / 1000) . 'K';
@@ -43,7 +55,7 @@ if ($harga_min >= 1000) {
 }
 
 // ── GALERI, TENTANG, PENGATURAN ──
-$q_galeri    = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC LIMIT 12");
+$q_galeri    = mysqli_query($koneksi, "SELECT id_galeri, judul, gambar FROM galeri ORDER BY id_galeri DESC LIMIT 12");
 $tentang     = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE id=1"));
 $pengaturan  = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM pengaturan WHERE id=1"));
 

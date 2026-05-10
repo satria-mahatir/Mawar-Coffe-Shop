@@ -8,9 +8,18 @@ if (!hash_equals($_SESSION['frontend_csrf_token'] ?? '', $_POST['csrf_token'] ??
     exit;
 }
 
-include 'koneksi.php';
+require_once 'config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Rate limiting: 1 request per 60 detik
+    $now = time();
+    if (isset($_SESSION['last_reservasi']) && ($now - $_SESSION['last_reservasi']) < 60) {
+        http_response_code(429);
+        echo json_encode(['status' => 'error', 'message' => 'Tunggu 1 menit sebelum reservasi lagi']);
+        exit;
+    }
+    $_SESSION['last_reservasi'] = $now;
 
     $nama        = trim($_POST['nama_pelanggan'] ?? '');
     $waktu       = trim($_POST['waktu_reservasi'] ?? '');
@@ -22,8 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['status' => 'error', 'message' => 'Nama tidak valid']);
         exit;
     }
-    if (empty($waktu)) {
-        echo json_encode(['status' => 'error', 'message' => 'Waktu reservasi wajib diisi']);
+    if (empty($waktu) || !DateTime::createFromFormat('Y-m-d\TH:i', $waktu)) {
+        echo json_encode(['status' => 'error', 'message' => 'Format waktu tidak valid']);
+        exit;
+    }
+    if (strlen($pesanan) > 1000) {
+        echo json_encode(['status' => 'error', 'message' => 'Detail pesanan terlalu panjang']);
         exit;
     }
 

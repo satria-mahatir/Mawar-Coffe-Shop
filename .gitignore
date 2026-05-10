@@ -1,1 +1,6 @@
 koneksi.php
+.vscode/
+.idea/
+*.log
+config/database.php
+.env
