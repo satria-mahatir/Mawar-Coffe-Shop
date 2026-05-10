@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../includes/koneksi.php';
+require_once '../config/database.php';
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
 if (isset($_POST['update_web'])) {

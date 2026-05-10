@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../includes/koneksi.php';
+require_once '../config/database.php';
 
 // Anti-Bypass & Cek Login
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
