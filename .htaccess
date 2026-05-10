@@ -6,3 +6,14 @@
 # (directory browsing)
 
 Options -Indexes
+
+# Blokir akses ke file debug
+<FilesMatch "^(test_|check_|cek_|fix_|verify_|show_).*\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Allow,Deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
