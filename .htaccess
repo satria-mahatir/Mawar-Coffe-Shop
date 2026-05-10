@@ -17,3 +17,14 @@ Options -Indexes
         Deny from all
     </IfModule>
 </FilesMatch>
+
+# Blokir akses ke file setup dan update
+<FilesMatch "^(update_db|setup_pengaturan|add_harga_ice)\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Allow,Deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

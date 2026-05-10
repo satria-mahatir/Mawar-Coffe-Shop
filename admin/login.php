@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 session_start();
 include '../includes/koneksi.php';
@@ -22,13 +20,19 @@ if (isset($_POST['submit'])) {
     $username = mysqli_real_escape_string($koneksi, $_POST['username']);
     $password = $_POST['password']; // Jangan di-MD5 dulu di sini!
 
-    // 1. Cari user berdasarkan username aja
-    $query  = "SELECT * FROM admin WHERE username='$username'";
-    $result = mysqli_query($koneksi, $query);
-    
-    if (!$result) {
-        $error = 'Error: ' . mysqli_error($koneksi);
-    } else if (mysqli_num_rows($result) > 0) {
+    // 1. Cari user berdasarkan username menggunakan prepared statement
+    $stmt = $koneksi->prepare("SELECT * FROM admin WHERE username = ? LIMIT 1");
+    if (!$stmt) {
+        error_log('Admin login prepare error: ' . $koneksi->error);
+        $error = 'Terjadi kesalahan sistem.';
+    } else {
+        $stmt->bind_param("s", $_POST['username']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+    }
+
+    if (empty($error) && isset($result)) {
         $data = mysqli_fetch_assoc($result);
         
         // 2. Verifikasi password BCRYPT yang diinput vs yang di database

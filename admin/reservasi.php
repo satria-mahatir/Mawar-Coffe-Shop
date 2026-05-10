@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 session_start();
 include '../includes/koneksi.php';
@@ -21,7 +19,8 @@ $stats = mysqli_fetch_assoc($stats_query);
 // Fetch reservations
 $query = mysqli_query($koneksi, "SELECT * FROM reservasi ORDER BY waktu_order DESC");
 if (!$query) {
-    die("Error query reservasi: " . mysqli_error($koneksi) . ". Pastikan tabel 'reservasi' sudah dibuat lewat phpMyAdmin.");
+    error_log('DB Error (reservasi): ' . mysqli_error($koneksi));
+    die("Terjadi kesalahan sistem saat memuat reservasi.");
 }
 ?>
 

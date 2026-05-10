@@ -9,12 +9,12 @@ if (empty($_SESSION['frontend_csrf_token'])) {
 }
 
 $q_minuman = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='minuman' ORDER BY id_menu DESC");
-if (!$q_minuman) { die("Error query minuman: " . mysqli_error($koneksi)); }
+if (!$q_minuman) { error_log('DB Error (minuman): ' . mysqli_error($koneksi)); die("Terjadi kesalahan sistem. Silakan coba lagi."); }
 $minuman_all = [];
 while($row = mysqli_fetch_assoc($q_minuman)) { $minuman_all[] = $row; }
 
 $q_makanan = mysqli_query($koneksi, "SELECT * FROM menu WHERE kategori='makanan' ORDER BY id_menu DESC");
-if (!$q_makanan) { die("Error query makanan: " . mysqli_error($koneksi)); }
+if (!$q_makanan) { error_log('DB Error (makanan): ' . mysqli_error($koneksi)); die("Terjadi kesalahan sistem. Silakan coba lagi."); }
 $makanan_all = [];
 while($row = mysqli_fetch_assoc($q_makanan)) { $makanan_all[] = $row; }
 

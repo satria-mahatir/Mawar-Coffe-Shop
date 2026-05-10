@@ -86,7 +86,8 @@ $result = mysqli_query($koneksi, "SELECT * FROM menu ORDER BY CASE
 END ASC, nama_menu ASC");
 
 if (!$result) {
-    die("Error query: " . mysqli_error($koneksi));
+    error_log('DB Error (menu list): ' . mysqli_error($koneksi));
+    die("Terjadi kesalahan sistem saat memuat menu.");
 }
 ?>
 
