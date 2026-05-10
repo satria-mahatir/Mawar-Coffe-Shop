@@ -1,0 +1,4 @@
+# Blokir akses langsung ke semua file PHP di folder admin
+# kecuali melalui sesi yang valid
+
+Options -Indexes
