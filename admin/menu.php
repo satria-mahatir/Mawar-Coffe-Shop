@@ -230,7 +230,7 @@ if (!$result) {
                           
                           <div class="form-group">
                             <label>Nama Menu</label>
-                            <input type="text" name="nama_menu" class="form-control" value="<?= htmlspecialchars($row['nama_menu']); ?>" required>
+                            <input type="text" name="nama_menu" class="form-control" value="<?= htmlspecialchars($row['nama_menu']); ?>" required maxlength="100">
                           </div>
                           
                           <div class="form-group">
@@ -256,7 +256,7 @@ if (!$result) {
                           
                           <div class="form-group">
                             <label>Deskripsi</label>
-                            <textarea name="deskripsi" class="form-control" rows="3"><?= htmlspecialchars($row['deskripsi']); ?></textarea>
+                            <textarea name="deskripsi" class="form-control" rows="3" required maxlength="1000"><?= htmlspecialchars($row['deskripsi']); ?></textarea>
                           </div>
                           
                           <div class="form-group">
@@ -295,7 +295,7 @@ if (!$result) {
       <div class="modal-header"><h5>Tambah Menu</h5></div>
       <div class="modal-body">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
-        <div class="form-group"><label>Nama Menu</label><input type="text" name="nama_menu" class="form-control" required></div>
+        <div class="form-group"><label>Nama Menu</label><input type="text" name="nama_menu" class="form-control" required maxlength="100"></div>
         <div class="form-group"><label>Kategori</label><select name="kategori" class="form-control"><option value="minuman">Minuman</option><option value="makanan">Makanan</option></select></div>
         <div class="form-group"><label>Harga Hot / Normal (Rp) <span class="text-danger">*</span></label><input type="number" name="harga" class="form-control" required></div>
         <div class="form-group">
@@ -305,7 +305,7 @@ if (!$result) {
             <input type="number" name="harga_ice" class="form-control" placeholder="Contoh: 8000">
           </div>
         </div>
-        <div class="form-group"><label>Deskripsi</label><textarea name="deskripsi" class="form-control" required></textarea></div>
+        <div class="form-group"><label>Deskripsi</label><textarea name="deskripsi" class="form-control" required maxlength="1000"></textarea></div>
         <div class="form-group"><label>Foto</label><input type="file" name="gambar" class="form-control-file" required></div>
       </div>
       <div class="modal-footer"><button type="submit" name="tambah_menu" class="btn btn-primary">Simpan</button></div>
