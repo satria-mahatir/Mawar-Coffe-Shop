@@ -120,11 +120,17 @@
     function closeMobileNav() { hamburger.classList.remove('open'); mobileNav.classList.remove('open'); document.body.style.overflow = ''; }
 
     // ── SCROLL REVEAL ──
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); observer.unobserve(e.target); } });
+    window.observer = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); window.observer.unobserve(e.target); } });
     }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
-    reveals.forEach(el => observer.observe(el));
+
+    window.initScrollReveal = function() {
+        const reveals = document.querySelectorAll('.reveal:not(.active)');
+        reveals.forEach(el => window.observer.observe(el));
+    };
+    
+    // Initial call
+    window.initScrollReveal();
 
     // ── DARK MODE ──
     function setTheme(dark) {
@@ -143,7 +149,7 @@
             btn.classList.add('active');
             const target = btn.dataset.tab;
             document.querySelectorAll('.tab-content').forEach(c => { c.classList.remove('active'); if (c.id === 'tab-' + target) c.classList.add('active'); });
-            document.querySelectorAll('#tab-' + target + ' .reveal').forEach(el => { el.classList.remove('active'); setTimeout(() => observer.observe(el), 50); });
+            document.querySelectorAll('#tab-' + target + ' .reveal').forEach(el => { el.classList.remove('active'); setTimeout(() => window.observer.observe(el), 50); });
         });
     });
 
@@ -158,7 +164,7 @@
             ? (currentLang === 'id' ? 'Tutup ▲' : 'Show Less ▲')
             : (currentLang === 'id' ? 'Lihat Menu Lainnya ▼' : 'Show More ▼');
         if (isOpen) {
-            extra.querySelectorAll('.reveal').forEach(el => { el.classList.remove('active'); setTimeout(() => observer.observe(el), 50); });
+            extra.querySelectorAll('.reveal').forEach(el => { el.classList.remove('active'); setTimeout(() => window.observer.observe(el), 50); });
         }
     }
 
@@ -491,7 +497,7 @@
     window.toggleMore = function(tab) { __origTM(tab); setTimeout(initMenuImages, 100); };
 
     // ── LEAFLET JS MAP ──
-    document.addEventListener("DOMContentLoaded", function() {
+    window.initMap = function() {
         var lat  = -7.9184921;
         var lng  = 113.8175745;
         
@@ -515,5 +521,5 @@
         L.marker([lat, lng], {icon: orangeIcon}).addTo(map)
             .bindPopup('<b>WARKOP MAWAR</b><br>Tempat Nongkrong & Ngopi Asik<br><br><a href="https://maps.app.goo.gl/DyufcHiVK3apKeKk7" target="_blank" style="background:#E8622A;color:white;padding:6px 12px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:8px;font-weight:bold;font-size:0.9rem;">Buka Google Maps</a>')
             .openPopup();
-    });
+    };
 

@@ -744,11 +744,9 @@ include 'includes/logic.php';
     window.addEventListener('load', () => { pageLoaded = true; });
 
     const iv = setInterval(()=>{
-      // Jika halaman sudah load, percepat progress ke 100
       if(pageLoaded) {
           p = Math.min(p + 5, 100);
       } else {
-          // Progress melambat di 90% kalau halaman belum load
           if (p < 90) {
               p = Math.min(p + Math.random()*3 + 0.5, 90);
           }
@@ -765,6 +763,8 @@ include 'includes/logic.php';
           if (loader) loader.classList.add('hide');
           document.body.classList.remove('no-scroll');
           if (mainContent) mainContent.style.opacity = '1';
+          if(typeof window.initMap === 'function') window.initMap();
+          if(typeof window.initScrollReveal === 'function') window.initScrollReveal();
         }, 600);
       }
     }, 50);

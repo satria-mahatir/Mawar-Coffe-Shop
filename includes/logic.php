@@ -1,7 +1,7 @@
 <?php
 // includes/logic.php
 session_start();
-include 'koneksi.php';
+include __DIR__ . '/koneksi.php';
 
 // Generate CSRF Token for Frontend
 if (empty($_SESSION['frontend_csrf_token'])) {
