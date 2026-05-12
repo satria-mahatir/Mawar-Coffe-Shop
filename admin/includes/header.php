@@ -25,6 +25,16 @@ if (empty($_SESSION['csrf_token'])) {
     <meta name="theme-color" content="#E8622A">
 
     <style>
+        /* Fix Scrollbar Layout Shift */
+        html {
+            scrollbar-gutter: stable;
+        }
+
+        /* Fix gap di sidebar untuk layout AdminLTE */
+        .layout-navbar-fixed.layout-fixed .wrapper .sidebar {
+            margin-top: 0 !important;
+        }
+
         .main-sidebar { background-color: #1A0F08 !important; }
         .nav-link.active { background-color: #E8622A !important; }
         .brand-link { border-bottom: 1px solid #4B3224 !important; }
@@ -106,5 +116,81 @@ if (empty($_SESSION['csrf_token'])) {
             .table { font-size: 0.75rem; }
             .btn { padding: 0.25rem 0.5rem; }
             .btn-sm { padding: 0.15rem 0.3rem; font-size: 0.6rem; }
+        }
+
+        /* --- iOS Style Dark Mode Toggle --- */
+        .ios-toggle-container {
+            display: flex;
+            align-items: center;
+        }
+        .ios-toggle {
+            display: none;
+        }
+        .ios-toggle-label {
+            width: 54px;
+            height: 28px;
+            background-color: #cbd5e1;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.4s ease;
+            margin: 0;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+        .ios-toggle-label::after {
+            content: '';
+            width: 22px;
+            height: 22px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+        .ios-toggle-label .fa-sun {
+            position: absolute;
+            left: 7px;
+            top: 7px;
+            font-size: 14px;
+            color: #f59e0b;
+            z-index: 1;
+        }
+        .ios-toggle-label .fa-moon {
+            position: absolute;
+            right: 7px;
+            top: 7px;
+            font-size: 14px;
+            color: #f1f5f9;
+            z-index: 1;
+        }
+        .ios-toggle:checked + .ios-toggle-label {
+            background-color: #E8622A; /* Tema Mawar */
+        }
+        .ios-toggle:checked + .ios-toggle-label::after {
+            transform: translateX(26px);
+        }
+
+        /* Dark Mode navbar adjustments */
+        body.dark-mode .main-header {
+            background-color: #1A0F08 !important;
+            border-bottom-color: #4B3224 !important;
+        }
+        body.dark-mode .main-header .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+        body.dark-mode .main-header .nav-link:hover {
+            color: #fff !important;
+        }
+
+        /* --- Smooth Transition for Dark Mode --- */
+        body.theme-transition,
+        body.theme-transition *,
+        body.theme-transition *:before,
+        body.theme-transition *:after {
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+            transition-delay: 0s !important;
         }
     </style>

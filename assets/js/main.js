@@ -247,7 +247,7 @@
     let cart = [];
     let cartOpen = false;
     let toastTimer = null;
-    const WA_NUMBER = window.WA_NUMBER; // Defined globally in index.php
+    var WA_NUMBER = window.WA_NUMBER; // Defined globally in footer.php
 
     function toggleCart() {
         cartOpen = !cartOpen;
@@ -351,60 +351,51 @@
     }
 
     document.getElementById('btnOrderWa').addEventListener('click', function() {
-        if (cart.length === 0) return;
-        
-        const nama = document.getElementById('reservasiNama').value.trim();
-        const waktu = document.getElementById('reservasiWaktu').value;
-        if (!nama || !waktu) {
-            alert('Silakan isi Nama dan Waktu Kedatangan terlebih dahulu!');
-            return;
-        }
+    if (cart.length === 0) return;
+    
+    const nama = document.getElementById('reservasiNama').value.trim();
+    const waktu = document.getElementById('reservasiWaktu').value;
+    if (!nama || !waktu) {
+        alert('Silakan isi Nama dan Waktu Kedatangan terlebih dahulu!');
+        return;
+    }
 
-        const note = document.getElementById('cartNote').value.trim();
-        const itemLines = cart.map(i => `• ${i.name} x${i.qty}`).join('\n');
-        const daftarMenu = cart.map(i => `${i.name} (x${i.qty})`).join(', ');
-        
-        // Simpan ke database via AJAX
-        fetch('proses_reservasi.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                nama_pelanggan: nama,
-                waktu_reservasi: waktu,
-                detail_pesanan: daftarMenu + (note ? ' - Catatan: ' + note : ''),
-                total_harga: cart.reduce((s,i) => s + i.price * i.qty, 0),
-                csrf_token: CSRF_TOKEN
-            })
+    const note = document.getElementById('cartNote').value.trim();
+    const itemLines = cart.map(i => `• ${i.name} x${i.qty}`).join('\n');
+    const daftarMenu = cart.map(i => `${i.name} (x${i.qty})`).join(', ');
+    const waktuFormat = waktu.replace('T', ' ');
+
+    const msg = [
+        '🌹 *Halo Warkop Mawar!*', '',
+        `Saya *${nama}*, mau reservasi tempat untuk tanggal *${waktuFormat}*.`, '',
+        'Pesanan saya:', itemLines, note ? `\nCatatan: ${note}` : '',
+        '', '_(Reservasi via Website Warkop Mawar)_'
+    ].join('\n');
+
+    // ✅ Buka WA duluan — langsung dari user click, bebas popup blocker
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+
+    // Simpan ke DB — fire and forget
+    fetch('proses_reservasi.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            nama_pelanggan: nama,
+            waktu_reservasi: waktu,
+            detail_pesanan: daftarMenu + (note ? ' - Catatan: ' + note : ''),
+            total_harga: cart.reduce((s,i) => s + i.price * i.qty, 0),
+            csrf_token: CSRF_TOKEN
         })
-        .then(res => res.json())
-        .then(data => {
-            if(data.status === 'success') {
-                const waktuFormat = waktu.replace('T', ' ');
-                const msg = [
-                    '🌹 *Halo Warkop Mawar!*', '', 
-                    `Saya *${nama}*, mau reservasi tempat untuk tanggal *${waktuFormat}*.`, '',
-                    'Pesanan saya:', itemLines, note ? `\nCatatan: ${note}` : '',
-                    '', '_(Reservasi via Website Warkop Mawar)_'
-                ].join('\n');
-                
-                window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
-                
-                // Opsional: kosongkan keranjang setelah sukses
-                cart = [];
-                renderCart();
-                document.getElementById('reservasiNama').value = '';
-                document.getElementById('reservasiWaktu').value = '';
-                document.getElementById('cartNote').value = '';
-                toggleCart();
-            } else {
-                alert('Gagal membuat reservasi. Silakan coba lagi.');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('Terjadi kesalahan jaringan.');
-        });
-    });
+    }).catch(err => console.error('Reservasi error:', err));
+
+    // Bersihkan cart
+    cart = [];
+    renderCart();
+    document.getElementById('reservasiNama').value = '';
+    document.getElementById('reservasiWaktu').value = '';
+    document.getElementById('cartNote').value = '';
+    toggleCart();
+});
 
     document.getElementById('btnGrab').addEventListener('click', () => window.location.href = 'https://food.grab.com/id/id/restaurant/warkop-mawar-badean-delivery/6-C3CYEXEEBA5XR6');
     document.getElementById('btnShopee').addEventListener('click', () => window.open('https://shopee.co.id/universal-link/now-food/shop/22679728?deep_and_deferred=1&shareChannel=whatsapp', '_blank'));
@@ -427,11 +418,23 @@
         });
     }
 
-    initCartButtons();
-    initTempToggle();
     document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => { setTimeout(initCartButtons, 50); setTimeout(initTempToggle, 50); }));
-    const origToggleMore = window.toggleMore;
-    window.toggleMore = function(tab) { origToggleMore(tab); setTimeout(initCartButtons, 50); setTimeout(initTempToggle, 50); };
+    window.toggleMore = function(tab) {
+        const extra = document.getElementById('extra-' + tab);
+        const btn = document.querySelector('.t-btn-more-' + tab);
+        if (!extra) return;
+        extra.classList.toggle('show');
+        const isOpen = extra.classList.contains('show');
+        btn.textContent = isOpen
+            ? (currentLang === 'id' ? 'Tutup ▲' : 'Show Less ▲')
+            : (currentLang === 'id' ? 'Lihat Menu Lainnya ▼' : 'Show More ▼');
+        if (isOpen) {
+            extra.querySelectorAll('.reveal').forEach(el => { el.classList.remove('active'); setTimeout(() => window.observer.observe(el), 50); });
+        }
+        setTimeout(initCartButtons, 50);
+        setTimeout(initTempToggle, 50);
+        setTimeout(initMenuImages, 100);
+    };
 
     // ── HOT/ICE TOGGLE LOGIC ──
     function initTempToggle() {
@@ -470,9 +473,8 @@
             if (img.dataset.imgInit) return;
             img.dataset.imgInit = '1';
 
-            img.addEventListener('load', function() {
-                this.style.opacity = '1';
-            });
+            // Langsung tampilkan gambar (jangan set opacity 0)
+            img.style.opacity = '1';
 
             img.addEventListener('error', function() {
                 this.style.display = 'none';
@@ -482,20 +484,21 @@
                 }
             });
 
-            // Force load check
-            if (img.complete) {
-                img.style.opacity = '1';
-            } else {
-                img.style.opacity = '0';
+            // Handle gambar yang sudah error sebelum listener ter-attach
+            if (img.complete && img.naturalHeight === 0 && img.src) {
+                img.style.display = 'none';
+                const placeholder = img.nextElementSibling;
+                if (placeholder && placeholder.classList.contains('placeholder-menu')) {
+                    placeholder.style.display = 'flex';
+                }
             }
         });
     }
 
     initMenuImages();
+    initCartButtons();
+    initTempToggle();
     document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => setTimeout(initMenuImages, 100)));
-    const __origTM = window.toggleMore;
-    window.toggleMore = function(tab) { __origTM(tab); setTimeout(initMenuImages, 100); };
-
     // ── LEAFLET JS MAP ──
     window.initMap = function() {
         var lat  = -7.9184921;

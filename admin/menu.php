@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config/database.php';
 
 // Prevent browser caching
@@ -9,16 +8,28 @@ header("Pragma: no-cache");
 
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
+// Whitelist ekstensi file yang diizinkan
+$allowed_img_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+function isAllowedImage($filename) {
+    global $allowed_img_ext;
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    return in_array($ext, $allowed_img_ext);
+}
+
 // --- LOGIKA GANTI STATUS MENU ---
 if (isset($_GET['status_id'])) {
     if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $id = $_GET['status_id'];
+    $id = (int)$_GET['status_id'];
     $st = $_GET['st'];
     $new_status = ($st == 'tersedia') ? 'habis' : 'tersedia';
     
-    mysqli_query($koneksi, "UPDATE menu SET status='$new_status' WHERE id_menu='$id'");
+    $stmt = $koneksi->prepare("UPDATE menu SET status=? WHERE id_menu=?");
+    $stmt->bind_param("si", $new_status, $id);
+    $stmt->execute();
+    $stmt->close();
     header("Location: menu.php#item_$id");
     exit;
 }
@@ -28,11 +39,18 @@ if (isset($_GET['hapus'])) {
     if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $id = $_GET['hapus'];
-    $q = mysqli_query($koneksi, "SELECT gambar FROM menu WHERE id_menu='$id'");
-    $d = mysqli_fetch_assoc($q);
-    if (file_exists("../images/".$d['gambar'])) unlink("../images/".$d['gambar']);
-    mysqli_query($koneksi, "DELETE FROM menu WHERE id_menu='$id'");
+    $id = (int)$_GET['hapus'];
+    $stmt = $koneksi->prepare("SELECT gambar FROM menu WHERE id_menu=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $d = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    if ($d && file_exists("../images/".$d['gambar'])) unlink("../images/".$d['gambar']);
+    
+    $stmt = $koneksi->prepare("DELETE FROM menu WHERE id_menu=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
     header("Location: menu.php#list"); exit;
 }
 
@@ -41,15 +59,20 @@ if (isset($_POST['tambah_menu'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $nama     = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
+    $nama     = trim($_POST['nama_menu']);
     $kat      = $_POST['kategori'];
-    $hrg      = $_POST['harga'];
-    $hrg_ice  = !empty($_POST['harga_ice']) ? (int)$_POST['harga_ice'] : 'NULL';
-    $desk     = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
-    $gambar   = time().'_'.$_FILES['gambar']['name'];
-    if (move_uploaded_file($_FILES['gambar']['tmp_name'], "../images/".$gambar)) {
-        $hrg_ice_val = ($hrg_ice === 'NULL') ? 'NULL' : "'$hrg_ice'";
-        mysqli_query($koneksi, "INSERT INTO menu (nama_menu, kategori, deskripsi, harga, harga_ice, gambar) VALUES ('$nama', '$kat', '$desk', '$hrg', $hrg_ice_val, '$gambar')");
+    $hrg      = (int)$_POST['harga'];
+    $hrg_ice  = !empty($_POST['harga_ice']) ? (int)$_POST['harga_ice'] : null;
+    $desk     = trim($_POST['deskripsi']);
+    
+    if ($_FILES['gambar']['name'] != "" && isAllowedImage($_FILES['gambar']['name'])) {
+        $gambar = time().'_'.$_FILES['gambar']['name'];
+        if (move_uploaded_file($_FILES['gambar']['tmp_name'], "../images/".$gambar)) {
+            $stmt = $koneksi->prepare("INSERT INTO menu (nama_menu, kategori, deskripsi, harga, harga_ice, gambar) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssiss", $nama, $kat, $desk, $hrg, $hrg_ice, $gambar);
+            $stmt->execute();
+            $stmt->close();
+        }
     }
     header("Location: menu.php#list"); exit;
 }
@@ -59,21 +82,24 @@ if (isset($_POST['edit_menu'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $id       = $_POST['id_menu'];
-    $nama     = mysqli_real_escape_string($koneksi, $_POST['nama_menu']);
+    $id       = (int)$_POST['id_menu'];
+    $nama     = trim($_POST['nama_menu']);
     $kat      = $_POST['kategori'];
-    $hrg      = $_POST['harga'];
+    $hrg      = (int)$_POST['harga'];
     $hrg_ice  = !empty($_POST['harga_ice']) ? (int)$_POST['harga_ice'] : null;
-    $desk     = mysqli_real_escape_string($koneksi, $_POST['deskripsi']);
-    $hrg_ice_val = ($hrg_ice === null) ? 'NULL' : "'$hrg_ice'";
+    $desk     = trim($_POST['deskripsi']);
     
-    if ($_FILES['gambar']['name'] != "") {
+    if ($_FILES['gambar']['name'] != "" && isAllowedImage($_FILES['gambar']['name'])) {
         $gambar = time().'_'.$_FILES['gambar']['name'];
         move_uploaded_file($_FILES['gambar']['tmp_name'], "../images/".$gambar);
-        mysqli_query($koneksi, "UPDATE menu SET nama_menu='$nama', kategori='$kat', harga='$hrg', harga_ice=$hrg_ice_val, deskripsi='$desk', gambar='$gambar' WHERE id_menu='$id'");
+        $stmt = $koneksi->prepare("UPDATE menu SET nama_menu=?, kategori=?, harga=?, harga_ice=?, deskripsi=?, gambar=? WHERE id_menu=?");
+        $stmt->bind_param("ssiissi", $nama, $kat, $hrg, $hrg_ice, $desk, $gambar, $id);
     } else {
-        mysqli_query($koneksi, "UPDATE menu SET nama_menu='$nama', kategori='$kat', harga='$hrg', harga_ice=$hrg_ice_val, deskripsi='$desk' WHERE id_menu='$id'");
+        $stmt = $koneksi->prepare("UPDATE menu SET nama_menu=?, kategori=?, harga=?, harga_ice=?, deskripsi=? WHERE id_menu=?");
+        $stmt->bind_param("ssiisi", $nama, $kat, $hrg, $hrg_ice, $desk, $id);
     }
+    $stmt->execute();
+    $stmt->close();
     header("Location: menu.php#item_$id"); exit;
 }
 
@@ -149,7 +175,7 @@ if (!$result) {
       <div class="container-fluid">
         <?php if(isset($_GET['status'])): ?>
           <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Data berhasil di-<b><?= $_GET['status']; ?></b>, bro!
+            Data berhasil di-<b><?= htmlspecialchars($_GET['status']); ?></b>, bro!
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
         <?php endif; ?>
@@ -176,7 +202,7 @@ if (!$result) {
                 <tr id="item_<?= $row['id_menu']; ?>">
                   <td class="align-middle"><?= $no++; ?></td>
                   <td class="align-middle">
-                    <img src="../images/<?= $row['gambar']; ?>" alt="<?= htmlspecialchars($row['nama_menu']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                    <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" alt="<?= htmlspecialchars($row['nama_menu']); ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                   </td>
                   <td class="align-middle text-left">
                     <strong><?= htmlspecialchars($row['nama_menu']); ?></strong><br>
@@ -218,7 +244,7 @@ if (!$result) {
                   <div class="modal-dialog" role="document">
                     <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none;"> <!-- PENYELAMAT: Class ini wajib ada brok! -->
                       <div class="modal-header" style="background-color: #1A0F08; color: #E8622A;">
-                        <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Menu: <?= $row['nama_menu']; ?></h5>
+                        <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Menu: <?= htmlspecialchars($row['nama_menu']); ?></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
                           <span aria-hidden="true">&times;</span>
                         </button>
@@ -261,10 +287,10 @@ if (!$result) {
                           
                           <div class="form-group">
                             <label>Ganti Foto <small class="text-muted">(Kosongkan jika tidak diganti)</small></label>
-                            <input type="file" name="gambar" class="form-control-file mb-2">
+                            <input type="file" name="gambar" class="form-control-file mb-2" accept="image/*">
                             <div class="p-2 border rounded bg-light text-center">
                               <small class="d-block mb-1 text-muted">Foto saat ini:</small>
-                              <img src="../images/<?= $row['gambar']; ?>" width="100" class="img-thumbnail">
+                              <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" width="100" class="img-thumbnail">
                             </div>
                           </div>
                         </div>
@@ -306,7 +332,7 @@ if (!$result) {
           </div>
         </div>
         <div class="form-group"><label>Deskripsi</label><textarea name="deskripsi" class="form-control" required maxlength="1000"></textarea></div>
-        <div class="form-group"><label>Foto</label><input type="file" name="gambar" class="form-control-file" required></div>
+        <div class="form-group"><label>Foto</label><input type="file" name="gambar" class="form-control-file" required accept="image/*"></div>
       </div>
       <div class="modal-footer"><button type="submit" name="tambah_menu" class="btn btn-primary">Simpan</button></div>
     </form>

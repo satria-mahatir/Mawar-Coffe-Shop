@@ -56,8 +56,8 @@
 </div>
 
     <script>
-        const WA_NUMBER = '<?= htmlspecialchars($pengaturan['wa_number']); ?>';
-        const CSRF_TOKEN = '<?= $_SESSION['frontend_csrf_token']; ?>';
+        window.WA_NUMBER = '6282244019596';
+        const CSRF_TOKEN = '<?= $_SESSION["frontend_csrf_token"]; ?>';
     </script>
     <script src="assets/js/main.js"></script>
     

@@ -1,26 +1,40 @@
 <?php
-session_start();
 require_once '../config/database.php';
+
+// Prevent browser caching
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
 if (isset($_POST['update_web'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $wa = $_POST['wa_number'];
-    $ig = $_POST['link_ig'];
-    $tt = $_POST['link_tiktok'];
-    $maps = mysqli_real_escape_string($koneksi, $_POST['link_maps']);
+    $wa = trim($_POST['wa_number']);
+    $ig = trim($_POST['link_ig']);
+    $tt = trim($_POST['link_tiktok']);
+    $maps = trim($_POST['link_maps']);
     
     // Update wa_number in pengaturan
-    mysqli_query($koneksi, "UPDATE pengaturan SET wa_number='$wa' WHERE id=1");
+    $stmt = $koneksi->prepare("UPDATE pengaturan SET wa_number=? WHERE id=1");
+    $stmt->bind_param("s", $wa);
+    $stmt->execute();
+    $stmt->close();
     
     // Check if pengaturan_web row exists
     $cek = mysqli_query($koneksi, "SELECT * FROM pengaturan_web WHERE id_pengaturan=1");
     if(mysqli_num_rows($cek) > 0) {
-        mysqli_query($koneksi, "UPDATE pengaturan_web SET link_ig='$ig', link_tiktok='$tt', link_maps='$maps' WHERE id_pengaturan=1");
+        $stmt = $koneksi->prepare("UPDATE pengaturan_web SET link_ig=?, link_tiktok=?, link_maps=? WHERE id_pengaturan=1");
+        $stmt->bind_param("sss", $ig, $tt, $maps);
+        $stmt->execute();
+        $stmt->close();
     } else {
-        mysqli_query($koneksi, "INSERT INTO pengaturan_web (id_pengaturan, link_ig, link_tiktok, link_maps) VALUES (1, '$ig', '$tt', '$maps')");
+        $stmt = $koneksi->prepare("INSERT INTO pengaturan_web (id_pengaturan, link_ig, link_tiktok, link_maps) VALUES (1, ?, ?, ?)");
+        $stmt->bind_param("sss", $ig, $tt, $maps);
+        $stmt->execute();
+        $stmt->close();
     }
     
     header("Location: pengaturan.php#form");
@@ -56,7 +70,7 @@ if(mysqli_num_rows($q_web2) > 0) {
           <div class="card-body">
             <div class="form-group">
               <label>Nomor WhatsApp (Gunakan format 62...)</label>
-              <input type="text" name="wa_number" class="form-control" value="<?= $web['wa_number']; ?>" required>
+              <input type="text" name="wa_number" class="form-control" value="<?= htmlspecialchars($web['wa_number']); ?>" required>
             </div>
             <div class="form-group">
               <label>Link Instagram</label>
@@ -78,7 +92,15 @@ if(mysqli_num_rows($q_web2) > 0) {
       </div>
     </section>
   </div>
+
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2026 Warkop Mawar.</strong> Dibuat oleh Tama.
+  </footer>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
 <script>
 // Auto-scroll ke anchor jika ada

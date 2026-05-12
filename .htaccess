@@ -7,7 +7,7 @@
 
 Options -Indexes
 
-<FilesMatch "^(test_|check_|cek_|fix_|verify_|show_|setup_|update_|add_).*\.php$">
+<FilesMatch "^(test_|check_|cek_|fix_|verify_|show_|setup_|add_).*\.php$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>

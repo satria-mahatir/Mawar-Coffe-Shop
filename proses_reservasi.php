@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once 'config/database.php';
 
 // CSRF check
 if (!hash_equals($_SESSION['frontend_csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
@@ -7,8 +7,6 @@ if (!hash_equals($_SESSION['frontend_csrf_token'] ?? '', $_POST['csrf_token'] ??
     echo json_encode(['status' => 'error', 'message' => 'Request tidak valid']);
     exit;
 }
-
-require_once 'config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

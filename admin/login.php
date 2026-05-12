@@ -1,6 +1,5 @@
 <?php
 
-session_start();
 require_once '../config/database.php';
 
 // Proteksi: Cegah maju-mundur browser setelah login
@@ -17,7 +16,7 @@ if (isset($_POST['submit'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['frontend_csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $username = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $username = trim($_POST['username']);
     $password = $_POST['password']; // Jangan di-MD5 dulu di sini!
 
     // 1. Cari user berdasarkan username menggunakan prepared statement
@@ -26,7 +25,7 @@ if (isset($_POST['submit'])) {
         error_log('Admin login prepare error: ' . $koneksi->error);
         $error = 'Terjadi kesalahan sistem.';
     } else {
-        $stmt->bind_param("s", $_POST['username']);
+        $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
@@ -36,7 +35,7 @@ if (isset($_POST['submit'])) {
         $data = mysqli_fetch_assoc($result);
         
         // 2. Verifikasi password BCRYPT yang diinput vs yang di database
-        if (password_verify($password, $data['password'])) {
+        if ($data && password_verify($password, $data['password'])) {
             // Kalau COCOK, bikin session
             $_SESSION['admin_logged_in'] = true;
             $_SESSION['username'] = $data['username'];
@@ -44,10 +43,12 @@ if (isset($_POST['submit'])) {
             
             header("Location: index.php"); 
             exit;
+        } else if (!$data) {
+            $error = 'Username tidak terdaftar!';
         } else {
             $error = 'Password salah bro!';
         }
-    } else {
+    } else if (empty($error)) {
         $error = 'Username tidak terdaftar!';
     }
 }
@@ -82,7 +83,7 @@ if (isset($_POST['submit'])) {
   <div class="card card-outline card-primary">
     <div class="card-header text-center">
       <!-- Link ini bisa diklik buat balik ke halaman utama -->
-      <a href="../index.html" class="h1" style="color: #111;"><b>Admin</b>Mawar</a>
+      <a href="../index.php" class="h1" style="color: #111;"><b>Admin</b>Mawar</a>
     </div>
     <div class="card-body">
       <p class="login-box-msg">Login dulu brok buat masuk dashboard</p>

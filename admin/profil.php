@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config/database.php';
 
 // Prevent browser caching
@@ -9,31 +8,40 @@ header("Pragma: no-cache");
 
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
-$admin_id = $_SESSION['user_id']; 
+$admin_id = (int)$_SESSION['user_id']; 
 
 if (isset($_POST['update_profil'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $user = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $user = trim($_POST['username']);
     $pass = $_POST['password'];
     
     if (!empty($pass)) {
         // Kalau password diisi, update username & password dengan BCRYPT
         $pass_hash = password_hash($pass, PASSWORD_BCRYPT);
-        $query = "UPDATE admin SET username='$user', password='$pass_hash' WHERE id_admin='$admin_id'";
+        $stmt = $koneksi->prepare("UPDATE admin SET username=?, password=? WHERE id_admin=?");
+        $stmt->bind_param("ssi", $user, $pass_hash, $admin_id);
     } else {
         // Kalau password kosong, update username doang
-        $query = "UPDATE admin SET username='$user' WHERE id_admin='$admin_id'";
+        $stmt = $koneksi->prepare("UPDATE admin SET username=? WHERE id_admin=?");
+        $stmt->bind_param("si", $user, $admin_id);
     }
 
-    if (mysqli_query($koneksi, $query)) {
+    if ($stmt->execute()) {
         $_SESSION['username'] = $user; // Update nama di sidebar
+        $stmt->close();
         echo "<script>alert('Profil berhasil diupdate! Silakan login ulang, bro.'); window.location='logout.php';</script>";
+        exit;
     }
+    $stmt->close();
 }
 
-$res = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM admin WHERE id_admin='$admin_id'"));
+$stmt = $koneksi->prepare("SELECT * FROM admin WHERE id_admin=?");
+$stmt->bind_param("i", $admin_id);
+$stmt->execute();
+$res = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +72,7 @@ $res = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM admin WHERE id_a
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
             <div class="form-group">
               <label>Username Baru</label>
-              <input type="text" name="username" class="form-control" value="<?= $res['username']; ?>" required>
+              <input type="text" name="username" class="form-control" value="<?= htmlspecialchars($res['username']); ?>" required>
             </div>
             <div class="form-group">
               <label>Password Baru (Kosongkan jika tidak diganti)</label>

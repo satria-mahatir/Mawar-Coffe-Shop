@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config/database.php';
 
 // Prevent browser caching
@@ -13,48 +12,67 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit; 
 }
 
+// Whitelist ekstensi file
+$allowed_img_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+$allowed_vid_ext = ['mp4', 'webm', 'mov'];
+
+function isAllowedMedia($filename, $type = 'image') {
+    global $allowed_img_ext, $allowed_vid_ext;
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    return $type === 'video' ? in_array($ext, $allowed_vid_ext) : in_array($ext, $allowed_img_ext);
+}
+
 // --- LOGIKA UPDATE TENTANG ---
 if (isset($_POST['update_tentang'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $quote = mysqli_real_escape_string($koneksi, $_POST['quote_text']);
+    $quote = trim($_POST['quote_text']);
     
-    // 1. Update teks quote
-    mysqli_query($koneksi, "UPDATE tentang SET quote_text='$quote' WHERE id=1");
+    // 1. Update teks quote dengan prepared statement
+    $stmt = $koneksi->prepare("UPDATE tentang SET quote_text=? WHERE id=1");
+    $stmt->bind_param("s", $quote);
+    $stmt->execute();
+    $stmt->close();
 
-    // Fungsi sakti buat upload foto spesifik tanpa ribet
-    function uploadKonten($inputName, $dbColumn, $koneksi) {
-        if ($_FILES[$inputName]['name'] != "") {
+    // Fungsi sakti buat upload foto/video spesifik tanpa ribet
+    function uploadKonten($inputName, $dbColumn, $koneksi, $type = 'image') {
+        if ($_FILES[$inputName]['name'] != "" && isAllowedMedia($_FILES[$inputName]['name'], $type)) {
             $nama_file = time() . '_' . $_FILES[$inputName]['name'];
             $tmp_file  = $_FILES[$inputName]['tmp_name'];
             $path      = "../images/" . $nama_file;
 
             if (move_uploaded_file($tmp_file, $path)) {
-                // Hapus foto lama biar folder images nggak penuh sampah
-                $lama = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT $dbColumn FROM tentang WHERE id=1"));
-                if (file_exists("../images/" . $lama[$dbColumn])) {
+                // Hapus file lama biar folder images nggak penuh sampah
+                $stmt = $koneksi->prepare("SELECT $dbColumn FROM tentang WHERE id=1");
+                $stmt->execute();
+                $lama = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
+                if ($lama && file_exists("../images/" . $lama[$dbColumn])) {
                     unlink("../images/" . $lama[$dbColumn]);
                 }
                 // Update nama file baru ke database
-                mysqli_query($koneksi, "UPDATE tentang SET $dbColumn='$nama_file' WHERE id=1");
+                $stmt = $koneksi->prepare("UPDATE tentang SET $dbColumn=? WHERE id=1");
+                $stmt->bind_param("s", $nama_file);
+                $stmt->execute();
+                $stmt->close();
             }
         }
     }
 
     // Eksekusi upload buat 4 posisi foto
-    uploadKonten('foto_utama', 'foto_utama', $koneksi);
-    uploadKonten('foto_1', 'foto_1', $koneksi);
-    uploadKonten('foto_2', 'foto_2', $koneksi);
-    uploadKonten('foto_3', 'foto_3', $koneksi);
+    uploadKonten('foto_utama', 'foto_utama', $koneksi, 'image');
+    uploadKonten('foto_1', 'foto_1', $koneksi, 'image');
+    uploadKonten('foto_2', 'foto_2', $koneksi, 'image');
+    uploadKonten('foto_3', 'foto_3', $koneksi, 'image');
 
     // Eksekusi upload buat 6 video beranda
-    uploadKonten('video_1', 'video_1', $koneksi);
-    uploadKonten('video_2', 'video_2', $koneksi);
-    uploadKonten('video_3', 'video_3', $koneksi);
-    uploadKonten('video_4', 'video_4', $koneksi);
-    uploadKonten('video_5', 'video_5', $koneksi);
-    uploadKonten('video_6', 'video_6', $koneksi);
+    uploadKonten('video_1', 'video_1', $koneksi, 'video');
+    uploadKonten('video_2', 'video_2', $koneksi, 'video');
+    uploadKonten('video_3', 'video_3', $koneksi, 'video');
+    uploadKonten('video_4', 'video_4', $koneksi, 'video');
+    uploadKonten('video_5', 'video_5', $koneksi, 'video');
+    uploadKonten('video_6', 'video_6', $koneksi, 'video');
 
     header("Location: tentang.php#content");
     exit;
@@ -95,7 +113,7 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
             <div class="card-body">
               <div class="form-group">
                 <label>Quote Utama</label>
-                <textarea name="quote_text" class="form-control" rows="3" required><?= $data['quote_text']; ?></textarea>
+                <textarea name="quote_text" class="form-control" rows="3" required><?= htmlspecialchars($data['quote_text']); ?></textarea>
                 <small class="text-muted">Muncul di samping foto utama section About.</small>
               </div>
             </div>
@@ -107,8 +125,8 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
               <div class="card card-outline card-orange">
                 <div class="card-header text-center"><small><b>FOTO UTAMA QUOTE</b></small></div>
                 <div class="card-body text-center">
-                  <img src="../images/<?= $data['foto_utama']; ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
-                  <input type="file" name="foto_utama" class="form-control-file">
+                  <img src="../images/<?= htmlspecialchars($data['foto_utama']); ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
+                  <input type="file" name="foto_utama" class="form-control-file" accept="image/*">
                 </div>
               </div>
             </div>
@@ -117,8 +135,8 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
               <div class="card card-outline card-orange">
                 <div class="card-header text-center"><small><b>FOTO MOMEN 1</b></small></div>
                 <div class="card-body text-center">
-                  <img src="../images/<?= $data['foto_1']; ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
-                  <input type="file" name="foto_1" class="form-control-file">
+                  <img src="../images/<?= htmlspecialchars($data['foto_1']); ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
+                  <input type="file" name="foto_1" class="form-control-file" accept="image/*">
                 </div>
               </div>
             </div>
@@ -127,8 +145,8 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
               <div class="card card-outline card-orange">
                 <div class="card-header text-center"><small><b>FOTO MOMEN 2</b></small></div>
                 <div class="card-body text-center">
-                  <img src="../images/<?= $data['foto_2']; ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
-                  <input type="file" name="foto_2" class="form-control-file">
+                  <img src="../images/<?= htmlspecialchars($data['foto_2']); ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
+                  <input type="file" name="foto_2" class="form-control-file" accept="image/*">
                 </div>
               </div>
             </div>
@@ -137,8 +155,8 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
               <div class="card card-outline card-orange">
                 <div class="card-header text-center"><small><b>FOTO MOMEN 3</b></small></div>
                 <div class="card-body text-center">
-                  <img src="../images/<?= $data['foto_3']; ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
-                  <input type="file" name="foto_3" class="form-control-file">
+                  <img src="../images/<?= htmlspecialchars($data['foto_3']); ?>" class="img-fluid mb-2 rounded shadow-sm" style="height:150px; width:100%; object-fit:cover;">
+                  <input type="file" name="foto_3" class="form-control-file" accept="image/*">
                 </div>
               </div>
             </div>
@@ -170,6 +188,10 @@ $data = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM tentang WHERE i
       </div>
     </section>
   </div>
+
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2026 Warkop Mawar.</strong> Dibuat oleh Tama.
+  </footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

@@ -1,7 +1,12 @@
 <?php
 
-session_start();
 require_once '../config/database.php';
+
+// Prevent browser caching
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 if (!isset($_SESSION['admin_logged_in'])) { header("Location: login.php"); exit; }
 
 // Ambil statistik revenue
@@ -171,9 +176,11 @@ if (!$query) {
       </div>
     </section>
   </div>
+
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2026 Warkop Mawar.</strong> Dibuat oleh Tama.
+  </footer>
 </div>
-</body>
-</html>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
@@ -228,3 +235,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+</body>
+</html>

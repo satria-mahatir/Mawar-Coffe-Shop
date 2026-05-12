@@ -1,6 +1,5 @@
 <?php
 
-session_start();
 require_once '../config/database.php';
 
 // Prevent browser caching
@@ -15,16 +14,13 @@ if (!isset($_SESSION['admin_logged_in'])) {
 }
 
 // Ambil data buat statistik singkat di dashboard
-$total_menu   = mysqli_num_rows(mysqli_query($koneksi, "SELECT id_menu FROM menu"));
-if ($total_menu === false) {
-    error_log('DB Error (admin menu count): ' . mysqli_error($koneksi));
-    $total_menu = 0;
-}
-$total_galeri = mysqli_num_rows(mysqli_query($koneksi, "SELECT id_galeri FROM galeri"));
-if ($total_galeri === false) {
-    error_log('DB Error (admin galeri count): ' . mysqli_error($koneksi));
-    $total_galeri = 0;
-}
+$q_menu = mysqli_query($koneksi, "SELECT id_menu FROM menu");
+$total_menu = $q_menu ? mysqli_num_rows($q_menu) : 0;
+if (!$q_menu) { error_log('DB Error (admin menu count): ' . mysqli_error($koneksi)); }
+
+$q_galeri = mysqli_query($koneksi, "SELECT id_galeri FROM galeri");
+$total_galeri = $q_galeri ? mysqli_num_rows($q_galeri) : 0;
+if (!$q_galeri) { error_log('DB Error (admin galeri count): ' . mysqli_error($koneksi)); }
 ?>
 <!DOCTYPE html>
 <html lang="id">

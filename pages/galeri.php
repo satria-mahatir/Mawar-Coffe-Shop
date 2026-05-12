@@ -6,7 +6,7 @@
             foreach($carousel_items as $item) {
                 $image_file = $item['gambar'];
                 $alt_text = htmlspecialchars($item['nama_menu']);
-                echo '<div class="gallery-item"><img loading="lazy" src="images/'.$image_file.'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
+                echo '<div class="gallery-item"><img loading="lazy" src="images/'.htmlspecialchars($image_file).'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
             }
             ?>
             <!-- Duplication for infinite scroll effect -->
@@ -14,7 +14,7 @@
             foreach($carousel_items as $item) {
                 $image_file = $item['gambar'];
                 $alt_text = htmlspecialchars($item['nama_menu']);
-                echo '<div class="gallery-item"><img loading="lazy" src="images/'.$image_file.'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
+                echo '<div class="gallery-item"><img loading="lazy" src="images/'.htmlspecialchars($image_file).'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
             }
             ?>
         </div>

@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../config/database.php';
 
 // Prevent browser caching
@@ -13,21 +12,35 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit; 
 }
 
+// Whitelist ekstensi file yang diizinkan
+$allowed_img_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+function isAllowedImageGaleri($filename) {
+    global $allowed_img_ext;
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    return in_array($ext, $allowed_img_ext);
+}
+
 // --- LOGIKA TAMBAH FOTO ---
 if (isset($_POST['tambah_foto'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
+    $judul = trim($_POST['judul']);
     $nama_file = $_FILES['gambar']['name'];
     $tmp_file  = $_FILES['gambar']['tmp_name'];
-    $gambar_baru = time() . '_' . $nama_file;
-    $path = "../images/" . $gambar_baru;
+    
+    if ($nama_file != "" && isAllowedImageGaleri($nama_file)) {
+        $gambar_baru = time() . '_' . $nama_file;
+        $path = "../images/" . $gambar_baru;
 
-    if (move_uploaded_file($tmp_file, $path)) {
-        mysqli_query($koneksi, "INSERT INTO galeri (judul, gambar) VALUES ('$judul', '$gambar_baru')");
-        header("Location: galeri.php#list");
-        exit;
+        if (move_uploaded_file($tmp_file, $path)) {
+            $stmt = $koneksi->prepare("INSERT INTO galeri (judul, gambar) VALUES (?, ?)");
+            $stmt->bind_param("ss", $judul, $gambar_baru);
+            $stmt->execute();
+            $stmt->close();
+            header("Location: galeri.php#list");
+            exit;
+        }
     }
 }
 
@@ -36,26 +49,36 @@ if (isset($_POST['edit_foto'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $id    = $_POST['id_galeri'];
-    $judul = mysqli_real_escape_string($koneksi, $_POST['judul']);
+    $id    = (int)$_POST['id_galeri'];
+    $judul = trim($_POST['judul']);
     
     // Cek apakah ada upload foto baru
-    if ($_FILES['gambar']['name'] != "") {
+    if ($_FILES['gambar']['name'] != "" && isAllowedImageGaleri($_FILES['gambar']['name'])) {
         $nama_file = time() . '_' . $_FILES['gambar']['name'];
         $tmp_file  = $_FILES['gambar']['tmp_name'];
         $path      = "../images/" . $nama_file;
 
         if (move_uploaded_file($tmp_file, $path)) {
             // Hapus foto lama dari folder
-            $lama = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT gambar FROM galeri WHERE id_galeri='$id'"));
-            if (file_exists("../images/" . $lama['gambar'])) {
+            $stmt = $koneksi->prepare("SELECT gambar FROM galeri WHERE id_galeri=?");
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $lama = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+            if ($lama && file_exists("../images/" . $lama['gambar'])) {
                 unlink("../images/" . $lama['gambar']);
             }
-            mysqli_query($koneksi, "UPDATE galeri SET judul='$judul', gambar='$nama_file' WHERE id_galeri='$id'");
+            $stmt = $koneksi->prepare("UPDATE galeri SET judul=?, gambar=? WHERE id_galeri=?");
+            $stmt->bind_param("ssi", $judul, $nama_file, $id);
+            $stmt->execute();
+            $stmt->close();
         }
     } else {
         // Jika hanya ganti judul saja
-        mysqli_query($koneksi, "UPDATE galeri SET judul='$judul' WHERE id_galeri='$id'");
+        $stmt = $koneksi->prepare("UPDATE galeri SET judul=? WHERE id_galeri=?");
+        $stmt->bind_param("si", $judul, $id);
+        $stmt->execute();
+        $stmt->close();
     }
     header("Location: galeri.php#item_$id");
     exit;
@@ -66,15 +89,21 @@ if (isset($_GET['hapus'])) {
     if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF Token Invalid!");
     }
-    $id = $_GET['hapus'];
-    $q = mysqli_query($koneksi, "SELECT gambar FROM galeri WHERE id_galeri='$id'");
-    $d = mysqli_fetch_assoc($q);
+    $id = (int)$_GET['hapus'];
+    $stmt = $koneksi->prepare("SELECT gambar FROM galeri WHERE id_galeri=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $d = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
     
-    if (file_exists("../images/".$d['gambar'])) {
+    if ($d && file_exists("../images/".$d['gambar'])) {
         unlink("../images/".$d['gambar']);
     }
     
-    mysqli_query($koneksi, "DELETE FROM galeri WHERE id_galeri='$id'");
+    $stmt = $koneksi->prepare("DELETE FROM galeri WHERE id_galeri=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
     header("Location: galeri.php#list");
     exit;
 }
@@ -118,9 +147,9 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
               <?php while($row = mysqli_fetch_assoc($result)) { ?>
                 <div class="col-md-3 col-6 mb-4" id="item_<?= $row['id_galeri']; ?>">
                   <div class="card h-100 shadow-sm">
-                    <img src="../images/<?= $row['gambar']; ?>" class="card-img-top" style="height: 180px; object-fit: cover;">
+                    <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" class="card-img-top" style="height: 180px; object-fit: cover;">
                     <div class="card-body p-2 text-center">
-                      <p class="mb-2 text-bold text-uppercase" style="font-size: 0.8rem;"><?= $row['judul']; ?></p>
+                      <p class="mb-2 text-bold text-uppercase" style="font-size: 0.8rem;"><?= htmlspecialchars($row['judul']); ?></p>
                       <div class="btn-group">
                         <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#modalEdit<?= $row['id_galeri']; ?>"><i class="fas fa-edit"></i> Edit</button>
                         <a href="galeri.php?hapus=<?= $row['id_galeri']; ?>&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-xs btn-danger" onclick="return confirm('Hapus foto ini kak?')"><i class="fas fa-trash"></i> Hapus</a>
@@ -142,15 +171,15 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
                         <input type="hidden" name="id_galeri" value="<?= $row['id_galeri']; ?>">
                         <div class="form-group">
                           <label>Judul/Caption</label>
-                          <input type="text" name="judul" class="form-control" value="<?= $row['judul']; ?>" required>
+                          <input type="text" name="judul" class="form-control" value="<?= htmlspecialchars($row['judul']); ?>" required>
                         </div>
                         <div class="form-group">
                           <label>Ganti Foto <small class="text-muted">(Biarkan kosong jika tidak ingin diganti)</small></label>
-                          <input type="file" name="gambar" class="form-control-file">
+                          <input type="file" name="gambar" class="form-control-file" accept="image/*">
                         </div>
                         <div class="text-center">
                            <small>Preview Sekarang:</small><br>
-                           <img src="../images/<?= $row['gambar']; ?>" width="150" class="img-thumbnail">
+                           <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" width="150" class="img-thumbnail">
                         </div>
                       </div>
                       <div class="modal-footer">
@@ -184,7 +213,7 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
       <div class="modal-body">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
         <div class="form-group"><label>Judul/Caption</label><input type="text" name="judul" class="form-control" required placeholder="Contoh: Suasana Malam"></div>
-        <div class="form-group"><label>File Foto</label><input type="file" name="gambar" class="form-control-file" required></div>
+        <div class="form-group"><label>File Foto</label><input type="file" name="gambar" class="form-control-file" required accept="image/*"></div>
       </div>
       <div class="modal-footer">
         <button type="submit" name="tambah_foto" class="btn btn-primary" style="background-color:#E8622A; border:none;">Simpan Foto</button>
