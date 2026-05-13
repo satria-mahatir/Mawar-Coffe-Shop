@@ -1,0 +1,214 @@
+════════════════════════════════════════════════════════════════════════════════
+    PANDUAN UPLOAD WEBSITE STATIS WARKOP MAWAR
+════════════════════════════════════════════════════════════════════════════════
+
+📋 STRUKTUR FILE YANG SUDAH SIAP
+════════════════════════════════════════════════════════════════════════════════
+
+static/
+├── index.html                          ← File utama (buka di browser)
+├── CARA_UPLOAD.txt                     ← File ini
+├── assets/
+│   ├── css/
+│   │   └── style.css                   ← Stylesheet (1236 lines)
+│   ├── js/
+│   │   └── main.js                     ← JavaScript functionality (528 lines)
+│   └── images/                         ← 61 gambar (webp, png, ico, etc)
+│       ├── minuman-*.webp
+│       ├── makanan-*.webp
+│       ├── footage-*.webp
+│       ├── wedding-coffe-booth-*.webp
+│       └── (favicon, apple-touch-icon, dll)
+
+
+✅ CHECKLIST SEBELUM UPLOAD
+════════════════════════════════════════════════════════════════════════════════
+
+Pastikan file-file berikut ada:
+ ☐ static/index.html (801 lines - LENGKAP)
+ ☐ static/assets/css/style.css
+ ☐ static/assets/js/main.js  
+ ☐ static/assets/images/ (61 files)
+
+Pastikan struktur HTML valid:
+ ☐ DOCTYPE declaration
+ ☐ <html>, <head>, <body>, </html> tags
+ ☐ Semua image paths menggunakan assets/images/
+ ☐ Semua link mengarah ke index.html (bukan .php)
+
+
+📤 CARA 1: UPLOAD VIA FTP/HOSTING PANEL
+════════════════════════════════════════════════════════════════════════════════
+
+1. Masuk ke cPanel atau File Manager hosting Anda
+2. Buka folder public_html atau folder website Anda
+3. Upload folder "static" dengan struktur yang sama
+
+Struktur akhir di server:
+   public_html/
+   ├── index.php (dinamis - tetap ada)
+   ├── admin/
+   ├── config/
+   ├── includes/
+   ├── pages/
+   ├── assets/ (PHP version)
+   └── static/ ← Upload folder ini lengkap dengan struktur
+       ├── index.html
+       ├── assets/
+       │   ├── css/
+       │   ├── js/
+       │   └── images/
+       └── CARA_UPLOAD.txt
+
+4. Akses via: https://yourdomain.com/static/index.html
+
+
+📤 CARA 2: UPLOAD VIA GIT
+════════════════════════════════════════════════════════════════════════════════
+
+Jika menggunakan Git:
+
+1. Stage perubahan:
+   git add static/
+
+2. Commit:
+   git commit -m "Add static HTML version of website"
+
+3. Push ke repository:
+   git push origin main
+
+4. Deploy dari repository di hosting (GitHub Pages, Vercel, Netlify, dll)
+
+
+🌐 AKSES WEBSITE
+════════════════════════════════════════════════════════════════════════════════
+
+Local (Development):
+   file:///c:/laragon/www/Tugas-akhir-mawar/static/index.html
+   atau
+   http://localhost/tugas-akhir-mawar/static/
+
+Hosted Server:
+   https://yourdomain.com/static/index.html
+   atau
+   https://yourdomain.com/static/
+
+
+⚙️ FITUR YANG BERFUNGSI
+════════════════════════════════════════════════════════════════════════════════
+
+✅ Berfungsi di Static Version:
+   • Navigation (semua link anchor bekerja)
+   • Hero section dengan video carousel
+   • Menu display (minuman & makanan)
+   • Cart/Keranjang functionality
+   • Gallery dengan lightbox
+   • Dark mode toggle
+   • Language toggle (Google Translate)
+   • Responsive design
+   • Custom cursor animation
+   • Scroll reveal animations
+   • Map (Leaflet)
+   • Platform buttons (GrabFood, ShopeeFood, WhatsApp)
+   • Mobile hamburger menu
+
+❌ Tidak Berfungsi di Static Version (Butuh Backend):
+   • Mengubah data menu (perlu database)
+   • Upload foto galeri
+   • Simpan reservasi ke database
+   • Admin panel
+   • Form processing ke database
+   → Untuk fitur ini, tetap gunakan index.php dinamis
+
+
+🔧 KONFIGURASI & CUSTOMIZATION
+════════════════════════════════════════════════════════════════════════════════
+
+Jika ingin mengubah data dalam static version:
+
+1. Edit index.html langsung:
+   • Menu items: Cari section id="menu"
+   • Galeri: Cari section id="galeri"
+   • Lokasi: Cari section id="lokasi"
+
+2. Edit konten About: Cari section id="about"
+
+3. Edit footer links & social media di footer section
+
+4. Ganti WhatsApp number di footer:
+   window.WA_NUMBER = '6282244019596'; → ganti dengan nomor Anda
+
+
+📞 BANTUAN & TROUBLESHOOTING
+════════════════════════════════════════════════════════════════════════════════
+
+Masalah: Gambar tidak muncul
+Solusi:
+   • Pastikan folder assets/images/ ter-upload lengkap
+   • Check browser console (F12 → Console)
+   • Pastikan path menggunakan assets/images/ bukan /images/
+
+Masalah: CSS tidak diterapkan / Layout berantakan
+Solusi:
+   • Pastikan assets/css/style.css ter-upload
+   • Clear browser cache (Ctrl+Shift+Delete)
+   • Check browser console untuk CSS load errors
+
+Masalah: JavaScript tidak berfungsi
+Solusi:
+   • Pastikan assets/js/main.js ter-upload
+   • Check browser console untuk JS errors
+   • Pastikan Leaflet JS CDN accessible
+
+Masalah: Video hero tidak play
+Solusi:
+   • Check apakah file video ada di assets/images/
+   • Pastikan format webm support di browser
+   • Coba di browser Chrome/Firefox terbaru
+
+
+📊 FILE SIZE & PERFORMANCE
+════════════════════════════════════════════════════════════════════════════════
+
+HTML:        801 lines (~40 KB)
+CSS:        1236 lines (~150 KB)
+JS:          528 lines (~25 KB)
+Images:      61 files (~10-50 MB tergantung resolusi)
+
+Total:      Sekitar 10-50 MB
+
+
+🔐 SECURITY NOTES
+════════════════════════════════════════════════════════════════════════════════
+
+• Static version tidak perlu backend atau database
+• Aman dari SQL injection atau PHP vulnerabilities
+• Semua data sudah hardcoded dalam HTML
+• Untuk fitur dinamis, gunakan index.php dengan auth yang benar
+
+
+✨ NEXT STEPS
+════════════════════════════════════════════════════════════════════════════════
+
+1. Jika perlu fitur tambahan yang dinamis:
+   → Tetap gunakan index.php (PHP version)
+
+2. Jika perlu static version untuk SEO/caching:
+   → Use index.html di static/ folder
+
+3. Jika mau kedua version berjalan:
+   → Setup URL rewrite/routing
+   → /static/ → static/index.html (static)
+   → / → index.php (dynamic)
+
+4. Untuk deployment:
+   → Upload ke hosting
+   → Set SSL/HTTPS
+   → Config domain
+
+
+════════════════════════════════════════════════════════════════════════════════
+Dibuat: Mai 13, 2026
+Untuk: Warkop Mawar - Bondowoso
+Status: SIAP UPLOAD ✅
+════════════════════════════════════════════════════════════════════════════════
