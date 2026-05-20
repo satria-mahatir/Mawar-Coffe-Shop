@@ -30,7 +30,8 @@ if (isset($_POST['tambah_foto'])) {
     $tmp_file  = $_FILES['gambar']['tmp_name'];
     
     if ($nama_file != "" && isAllowedImageGaleri($nama_file)) {
-        $gambar_baru = time() . '_' . $nama_file;
+        $ext = strtolower(pathinfo($nama_file, PATHINFO_EXTENSION));
+        $gambar_baru = time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
         $path = "../images/" . $gambar_baru;
 
         if (move_uploaded_file($tmp_file, $path)) {
@@ -54,7 +55,8 @@ if (isset($_POST['edit_foto'])) {
     
     // Cek apakah ada upload foto baru
     if ($_FILES['gambar']['name'] != "" && isAllowedImageGaleri($_FILES['gambar']['name'])) {
-        $nama_file = time() . '_' . $_FILES['gambar']['name'];
+        $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
+        $nama_file = time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
         $tmp_file  = $_FILES['gambar']['tmp_name'];
         $path      = "../images/" . $nama_file;
 
@@ -142,31 +144,48 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
                 <i class="fas fa-plus"></i> Tambah Foto Baru
             </button>
           </div>
-          <div class="card-body mawar-scroll">
+          <div class="card-body">
             <div class="row" id="list">
               <?php while($row = mysqli_fetch_assoc($result)) { ?>
-                <div class="col-md-3 col-6 mb-4" id="item_<?= $row['id_galeri']; ?>">
-                  <div class="card h-100 shadow-sm">
-                    <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" class="card-img-top" style="height: 180px; object-fit: cover;">
-                    <div class="card-body p-2 text-center">
-                      <p class="mb-2 text-bold text-uppercase" style="font-size: 0.8rem;"><?= htmlspecialchars($row['judul']); ?></p>
-                      <div class="btn-group">
-                        <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#modalEdit<?= $row['id_galeri']; ?>"><i class="fas fa-edit"></i> Edit</button>
-                        <a href="galeri.php?hapus=<?= $row['id_galeri']; ?>&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-xs btn-danger" onclick="return confirm('Hapus foto ini kak?')"><i class="fas fa-trash"></i> Hapus</a>
+                <div class="col-12 col-sm-6 col-md-3 mb-4" id="item_<?= $row['id_galeri']; ?>">
+                  <div class="card h-100 shadow" style="border-radius: 12px; overflow: hidden; border: none; transition: transform 0.2s;">
+                    <div style="position: relative;">
+                      <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" class="card-img-top" style="height: 190px; object-fit: cover;">
+                      <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem;">
+                        <i class="fas fa-image"></i>
+                      </div>
+                    </div>
+                    <div class="card-body p-3 d-flex flex-column justify-content-between" style="background-color: #fff;">
+                      <p class="mb-3 text-bold text-uppercase text-dark text-truncate" style="font-size: 0.85rem; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="<?= htmlspecialchars($row['judul']); ?>">
+                        <?= htmlspecialchars($row['judul']); ?>
+                      </p>
+                      <div class="row no-gutters">
+                        <div class="col-6 pr-1">
+                          <button class="btn btn-block btn-info btn-action-mobile" data-toggle="modal" data-target="#modalEdit<?= $row['id_galeri']; ?>">
+                            <i class="fas fa-edit"></i> Edit
+                          </button>
+                        </div>
+                        <div class="col-6 pl-1">
+                          <button class="btn btn-block btn-danger btn-action-mobile" onclick="konfirmasiHapusFoto(<?= $row['id_galeri']; ?>)">
+                            <i class="fas fa-trash"></i> Hapus
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Modal Edit Foto -->
-                <div class="modal fade" id="modalEdit<?= $row['id_galeri']; ?>" tabindex="-1">
-                  <div class="modal-dialog">
-                    <form action="" method="POST" enctype="multipart/form-data" class="modal-content">
-                      <div class="modal-header" style="background-color: #E8622A; color: white;">
-                        <h5 class="modal-title">Edit Foto Galeri</h5>
-                        <button type="button" class="close" data-dismiss="modal" style="color: white;"><span>&times;</span></button>
+                <!-- Modal Edit Foto (Premium) -->
+                <div class="modal fade" id="modalEdit<?= $row['id_galeri']; ?>" tabindex="-1" role="dialog" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <form action="" method="POST" enctype="multipart/form-data" class="modal-content" style="border-radius: 12px; overflow: hidden; border: none;">
+                      <div class="modal-header" style="background-color: #1A0F08; color: #E8622A;">
+                        <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Foto Galeri</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
                       </div>
-                      <div class="modal-body">
+                      <div class="modal-body text-left" style="background-color: #fff; color: #333;">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                         <input type="hidden" name="id_galeri" value="<?= $row['id_galeri']; ?>">
                         <div class="form-group">
@@ -175,20 +194,20 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
                         </div>
                         <div class="form-group">
                           <label>Ganti Foto <small class="text-muted">(Biarkan kosong jika tidak ingin diganti)</small></label>
-                          <input type="file" name="gambar" class="form-control-file" accept="image/*">
+                          <input type="file" name="gambar" class="form-control-file mb-2" accept="image/*">
                         </div>
-                        <div class="text-center">
-                           <small>Preview Sekarang:</small><br>
-                           <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" width="150" class="img-thumbnail">
+                        <div class="p-2 border rounded bg-light text-center">
+                           <small class="d-block mb-1 text-muted">Preview Sekarang:</small>
+                           <img src="../images/<?= htmlspecialchars($row['gambar']); ?>" width="120" class="img-thumbnail">
                         </div>
                       </div>
-                      <div class="modal-footer">
-                        <button type="submit" name="edit_foto" class="btn btn-success">Update Data</button>
+                      <div class="modal-footer" style="background-color: #F8F9FA;">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" name="edit_foto" class="btn btn-primary" style="background-color: #E8622A; border: none;">Simpan</button>
                       </div>
                     </form>
                   </div>
                 </div>
-
               <?php } ?>
             </div>
           </div>
@@ -202,20 +221,29 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
   </footer>
 </div>
 
-<!-- Modal Tambah -->
-<div class="modal fade" id="modalFoto" tabindex="-1">
-  <div class="modal-dialog">
-    <form action="" method="POST" enctype="multipart/form-data" class="modal-content">
-      <div class="modal-header" style="background-color: #E8622A; color: white;">
-        <h5 class="modal-title">Tambah Foto Galeri</h5>
-        <button type="button" class="close" data-dismiss="modal" style="color: white;"><span>&times;</span></button>
+<!-- Modal Tambah (Premium & Batal Berfungsi Sempurna) -->
+<div class="modal fade" id="modalFoto" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form action="" method="POST" enctype="multipart/form-data" class="modal-content" style="border-radius: 12px; overflow: hidden; border: none;">
+      <div class="modal-header" style="background-color: #1A0F08; color: #E8622A;">
+        <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Tambah Foto Baru</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body text-left" style="background-color: #fff; color: #333;">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
-        <div class="form-group"><label>Judul/Caption</label><input type="text" name="judul" class="form-control" required placeholder="Contoh: Suasana Malam"></div>
-        <div class="form-group"><label>File Foto</label><input type="file" name="gambar" class="form-control-file" required accept="image/*"></div>
+        <div class="form-group">
+          <label>Judul/Caption</label>
+          <input type="text" name="judul" class="form-control" required placeholder="Contoh: Suasana Sore Hari di Mawar">
+        </div>
+        <div class="form-group">
+          <label>File Foto</label>
+          <input type="file" name="gambar" class="form-control-file" required accept="image/*">
+        </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="background-color: #F8F9FA;">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
         <button type="submit" name="tambah_foto" class="btn btn-primary" style="background-color:#E8622A; border:none;">Simpan Foto</button>
       </div>
     </form>
@@ -227,6 +255,23 @@ $result = mysqli_query($koneksi, "SELECT * FROM galeri ORDER BY id_galeri DESC")
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
 <script>
+function konfirmasiHapusFoto(id) {
+    Swal.fire({
+        title: 'Hapus foto ini, bro?',
+        text: "Foto bakal terhapus selamanya dari galeri!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#E8622A', // Warna oren Mawar
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "galeri.php?hapus=" + id + "&csrf_token=<?= $_SESSION['csrf_token']; ?>";
+        }
+    })
+}
+
 // Auto-scroll ke anchor jika ada
 document.addEventListener('DOMContentLoaded', function() {
     if (window.location.hash) {

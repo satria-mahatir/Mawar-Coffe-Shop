@@ -10,14 +10,33 @@ if (!hash_equals($_SESSION['frontend_csrf_token'] ?? '', $_POST['csrf_token'] ??
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Rate limiting: 1 request per 60 detik
+    // Rate limiting: 1 request per 60 detik (Session + IP-based temp file)
     $now = time();
-    if (isset($_SESSION['last_reservasi']) && ($now - $_SESSION['last_reservasi']) < 60) {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    $ip_hash = md5($ip);
+    $temp_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "mawar_rl_" . $ip_hash;
+
+    // Cek Sesi Browser
+    $session_blocked = isset($_SESSION['last_reservasi']) && ($now - $_SESSION['last_reservasi']) < 60;
+    
+    // Cek File IP (mencegah bypass tanpa cookie/bot)
+    $ip_blocked = false;
+    if (file_exists($temp_file)) {
+        $last_time = (int)@file_get_contents($temp_file);
+        if (($now - $last_time) < 60) {
+            $ip_blocked = true;
+        }
+    }
+
+    if ($session_blocked || $ip_blocked) {
         http_response_code(429);
         echo json_encode(['status' => 'error', 'message' => 'Tunggu 1 menit sebelum reservasi lagi']);
         exit;
     }
+
+    // Catat waktu reservasi terakhir
     $_SESSION['last_reservasi'] = $now;
+    @file_put_contents($temp_file, $now);
 
     $nama        = trim($_POST['nama_pelanggan'] ?? '');
     $waktu       = trim($_POST['waktu_reservasi'] ?? '');

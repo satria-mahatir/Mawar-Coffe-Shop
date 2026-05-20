@@ -24,7 +24,7 @@
                     $harga_hot = $row['harga'];
                     $harga_ice = $has_ice ? $row['harga_ice'] : 0;
                 ?>
-                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" <?= $has_ice ? "data-harga-hot='$harga_hot' data-harga-ice='$harga_ice' data-has-ice='1'" : ''; ?>>
+                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" data-id="<?= $row['id_menu']; ?>" <?= $has_ice ? "data-harga-hot='$harga_hot' data-harga-ice='$harga_ice' data-has-ice='1'" : ''; ?>>
                         <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                 <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
@@ -64,7 +64,7 @@
                         $harga_hot = $row['harga'];
                         $harga_ice = $has_ice ? $row['harga_ice'] : 0;
                     ?>
-                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" <?= $has_ice ? "data-harga-hot='$harga_hot' data-harga-ice='$harga_ice' data-has-ice='1'" : ''; ?>>
+                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" data-id="<?= $row['id_menu']; ?>" <?= $has_ice ? "data-harga-hot='$harga_hot' data-harga-ice='$harga_ice' data-has-ice='1'" : ''; ?>>
                             <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                                 <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                     <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
@@ -109,7 +109,7 @@
                     $count++;
                     if($count > 6) break;
                 ?>
-                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                    <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" data-id="<?= $row['id_menu']; ?>">
                         <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                             <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                 <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>
@@ -139,7 +139,7 @@
                     for($i = 6; $i < count($makanan_all); $i++) { 
                         $row = $makanan_all[$i];
                     ?>
-                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>">
+                        <div class="menu-card reveal active <?= (isset($row['status']) && $row['status'] == 'habis') ? 'sold-out' : ''; ?>" data-id="<?= $row['id_menu']; ?>">
                             <div class="menu-img-wrap" style="<?= (isset($row['status']) && $row['status'] == 'habis') ? 'filter: grayscale(1);' : ''; ?>">
                                 <?php if(isset($row['status']) && $row['status'] == 'habis'): ?>
                                     <div class="menu-card-tag" style="background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;">SOLD OUT</div>

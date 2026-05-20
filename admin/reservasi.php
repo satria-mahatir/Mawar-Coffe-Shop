@@ -132,7 +132,11 @@ if (!$query) {
             <h3 class="card-title">Daftar Reservasi</h3>
           </div>
           <div class="card-body p-3">
-            <table class="table table-striped table-hover text-nowrap" id="list">
+            <div class="table-responsive-indicator">
+              <i class="fas fa-info-circle"></i> ← Geser tabel ke kanan-kiri untuk detail reservasi →
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped table-hover text-nowrap" id="list">
               <thead>
                 <tr>
                   <th>No</th>
@@ -159,18 +163,25 @@ if (!$query) {
                   <td><?= nl2br(htmlspecialchars($row['detail_pesanan'])); ?></td>
                   <td><span class="badge <?= $status_class; ?>"><?= $row['status_reservasi']; ?></span></td>
                   <td>
-                    <?php if ($row['status_reservasi'] == 'Pending'): ?>
-                        <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Dikonfirmasi&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-sm btn-info" title="Konfirmasi Reservasi">Konfirmasi</a>
-                    <?php endif; ?>
-                    
-                    <?php if ($row['status_reservasi'] == 'Pending' || $row['status_reservasi'] == 'Dikonfirmasi'): ?>
-                        <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Selesai&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-sm btn-success" title="Selesaikan">Selesai</a>
-                    <?php endif; ?>
+                    <div class="d-flex flex-wrap justify-content-center" style="gap: 6px;">
+                      <?php if ($row['status_reservasi'] == 'Pending'): ?>
+                          <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Dikonfirmasi&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-info btn-action-mobile" title="Konfirmasi Reservasi">
+                              <i class="fas fa-check"></i> Konfirmasi
+                          </a>
+                      <?php endif; ?>
+                      
+                      <?php if ($row['status_reservasi'] == 'Pending' || $row['status_reservasi'] == 'Dikonfirmasi'): ?>
+                          <a href="update_reservasi.php?id=<?= $row['id_reservasi']; ?>&status=Selesai&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-success btn-action-mobile" title="Selesaikan">
+                              <i class="fas fa-check-double"></i> Selesai
+                          </a>
+                      <?php endif; ?>
+                    </div>
                   </td>
                 </tr>
                 <?php } ?>
               </tbody>
             </table>
+            </div> <!-- Close table-responsive -->
           </div>
         </div>
       </div>
@@ -233,6 +244,67 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 200);
         }
     }
+});
+
+// Auto-Check & Auto-Refresh saat ada Reservasi Baru Masuk
+document.addEventListener('DOMContentLoaded', function() {
+    let initialCount = null;
+    
+    function checkNewReservations() {
+        fetch('api_check_reservations.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.total !== undefined) {
+                    if (initialCount === null) {
+                        initialCount = data.total;
+                    } else if (data.total > initialCount) {
+                        // Jumlah bertambah, ada pesanan baru!
+                        localStorage.setItem('new_reservation_alert', '1');
+                        window.location.reload();
+                    } else if (data.total < initialCount) {
+                        // Admin baru aja hapus/selesaikan pesanan lain, update hitungan tanpa reload
+                        initialCount = data.total;
+                    }
+                }
+            })
+            .catch(err => console.error('Gagal mengecek reservasi baru:', err));
+    }
+    
+    // Tampilkan Toast Alert jika baru saja di-reload karena ada reservasi baru
+    if (localStorage.getItem('new_reservation_alert') === '1') {
+        localStorage.removeItem('new_reservation_alert');
+        // Mainkan bell sound menggunakan HTML5 Audio (synthesized) agar lebih premium!
+        try {
+            const context = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = context.createOscillator();
+            const gain = context.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(830.6, context.currentTime); // G5 note (Coffee shop ring!)
+            gain.gain.setValueAtTime(0, context.currentTime);
+            gain.gain.linearRampToValueAtTime(0.3, context.currentTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.8);
+            
+            osc.connect(gain);
+            gain.connect(context.destination);
+            osc.start();
+            osc.stop(context.currentTime + 0.8);
+        } catch (e) {
+            console.log('AudioContext blocked by browser policy');
+        }
+        
+        // Tampilkan alert toast bootstrap AdminLTE
+        $(document).Toasts('create', {
+            class: 'bg-success',
+            title: 'Pesanan Baru Masuk!',
+            autohide: true,
+            delay: 5000,
+            body: 'Waduh bro! Ada pesanan/reservasi baru masuk nih, list tabel udah di-update otomatis!'
+        });
+    }
+
+    // Jalankan check setiap 10 detik
+    setInterval(checkNewReservations, 10000);
 });
 </script>
 </body>

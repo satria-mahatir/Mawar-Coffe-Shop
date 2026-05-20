@@ -526,3 +526,87 @@
             .openPopup();
     };
 
+    // ── DYNAMIC MENU STATUS POLLING ──
+    function checkMenuStatus() {
+        fetch('api_menu_status.php')
+            .then(res => res.json())
+            .then(statuses => {
+                Object.keys(statuses).forEach(id => {
+                    const status = statuses[id]; // 'tersedia' or 'habis'
+                    const cards = document.querySelectorAll(`.menu-card[data-id="${id}"]`);
+                    
+                    cards.forEach(card => {
+                        const imgWrap = card.querySelector('.menu-img-wrap');
+                        const cardBody = card.querySelector('.menu-card-body');
+                        const addBtn = card.querySelector('.add-btn');
+                        
+                        if (status === 'habis') {
+                            // 1. Tambah class sold-out
+                            if (!card.classList.contains('sold-out')) {
+                                card.classList.add('sold-out');
+                            }
+                            
+                            // 2. Grayscale image wrap
+                            if (imgWrap) {
+                                imgWrap.style.filter = 'grayscale(1)';
+                                
+                                // Cek dan tambah SOLD OUT badge jika belum ada
+                                let badge = imgWrap.querySelector('.menu-card-tag');
+                                if (!badge) {
+                                    badge = document.createElement('div');
+                                    badge.className = 'menu-card-tag';
+                                    badge.style.cssText = 'background: #555 !important; position: absolute; top: 10px; left: 10px; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 0.8rem;';
+                                    badge.textContent = 'SOLD OUT';
+                                    imgWrap.appendChild(badge);
+                                }
+                            }
+                            
+                            // 3. Opacity 0.6 pada body
+                            if (cardBody) {
+                                cardBody.style.opacity = '0.6';
+                            }
+                            
+                            // 4. Disable add button
+                            if (addBtn) {
+                                addBtn.disabled = true;
+                                addBtn.style.background = '#ccc';
+                                addBtn.style.cursor = 'not-allowed';
+                                addBtn.textContent = '×';
+                            }
+                        } else {
+                            // Status: tersedia
+                            // 1. Hapus class sold-out
+                            card.classList.remove('sold-out');
+                            
+                            // 2. Reset grayscale & hapus badge
+                            if (imgWrap) {
+                                imgWrap.style.filter = '';
+                                const badge = imgWrap.querySelector('.menu-card-tag');
+                                if (badge) {
+                                    badge.remove();
+                                }
+                            }
+                            
+                            // 3. Reset opacity
+                            if (cardBody) {
+                                cardBody.style.opacity = '';
+                            }
+                            
+                            // 4. Enable add button
+                            if (addBtn && addBtn.disabled) {
+                                addBtn.disabled = false;
+                                addBtn.style.background = '';
+                                addBtn.style.cursor = '';
+                                addBtn.textContent = '+';
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(err => console.error('Error fetching menu status:', err));
+    }
+    // Poll setiap 10 detik
+    setInterval(checkMenuStatus, 10000);
+    // Jalankan awal setelah 2 detik
+    setTimeout(checkMenuStatus, 2000);
+

@@ -2,21 +2,32 @@
     <div class="gallery-strip">
         <div class="gallery-track" id="galleryTrack">
             <?php 
-            // Generate carousel items dynamically
-            foreach($carousel_items as $item) {
-                $image_file = $item['gambar'];
-                $alt_text = htmlspecialchars($item['nama_menu']);
-                echo '<div class="gallery-item"><img loading="lazy" src="images/'.htmlspecialchars($image_file).'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
+            // Ensure we have enough items to span the screen (minimum 12 items)
+            $display_items = $carousel_items;
+            if (count($carousel_items) > 0) {
+                while (count($display_items) < 12) {
+                    $display_items = array_merge($display_items, $carousel_items);
+                }
             }
             ?>
-            <!-- Duplication for infinite scroll effect -->
-            <?php 
-            foreach($carousel_items as $item) {
-                $image_file = $item['gambar'];
-                $alt_text = htmlspecialchars($item['nama_menu']);
-                echo '<div class="gallery-item"><img loading="lazy" src="images/'.htmlspecialchars($image_file).'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
-            }
-            ?>
+            <div class="gallery-group">
+                <?php 
+                foreach($display_items as $item) {
+                    $image_file = $item['gambar'];
+                    $alt_text = htmlspecialchars($item['nama_menu']);
+                    echo '<div class="gallery-item"><img loading="lazy" src="images/'.htmlspecialchars($image_file).'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
+                }
+                ?>
+            </div>
+            <div class="gallery-group" aria-hidden="true">
+                <?php 
+                foreach($display_items as $item) {
+                    $image_file = $item['gambar'];
+                    $alt_text = htmlspecialchars($item['nama_menu']);
+                    echo '<div class="gallery-item"><img loading="lazy" src="images/'.htmlspecialchars($image_file).'" alt="'.$alt_text.'" onerror="this.src=\'images/placeholder.png\'"></div>';
+                }
+                ?>
+            </div>
         </div>
     </div>
 

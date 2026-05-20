@@ -12,7 +12,13 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
 
 $error = '';
 
-if (isset($_POST['submit'])) {
+// Proteksi Brute Force: Cek apakah terkunci
+if (isset($_SESSION['lockout_time']) && time() < $_SESSION['lockout_time']) {
+    $remaining = ceil(($_SESSION['lockout_time'] - time()) / 60);
+    $error = "Terlalu banyak percobaan login. Akun terkunci, coba lagi dalam $remaining menit.";
+}
+
+if (empty($error) && isset($_POST['submit'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['frontend_csrf_token']) {
         die("CSRF Token Invalid!");
     }
@@ -36,17 +42,27 @@ if (isset($_POST['submit'])) {
         
         // 2. Verifikasi password BCRYPT yang diinput vs yang di database
         if ($data && password_verify($password, $data['password'])) {
-            // Kalau COCOK, bikin session
+            // Kalau COCOK, bikin session dan reset hitungan lockout
+            unset($_SESSION['login_attempts']);
+            unset($_SESSION['lockout_time']);
+            
             $_SESSION['admin_logged_in'] = true;
             $_SESSION['username'] = $data['username'];
             $_SESSION['user_id']  = $data['id_admin'];
             
             header("Location: index.php"); 
             exit;
-        } else if (!$data) {
-            $error = 'Username tidak terdaftar!';
         } else {
-            $error = 'Password salah bro!';
+            // Jika gagal, tambah hitungan percobaan
+            $_SESSION['login_attempts'] = ($_SESSION['login_attempts'] ?? 0) + 1;
+            
+            if ($_SESSION['login_attempts'] >= 5) {
+                $_SESSION['lockout_time'] = time() + 600; // Lockout 10 menit
+                $error = 'Terlalu banyak percobaan login. Akun dikunci selama 10 menit.';
+            } else {
+                $sisa = 5 - $_SESSION['login_attempts'];
+                $error = ($data) ? "Password salah bro! (Sisa percobaan: $sisa)" : "Username tidak terdaftar! (Sisa percobaan: $sisa)";
+            }
         }
     } else if (empty($error)) {
         $error = 'Username tidak terdaftar!';
@@ -87,11 +103,11 @@ if (isset($_POST['submit'])) {
     </div>
     <div class="card-body">
       <p class="login-box-msg">Login dulu brok buat masuk dashboard</p>
-
+ 
       <!-- Alert Bootstrap buat nampilin error -->
       <?php if($error != ''): ?>
         <div class="alert alert-danger text-center" role="alert">
-          <?php echo $error; ?>
+          <?php echo htmlspecialchars($error); ?>
         </div>
       <?php endif; ?>
 

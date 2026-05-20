@@ -83,10 +83,40 @@ if (empty($_SESSION['csrf_token'])) {
             border-radius: 10px;
         }
 
-        /* Responsivitas Card Body di Mobile */
+        /* Responsivitas Card Body & Tabel di Mobile */
+        .btn-action-mobile {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 6px;
+            min-height: 36px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .table-responsive-indicator {
+            display: none;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #E8622A;
+            margin-bottom: 10px;
+            font-weight: 600;
+            animation: mawarPulse 1.5s infinite;
+        }
+
+        @keyframes mawarPulse {
+            0% { opacity: 0.5; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.5; transform: scale(0.98); }
+        }
+
         @media (max-width: 768px) {
-            .card-body.p-0 {
-                overflow-x: auto;
+            .card-body {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
             }
             .mawar-scroll {
                 max-height: 400px;
@@ -94,12 +124,14 @@ if (empty($_SESSION['csrf_token'])) {
             .content-header h1 {
                 font-size: 1.5rem;
             }
+            .table-responsive-indicator {
+                display: block;
+            }
             
             /* Improve mobile table display */
             .table { font-size: 0.85rem; }
-            .table thead th { padding: 0.5rem 0.25rem; }
-            .table td { padding: 0.5rem 0.25rem; }
-            .btn-sm { padding: 0.25rem 0.4rem; font-size: 0.65rem; }
+            .table thead th { padding: 0.6rem 0.4rem; }
+            .table td { padding: 0.6rem 0.4rem; }
             
             /* Mobile friendly form layout */
             .form-group { margin-bottom: 0.75rem; }
@@ -109,13 +141,17 @@ if (empty($_SESSION['csrf_token'])) {
             .table .d-none-sm { display: none; }
         }
         
+        @media (max-width: 576px) {
+            .btn-action-mobile {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+                min-height: 44px; /* Touch target standard */
+            }
+        }
+        
         @media (max-width: 480px) {
-            .main-sidebar { width: 100%; }
-            .layout-fixed .main-sidebar { position: absolute; }
-            .content-wrapper { margin-left: 0; }
-            .table { font-size: 0.75rem; }
-            .btn { padding: 0.25rem 0.5rem; }
-            .btn-sm { padding: 0.15rem 0.3rem; font-size: 0.6rem; }
+            /* Membiarkan responsivitas sidebar bawaan AdminLTE bekerja dengan sempurna tanpa crash */
+            .table { font-size: 0.78rem; }
         }
 
         /* --- iOS Style Dark Mode Toggle --- */

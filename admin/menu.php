@@ -30,6 +30,11 @@ if (isset($_GET['status_id'])) {
     $stmt->bind_param("si", $new_status, $id);
     $stmt->execute();
     $stmt->close();
+    
+    // Clear homepage cache
+    $cache_file = sys_get_temp_dir() . '/warkop_menu_cache.json';
+    if (file_exists($cache_file)) { @unlink($cache_file); }
+    
     header("Location: menu.php#item_$id");
     exit;
 }
@@ -51,6 +56,11 @@ if (isset($_GET['hapus'])) {
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $stmt->close();
+    
+    // Clear homepage cache
+    $cache_file = sys_get_temp_dir() . '/warkop_menu_cache.json';
+    if (file_exists($cache_file)) { @unlink($cache_file); }
+    
     header("Location: menu.php#list"); exit;
 }
 
@@ -66,7 +76,9 @@ if (isset($_POST['tambah_menu'])) {
     $desk     = trim($_POST['deskripsi']);
     
     if ($_FILES['gambar']['name'] != "" && isAllowedImage($_FILES['gambar']['name'])) {
-        $gambar = time().'_'.$_FILES['gambar']['name'];
+        $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
+        $gambar = time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
+        
         if (move_uploaded_file($_FILES['gambar']['tmp_name'], "../images/".$gambar)) {
             $stmt = $koneksi->prepare("INSERT INTO menu (nama_menu, kategori, deskripsi, harga, harga_ice, gambar) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("sssiss", $nama, $kat, $desk, $hrg, $hrg_ice, $gambar);
@@ -74,6 +86,11 @@ if (isset($_POST['tambah_menu'])) {
             $stmt->close();
         }
     }
+    
+    // Clear homepage cache
+    $cache_file = sys_get_temp_dir() . '/warkop_menu_cache.json';
+    if (file_exists($cache_file)) { @unlink($cache_file); }
+    
     header("Location: menu.php#list"); exit;
 }
 
@@ -90,7 +107,9 @@ if (isset($_POST['edit_menu'])) {
     $desk     = trim($_POST['deskripsi']);
     
     if ($_FILES['gambar']['name'] != "" && isAllowedImage($_FILES['gambar']['name'])) {
-        $gambar = time().'_'.$_FILES['gambar']['name'];
+        $ext = strtolower(pathinfo($_FILES['gambar']['name'], PATHINFO_EXTENSION));
+        $gambar = time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
+        
         move_uploaded_file($_FILES['gambar']['tmp_name'], "../images/".$gambar);
         $stmt = $koneksi->prepare("UPDATE menu SET nama_menu=?, kategori=?, harga=?, harga_ice=?, deskripsi=?, gambar=? WHERE id_menu=?");
         $stmt->bind_param("ssiissi", $nama, $kat, $hrg, $hrg_ice, $desk, $gambar, $id);
@@ -100,6 +119,11 @@ if (isset($_POST['edit_menu'])) {
     }
     $stmt->execute();
     $stmt->close();
+    
+    // Clear homepage cache
+    $cache_file = sys_get_temp_dir() . '/warkop_menu_cache.json';
+    if (file_exists($cache_file)) { @unlink($cache_file); }
+    
     header("Location: menu.php#item_$id"); exit;
 }
 
@@ -180,9 +204,13 @@ if (!$result) {
           </div>
         <?php endif; ?>
         <div class="card">
-          <div class="card-header"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTambah"><i class="fas fa-plus"></i> Tambah Menu</button></div>
-          <div class="card-body p-3 mawar-scroll">
-            <table id="tabelMenu" class="table table-striped table-bordered text-center dt-responsive nowrap" style="width:100%">
+          <div class="card-header"><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalTambah" style="background-color: #E8622A; border: none; font-weight: bold; padding: 6px 12px;"><i class="fas fa-plus"></i> Tambah Menu</button></div>
+          <div class="card-body p-3">
+            <div class="table-responsive-indicator">
+              <i class="fas fa-info-circle"></i> ← Geser tabel ke kanan-kiri untuk detail menu →
+            </div>
+            <div class="table-responsive">
+              <table id="tabelMenu" class="table table-striped table-bordered text-center dt-responsive nowrap" style="width:100%">
               <thead style="background-color: #1A0F08; color: #F5EFE4;">
                 <tr>
                   <th style="width: 5%">No</th>
@@ -216,26 +244,27 @@ if (!$result) {
                     <?php else: ?>
                       <span class="text-muted">—</span>
                     <?php endif; ?>
-                  </td>
-                  <td class="align-middle">
-                    <!-- Tombol Status -->
-                    <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
-                        <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=tersedia&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-xs btn-success" title="Klik untuk jadikan Habis">
-                            <i class="fas fa-check-circle"></i> Tersedia
-                        </a>
-                    <?php else: ?>
-                        <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=habis&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-xs btn-secondary" title="Klik untuk jadikan Tersedia">
-                            <i class="fas fa-times-circle"></i> Habis
-                        </a>
-                    <?php endif; ?>
+                                     <td class="align-middle">
+                    <div class="d-flex flex-wrap justify-content-center" style="gap: 4px;">
+                      <!-- Tombol Status -->
+                      <?php if(!isset($row['status']) || $row['status'] == 'tersedia'): ?>
+                          <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=tersedia&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-success btn-action-mobile" title="Klik untuk jadikan Habis">
+                              <i class="fas fa-check-circle"></i> Tersedia
+                          </a>
+                      <?php else: ?>
+                          <a href="menu.php?status_id=<?= $row['id_menu']; ?>&st=habis&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn btn-secondary btn-action-mobile" title="Klik untuk jadikan Tersedia">
+                              <i class="fas fa-times-circle"></i> Habis
+                          </a>
+                      <?php endif; ?>
 
-                    <!-- Tombol Edit & Hapus lu yang lama di bawahnya -->
-                    <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#modalEdit<?= $row['id_menu']; ?>">
-                      <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-xs btn-danger" onclick="konfirmasiHapus(<?= $row['id_menu']; ?>)">
-                      <i class="fas fa-trash"></i> Hapus
-                    </button>
+                      <!-- Tombol Edit & Hapus -->
+                      <button class="btn btn-info btn-action-mobile" data-toggle="modal" data-target="#modalEdit<?= $row['id_menu']; ?>">
+                        <i class="fas fa-edit"></i> Edit
+                      </button>
+                      <button class="btn btn-danger btn-action-mobile" onclick="konfirmasiHapus(<?= $row['id_menu']; ?>)">
+                        <i class="fas fa-trash"></i> Hapus
+                      </button>
+                    </div>
                   </td>
                 </tr>
 
@@ -307,6 +336,7 @@ if (!$result) {
                 <?php } ?>
               </tbody>
             </table>
+            </div> <!-- Close table-responsive -->
           </div>
         </div>
       </div>
@@ -314,27 +344,59 @@ if (!$result) {
   </div>
 </div>
 
-<!-- Modal Tambah (Sama kayak kode lama lu) -->
-<div class="modal fade" id="modalTambah" tabindex="-1">
-  <div class="modal-dialog">
-    <form action="" method="POST" enctype="multipart/form-data" class="modal-content">
-      <div class="modal-header"><h5>Tambah Menu</h5></div>
-      <div class="modal-body">
+<!-- Modal Tambah (Visual Premium & Batal/Tutup Berfungsi Sempurna) -->
+<div class="modal fade" id="modalTambah" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form action="" method="POST" enctype="multipart/form-data" class="modal-content" style="border-radius: 12px; overflow: hidden; border: none;">
+      <div class="modal-header" style="background-color: #1A0F08; color: #E8622A;">
+        <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Tambah Menu Baru</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-left" style="background-color: #fff; color: #333;">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
-        <div class="form-group"><label>Nama Menu</label><input type="text" name="nama_menu" class="form-control" required maxlength="100"></div>
-        <div class="form-group"><label>Kategori</label><select name="kategori" class="form-control"><option value="minuman">Minuman</option><option value="makanan">Makanan</option></select></div>
-        <div class="form-group"><label>Harga Hot / Normal (Rp) <span class="text-danger">*</span></label><input type="number" name="harga" class="form-control" required></div>
+        
+        <div class="form-group">
+          <label>Nama Menu</label>
+          <input type="text" name="nama_menu" class="form-control" required maxlength="100" placeholder="Contoh: Kopi Susu Mawar">
+        </div>
+        
+        <div class="form-group">
+          <label>Kategori</label>
+          <select name="kategori" class="form-control">
+            <option value="minuman">Minuman</option>
+            <option value="makanan">Makanan</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Harga Hot / Normal (Rp) <span class="text-danger">*</span></label>
+          <input type="number" name="harga" class="form-control" required placeholder="Contoh: 15000">
+        </div>
+        
         <div class="form-group">
           <label>Harga Ice (Rp) <small class="text-muted">— Kosongkan jika tidak ada pilihan ice</small></label>
           <div class="input-group">
             <div class="input-group-prepend"><span class="input-group-text">🧊</span></div>
-            <input type="number" name="harga_ice" class="form-control" placeholder="Contoh: 8000">
+            <input type="number" name="harga_ice" class="form-control" placeholder="Contoh: 17000">
           </div>
         </div>
-        <div class="form-group"><label>Deskripsi</label><textarea name="deskripsi" class="form-control" required maxlength="1000"></textarea></div>
-        <div class="form-group"><label>Foto</label><input type="file" name="gambar" class="form-control-file" required accept="image/*"></div>
+        
+        <div class="form-group">
+          <label>Deskripsi</label>
+          <textarea name="deskripsi" class="form-control" rows="3" required maxlength="1000" placeholder="Jelaskan cita rasa menu ini..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Foto Menu</label>
+          <input type="file" name="gambar" class="form-control-file" required accept="image/*">
+        </div>
       </div>
-      <div class="modal-footer"><button type="submit" name="tambah_menu" class="btn btn-primary">Simpan</button></div>
+      <div class="modal-footer" style="background-color: #F8F9FA;">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+        <button type="submit" name="tambah_menu" class="btn btn-primary" style="background-color: #E8622A; border: none;">Simpan</button>
+      </div>
     </form>
   </div>
 </div>
